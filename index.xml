@@ -18,10 +18,13 @@
       
       <guid>https://domgoodwin.github.io/post/setup/</guid>
       <description>Introduction Hugo is a Go based, static site generator. It has some impressive benchmarking figures, a huge catalog of impressive themes and means I don&amp;rsquo;t have to write HTML.
-I&amp;rsquo;m setting this up with the follow configuratons &amp;gt; Ubuntu 16.04 LTS &amp;gt; Hugo 0.32 &amp;gt; Go 1.9.4
-Installing Hugo Ubuntu/Debian: &amp;gt; sudo apt-get install hugo
-Check it&amp;rsquo;s installed correctly: &amp;gt; hugo version
-Creating your site Basic setup To generate your base site: &amp;gt; hugo new site my-blog</description>
+I&amp;rsquo;m setting this up with the follow configuratons
+Ubuntu 16.04 LTS Hugo 0.32 Go 1.9.4  Installing Hugo Ubuntu/Debian:
+sudo apt-get install hugo
+Check it&amp;rsquo;s installed correctly:
+hugo version
+Creating your site Basic setup To generate your base site:
+hugo new site my-blog</description>
     </item>
     
     <item>
