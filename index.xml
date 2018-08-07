@@ -12,29 +12,25 @@
     
     
     <item>
-      <title>Setup</title>
+      <title>Setting up a Hugo Blog</title>
       <link>https://domgoodwin.github.io/post/setup/</link>
       <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
       
       <guid>https://domgoodwin.github.io/post/setup/</guid>
-      <description>Introduction Hugo is a Go based, static site generator. It has some impressive benchmarking figures, a huge catalog of impressive themes and means I don&amp;rsquo;t have to write HTML.
-I&amp;rsquo;m setting this up with the follow configuratons
-Ubuntu 16.04 LTS Hugo 0.32 Go 1.9.4  Installing Hugo Ubuntu/Debian:
-sudo apt-get install hugo
-Check it&amp;rsquo;s installed correctly:
-hugo version
-Creating your site Basic setup To generate your base site:
-hugo new site my-blog</description>
+      <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
     <item>
-      <title>Podcast reccomendations</title>
+      <title>Podcast reccomendations - 04/2018</title>
       <link>https://domgoodwin.github.io/post/podcasts/</link>
       <pubDate>Wed, 04 Apr 2018 22:03:36 +0100</pubDate>
       
       <guid>https://domgoodwin.github.io/post/podcasts/</guid>
-      <description>Reply All Every week, you&amp;rsquo;re presented with an intersting tale relating to the internet. From online bounty hunters to crowdsourcing medical advice, this podcast&amp;rsquo;s range of stories are always interesting and worth a listen.
-Episodes to get started   Long Distance : #102 / #103 The Secret Life of Alex Goldman : #96 Boy in Photo : #79   This American Life This American Life is one of the most popular podcasts of all time.</description>
+      <description>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;
+
+&lt;p&gt;&lt;/p&gt;</description>
     </item>
     
   </channel>
