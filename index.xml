@@ -17,7 +17,7 @@
       <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
       
       <guid>https://domgoodwin.github.io/post/setup/</guid>
-      <description>Introduction [Hugo](&amp;ldquo;https://gohugo.io/&amp;quot;) is a Go based, static site generator. It has some [impressive](&amp;ldquo;https://www.youtube.com/watch?v=CdiDYZ51a2o&amp;quot;) benchmarking figures, a [huge catalog](&amp;ldquo;https://themes.gohugo.io/&amp;quot;) of impressive themes and means I don&amp;rsquo;t have to write HTML.
+      <description>Introduction Hugo is a Go based, static site generator. It has some impressive benchmarking figures, a huge catalog of impressive themes and means I don&amp;rsquo;t have to write HTML.
 I&amp;rsquo;m setting this up with the follow configuratons &amp;gt; Ubuntu 16.04 LTS &amp;gt; Hugo 0.32 &amp;gt; Go 1.9.4
 Installing Hugo Ubuntu/Debian: &amp;gt; sudo apt-get install hugo
 Check it&amp;rsquo;s installed correctly: &amp;gt; hugo version
