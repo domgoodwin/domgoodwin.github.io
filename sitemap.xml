@@ -1,15 +1,37 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://domgoodwin.github.io/</loc>
-    <lastmod>2018-04-04T22:03:36+01:00</lastmod>
-    <priority>0</priority>
+    <loc>https://domgoodwin.github.io/post/setup/</loc>
+    <lastmod>2018-04-06T11:03:53+01:00</lastmod>
   </url>
   
   <url>
     <loc>https://domgoodwin.github.io/post/podcasts/</loc>
     <lastmod>2018-04-04T22:03:36+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://domgoodwin.github.io/categories/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://domgoodwin.github.io/post/</loc>
+    <lastmod>2018-04-06T11:03:53+01:00</lastmod>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://domgoodwin.github.io/tags/</loc>
+    <priority>0</priority>
+  </url>
+  
+  <url>
+    <loc>https://domgoodwin.github.io/</loc>
+    <lastmod>2018-04-06T11:03:53+01:00</lastmod>
+    <priority>0</priority>
   </url>
   
 </urlset>

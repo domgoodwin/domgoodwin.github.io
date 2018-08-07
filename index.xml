@@ -6,8 +6,23 @@
     <description>Recent content on domgoodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 04 Apr 2018 22:03:36 +0100</lastBuildDate>
-    <atom:link href="https://domgoodwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 06 Apr 2018 11:03:53 +0100</lastBuildDate>
+    
+	<atom:link href="https://domgoodwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Setup</title>
+      <link>https://domgoodwin.github.io/post/setup/</link>
+      <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
+      
+      <guid>https://domgoodwin.github.io/post/setup/</guid>
+      <description>Introduction [Hugo](&amp;ldquo;https://gohugo.io/&amp;quot;) is a Go based, static site generator. It has some [impressive](&amp;ldquo;https://www.youtube.com/watch?v=CdiDYZ51a2o&amp;quot;) benchmarking figures, a [huge catalog](&amp;ldquo;https://themes.gohugo.io/&amp;quot;) of impressive themes and means I don&amp;rsquo;t have to write HTML.
+I&amp;rsquo;m setting this up with the follow configuratons &amp;gt; Ubuntu 16.04 LTS &amp;gt; Hugo 0.32 &amp;gt; Go 1.9.4
+Installing Hugo Ubuntu/Debian: &amp;gt; sudo apt-get install hugo
+Check it&amp;rsquo;s installed correctly: &amp;gt; hugo version
+Creating your site Basic setup To generate your base site: &amp;gt; hugo new site my-blog</description>
+    </item>
     
     <item>
       <title>Podcast reccomendations</title>
@@ -15,179 +30,8 @@
       <pubDate>Wed, 04 Apr 2018 22:03:36 +0100</pubDate>
       
       <guid>https://domgoodwin.github.io/post/podcasts/</guid>
-      <description>
-
-&lt;h2 id=&#34;reply-all:490078144366c347e8b62bdc4bb6103e&#34;&gt;Reply All&lt;/h2&gt;
-
-&lt;p&gt;Every week, you&amp;rsquo;re presented with an intersting tale relating to the internet. From online bounty hunters to crowdsourcing medical advice, this podcast&amp;rsquo;s range of stories are always interesting and worth a listen.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Long Distance : #102 / #103&lt;/li&gt;
-&lt;li&gt;The Secret Life of Alex Goldman : #96&lt;/li&gt;
-&lt;li&gt;Boy in Photo : #79&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;this-american-life:490078144366c347e8b62bdc4bb6103e&#34;&gt;This American Life&lt;/h2&gt;
-
-&lt;p&gt;This American Life is one of the most popular podcasts of all time. With over twenty years worth of archives, the amount of amazing episodes are endless.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-1:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Human Error in Voltile Situations : #634&lt;/li&gt;
-&lt;li&gt;20 Acts in 60 Minutes : #241&lt;/li&gt;
-&lt;li&gt;Five Women : #640&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;my-favourite-murder:490078144366c347e8b62bdc4bb6103e&#34;&gt;My Favourite Murder&lt;/h2&gt;
-
-&lt;p&gt;Every week, the hosts tell some of their favourite, most interesting true crime, murder stories.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-2:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;My Firstest Murder : #1&lt;/li&gt;
-&lt;li&gt;Decompressions : #102&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;sawbones:490078144366c347e8b62bdc4bb6103e&#34;&gt;Sawbones&lt;/h2&gt;
-
-&lt;p&gt;A look into the history of how illnesses and medcial problems were &lt;em&gt;solved&lt;/em&gt; throughout time. Makes you wonder if we&amp;rsquo;re as wrong now as our ancestors were.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-3:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;The Women Who Gave Birth to Rabbits&lt;/li&gt;
-&lt;li&gt;Opioid Addiction&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;no-such-thing-as-a-fish:490078144366c347e8b62bdc4bb6103e&#34;&gt;No Such Thing As A Fish&lt;/h2&gt;
-
-&lt;p&gt;The researches behind the facts for QI talk about their favourites facts of the week.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-4:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Really any, they&amp;rsquo;re all great&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;page-94-the-private-eye-podcast:490078144366c347e8b62bdc4bb6103e&#34;&gt;Page 94: The Private Eye Podcast&lt;/h2&gt;
-
-&lt;p&gt;A more detailed look into some stories within Private Eye.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-5:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Hospital and Hacks&lt;/li&gt;
-&lt;li&gt;Credit and Christmas&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;disect:490078144366c347e8b62bdc4bb6103e&#34;&gt;Disect&lt;/h2&gt;
-
-&lt;p&gt;Long form music analysis, each season focussing on an album.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-6:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;S2E1 - Kanye West: The Elephant in the Room&lt;/li&gt;
-&lt;li&gt;S1E9 - Alright by Kendrick Lamar&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;hello-internet:490078144366c347e8b62bdc4bb6103e&#34;&gt;Hello Internet&lt;/h2&gt;
-
-&lt;p&gt;Two very inteligent, insightful and interesting people discuss topics of note; always thought provoking.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-7:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Being Wrong on The Internet, #1&lt;/li&gt;
-&lt;li&gt;Mr Chompers, #93&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;freakonomics:490078144366c347e8b62bdc4bb6103e&#34;&gt;Freakonomics&lt;/h2&gt;
-
-&lt;p&gt;Two economist explore the hidden side of everything, from pizza stores to chuck e cheeses.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-8:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;What Are you Waiting For?&lt;/li&gt;
-&lt;li&gt;How Big is My Penis? (And Other Things We Ask Google)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;my-dad-wrote-a-porno:490078144366c347e8b62bdc4bb6103e&#34;&gt;My Dad Wrote A Porno&lt;/h2&gt;
-
-&lt;p&gt;I think the title of this one really says it all.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-9:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;S1E1 - &amp;lsquo;The Job Interview;&amp;rsquo;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;mortified:490078144366c347e8b62bdc4bb6103e&#34;&gt;Mortified&lt;/h2&gt;
-
-&lt;p&gt;Adults tell the embarrassing stories of things they did as kids.&lt;/p&gt;
-
-&lt;h3 id=&#34;episodes-to-get-started-10:490078144366c347e8b62bdc4bb6103e&#34;&gt;Episodes to get started&lt;/h3&gt;
-
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Titanic Ruined My Love Life, #88&lt;/li&gt;
-&lt;li&gt;How to Become a Catfish, #105&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-
-&lt;hr /&gt;
-
-&lt;h2 id=&#34;notable-mentions:490078144366c347e8b62bdc4bb6103e&#34;&gt;Notable mentions&lt;/h2&gt;
-
-&lt;blockquote&gt;
-&lt;p&gt;S-Town, Serial, Crimetown&lt;/p&gt;
-&lt;/blockquote&gt;
-</description>
+      <description>Reply All Every week, you&amp;rsquo;re presented with an intersting tale relating to the internet. From online bounty hunters to crowdsourcing medical advice, this podcast&amp;rsquo;s range of stories are always interesting and worth a listen.
+Episodes to get started   Long Distance : #102 / #103 The Secret Life of Alex Goldman : #96 Boy in Photo : #79   This American Life This American Life is one of the most popular podcasts of all time.</description>
     </item>
     
   </channel>

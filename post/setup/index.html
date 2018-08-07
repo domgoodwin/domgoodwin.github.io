@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.46" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/index.xml" type="application/rss+xml" title="domgoodwin">
+<title>Setup - domgoodwin</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://domgoodwin.github.io/">[domgoodwin]</a>
+    <span class="caret"># _</span>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2018-04-06">April 06, 2018</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">Setup</h1>
+  <section class="body" itemprop="articleBody">
+    
+
+<h1 id="introduction">Introduction</h1>
+
+<p>[Hugo](&ldquo;<a href="https://gohugo.io/&quot;">https://gohugo.io/&quot;</a>) is a Go based, static site generator. It has some [impressive](&ldquo;<a href="https://www.youtube.com/watch?v=CdiDYZ51a2o&quot;">https://www.youtube.com/watch?v=CdiDYZ51a2o&quot;</a>) benchmarking figures, a [huge catalog](&ldquo;<a href="https://themes.gohugo.io/&quot;">https://themes.gohugo.io/&quot;</a>) of impressive themes and means I don&rsquo;t have to write HTML.</p>
+
+<p>I&rsquo;m setting this up with the follow configuratons
+&gt; Ubuntu 16.04 LTS
+&gt; Hugo 0.32
+&gt; Go 1.9.4</p>
+
+<h1 id="installing-hugo">Installing Hugo</h1>
+
+<p>Ubuntu/Debian:
+&gt; sudo apt-get install hugo</p>
+
+<p>Check it&rsquo;s installed correctly:
+&gt; hugo version</p>
+
+<h1 id="creating-your-site">Creating your site</h1>
+
+<h2 id="basic-setup">Basic setup</h2>
+
+<p>To generate your base site:
+&gt; hugo new site my-blog</p>
+
+<p><em>This will create a folder, my-blog, in your current directory</em></p>
+
+<p><strong>The folder structure will be:</strong>
+&gt;+&ndash;archetypes/     Templates for content files<br />
+&gt;+&ndash;content/        Where content for your site goes<br />
+&gt;+&ndash;data/           Config files for generating your site<br />
+&gt;+&ndash;layouts/        Html templates for content views<br />
+&gt;+&ndash;static/         All static content for site goes here<br />
+&gt;config.toml        General site properties like: theme, title</p>
+
+<p>Setup your site as a git repo:
+&gt; git init</p>
+
+<h2 id="using-a-theme">Using a theme</h2>
+
+<p>Pick a theme you want to use from [here](&ldquo;<a href="https://themes.gohugo.io/&quot;">https://themes.gohugo.io/&quot;</a>)</p>
+
+<p>As themes are stored as git repos, the best way to use one is a submodule
+&gt; git submodule add {THEME-REPO} themes/{THEME-NAME}</p>
+
+<p>Once the submodule has been added, add this line to your <em>config.toml</em>:
+&gt;  theme = &ldquo;{THEME-NAME}&rdquo;</p>
+
+<p>To see what your theme looks like, run the Hugo server:
+&gt; hugo server</p>
+
+<p>Your empty site should be availbale at:
+&gt; localhost:1313</p>
+
+<h2 id="adding-content">Adding content</h2>
+
+<p>To create a new post for your site:
+&gt; hugo new post/hello-world.md</p>
+
+<p>By default (because of the archetypes/default.md) your post file will look like this:
+&gt;title: &ldquo;Hello World&rdquo;<br />
+&gt;date: 2018-04-06T11:03:53+01:00<br />
+&gt;draft: true</p>
+
+<p>To see your page, you need to run the server with drafts enabled:
+&gt; hugo server -D</p>
+
+<h2 id="overriding-themes">Overriding themes</h2>
+
+<p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:
+&gt; themes/{THEME-NAME}/layouts/</p>
+
+<p>To:<br />
+&gt; layouts/</p>
+
+<p>Then the files in the root layouts folder will override your theme ones</p>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2018 domgoodwin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
