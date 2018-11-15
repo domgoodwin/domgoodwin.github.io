@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.46" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/index.xml" type="application/rss+xml" title="domgoodwin">
+<title>Setting up a Hugo Blog - domgoodwin</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://domgoodwin.github.io/">[domgoodwin]</a>
+    <span class="caret"> # </span>
+    <a class="path" href="http://home.domgoodw.in">Home</a>
+    <span class="caret"> # </span>
+    <a class="path" href="http://api.domgoodw.in">API</a>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2018-04-06">April 06, 2018</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">Setting up a Hugo Blog</h1>
+  <section class="body" itemprop="articleBody">
+    <p><a href="https://gohugo.io/">Hugo</a> is a Go based, static site generator. It has some <a href="https://www.youtube.com/watch?v=CdiDYZ51a2o">impressive</a> benchmarking figures, a <a href="https://themes.gohugo.io/">huge catalog</a> of impressive themes and means I don&rsquo;t have to write HTML.</p>
+
+<p></p>
+
+<p>I&rsquo;m setting this up with the follow configuratons</p>
+
+<pre><code class="language-text">Ubuntu 16.04 LTS
+Hugo 0.32
+Go 1.9.4
+</code></pre>
+
+<h1 id="installing-hugo">Installing Hugo</h1>
+
+<p>Ubuntu/Debian:<br />
+<code>sudo apt-get install hugo</code></p>
+
+<p>Check it&rsquo;s installed correctly:<br />
+<code>hugo version</code></p>
+
+<h1 id="creating-your-site">Creating your site</h1>
+
+<h2 id="basic-setup">Basic setup</h2>
+
+<p>To generate your base site:<br />
+<code>hugo new site my-blog</code></p>
+
+<p><em>This will create a folder, my-blog, in your current directory</em></p>
+
+<p><strong>The folder structure will be:</strong></p>
+
+<pre><code class="language-file">+--archetypes/     Templates for content files  
++--content/        Where content for your site goes  
++--data/           Config files for generating your site  
++--layouts/        Html templates for content views  
++--static/         All static content for site goes here  
+config.toml        General site properties like: theme, title  
+</code></pre>
+
+<p>Setup your site as a git repo:<br />
+<code>git init</code></p>
+
+<h2 id="using-a-theme">Using a theme</h2>
+
+<p>Pick a theme you want to use from <a href="https://themes.gohugo.io/">here</a></p>
+
+<p>As themes are stored as git repos, the best way to use one is a submodule<br />
+<code>git submodule add {THEME-REPO} themes/{THEME-NAME}</code></p>
+
+<p>Once the submodule has been added, add this line to your <em>config.toml</em>:<br />
+<code>theme = &quot;{THEME-NAME}&quot;</code></p>
+
+<p>To see what your theme looks like, run the Hugo server:<br />
+<code>hugo server</code></p>
+
+<p>Your empty site should be availbale at:<br />
+<code>localhost:1313</code></p>
+
+<h2 id="adding-content">Adding content</h2>
+
+<p>To create a new post for your site:<br />
+<code>hugo new post/hello-world.md</code></p>
+
+<p>By default (because of the archetypes/default.md) your post file will look like this:</p>
+
+<pre><code class="language-text">title: &quot;Hello World&quot;  
+date: 2018-04-06T11:03:53+01:00  
+draft: true  
+</code></pre>
+
+<p>To see your page, you need to run the server with drafts enabled:<br />
+<code>hugo server -D</code></p>
+
+<h2 id="overriding-themes">Overriding themes</h2>
+
+<p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:<br />
+<code>themes/{THEME-NAME}/layouts/</code> to: <code>layouts/</code></p>
+
+<p>Then the files in the root layouts folder will override your theme ones</p>
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2018 domgoodwin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
