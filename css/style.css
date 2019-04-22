@@ -497,3 +497,8 @@ pre { background: #2d2d2d; color: #f2f0ec }
   padding: 0px 0px;
   overflow: hidden;
 }
+
+div.books {
+  padding: 2px;
+  display: inline;
+}
