@@ -17,8 +17,7 @@
       <pubDate>Sat, 27 Apr 2019 17:12:07 +0100</pubDate>
       
       <guid>https://domgoodwin.github.io/books/</guid>
-      <description>Currently reading    Share book reviews and ratings with Dom, and even join a book club on Goodreads.   &amp;lt;/div&amp;gt; &amp;lt;script src=&amp;quot;https://www.goodreads.com/review/grid_widget/87140010.Dom&#39;s%20currently-reading%20book%20montage?cover_size=medium&amp;amp;hide_link=true&amp;amp;hide_title=true&amp;amp;num_books=20&amp;amp;order=d&amp;amp;shelf=currently-reading&amp;amp;sort=date_read&amp;amp;widget_id=1555969678&amp;quot; type=&amp;quot;text/javascript&amp;quot; charset=&amp;quot;utf-8&amp;quot;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;/div&amp;gt;   To read                 Share book reviews and ratings with Dom, and even join a book club on Goodreads. 
- &amp;lt;/div&amp;gt; &amp;lt;script src=&amp;quot;https://www.goodreads.com/review/grid_widget/87140010.Dom&#39;s%20to-read%20book%20montage?cover_size=medium&amp;amp;hide_link=true&amp;amp;hide_title=true&amp;amp;num_books=20&amp;amp;order=d&amp;amp;shelf=to-read&amp;amp;sort=date_read&amp;amp;widget_id=1555969916&amp;quot; type=&amp;quot;text/javascript&amp;quot; charset=&amp;quot;utf-8&amp;quot;&amp;gt;&amp;lt;/script&amp;gt; &amp;lt;/div&amp;gt;   Read                      Share book reviews and ratings with Dom, and even join a book club on Goodreads.</description>
+      <description>{{ partial &amp;ldquo;books.html&amp;rdquo; . }}</description>
     </item>
     
     <item>
