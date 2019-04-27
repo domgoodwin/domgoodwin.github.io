@@ -484,20 +484,3 @@ pre { background: #2d2d2d; color: #f2f0ec }
 .highlight .il { color: #f99157 } /* Literal.Number.Integer.Long */
 
 /*# sourceMappingURL=style.css.map */
-
-.gr_grid_container {
-  /* customize grid container div here. eg: width: 500px; */
-}
-
-.gr_grid_book_container {
-  /* customize book cover container div here */
-  float: left;
-  width: 98px;
-  height: 160px;
-  padding: 0px 0px;
-  overflow: hidden;
-}
-
-div.books {
-  display: grid;
-}
