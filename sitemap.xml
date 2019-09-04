@@ -5,7 +5,6 @@
   <url>
     <loc>https://domgoodwin.github.io/</loc>
     <lastmod>2019-07-22T11:28:19+01:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -16,7 +15,6 @@
   <url>
     <loc>https://domgoodwin.github.io/post/</loc>
     <lastmod>2019-07-22T11:28:19+01:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
@@ -41,12 +39,10 @@
   
   <url>
     <loc>https://domgoodwin.github.io/categories/</loc>
-    <priority>0</priority>
   </url>
   
   <url>
     <loc>https://domgoodwin.github.io/tags/</loc>
-    <priority>0</priority>
   </url>
   
 </urlset>
