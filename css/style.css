@@ -403,13 +403,6 @@ article.single p code {
 }
 
 article.single figure, article.single div.highlight {
-  box-sizing: border-box;
-  max-width: 52rem;
-  width: 52rem;
-  margin-left: -8rem;
-  margin-right: -8rem;
-  margin-bottom: 1rem;
-  padding: 1em;
   background-color: #393939;
   background-color: var(--base07);
 }
