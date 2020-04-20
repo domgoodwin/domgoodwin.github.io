@@ -6,10 +6,20 @@
     <description>Recent content on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 22 Jul 2019 11:28:19 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 20 Apr 2020 14:57:09 +0100</lastBuildDate>
     
 	<atom:link href="https://domgoodwin.github.io/index.xml" rel="self" type="application/rss+xml" />
     
+    
+    <item>
+      <title>Kubernetes Debugging</title>
+      <link>https://domgoodwin.github.io/post/kubernetes-debugging/</link>
+      <pubDate>Mon, 20 Apr 2020 14:57:09 +0100</pubDate>
+      
+      <guid>https://domgoodwin.github.io/post/kubernetes-debugging/</guid>
+      <description>Kubernetes debugging   var(&amp;ndash;base07)
+Overview Basic flow to debug a problem accessing an application deployed on Kubernetes</description>
+    </item>
     
     <item>
       <title>Podcasts reccomendations - 07/2019</title>
