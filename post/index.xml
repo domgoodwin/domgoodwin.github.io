@@ -21,6 +21,15 @@
     </item>
     
     <item>
+      <title>Shellscript Notes</title>
+      <link>https://domgoodwin.github.io/post/shellscript-day2/</link>
+      <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
+      
+      <guid>https://domgoodwin.github.io/post/shellscript-day2/</guid>
+      <description>Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void .</description>
+    </item>
+    
+    <item>
       <title>Podcasts reccomendations - 07/2019</title>
       <link>https://domgoodwin.github.io/post/podcasts-2019-q2/</link>
       <pubDate>Mon, 22 Jul 2019 11:28:19 +0100</pubDate>

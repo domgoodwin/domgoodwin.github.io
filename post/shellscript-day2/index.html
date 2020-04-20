@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en-us">
+<head>
+<meta charset="utf-8">
+<meta name="description" content="">
+<meta name="generator" content="Hugo 0.55.6" />
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="/css/style.css" type="text/css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
+<link rel="alternate" href="/index.xml" type="application/rss+xml" title="Dom Goodwin">
+<title>Shellscript Notes - Dom Goodwin</title>
+</head>
+<body>
+
+<header>
+  <div class="container clearfix">
+    <a class="path" href="https://domgoodwin.github.io/">[Dom Goodwin]</a>
+    <span class="caret"> # </span>
+    <a class="path" href="http://domgoodw.in/post/">Posts</a>
+    <span class="caret"> # </span>
+    <a class="path" href="http://domgoodw.in/books/">Books</a>
+    <span class="caret"> # </span>
+    <a class="path" href="http://api.domgoodw.in">API</a>
+    <div class="right">
+      
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+
+<main role="main" class="article">
+  
+<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
+  <div class="meta">
+
+    <span class="key">published on</span>
+    <span class="val"><time itemprop="datePublished" datetime="2020-02-20">February 20, 2020</time></span>
+
+
+
+  </div>
+  <h1 class="headline" itemprop="headline">Shellscript Notes</h1>
+  <section class="body" itemprop="articleBody">
+    
+
+<h2 id="commonly-used">Commonly used</h2>
+
+<pre><code class="language-bash"># Check if variable contains mystring
+if [[ $var == *mystring*  ]]; then # The double closed brackets are essential for wildcard match
+    echo &quot;it does&quot;;
+fi
+
+# Split on &quot;:&quot; and get 1st
+echo &quot;docker-image:0.1&quot; | cut -d &quot;:&quot; -f1 # returns docker-image
+
+# Find and replace all via pipe
+echo &quot;Hello I'm Dom&quot; | sed 's/Dom/&lt;void&gt;/g' # &quot;/&quot; could be any char
+
+
+# Redirect stdout and stderr to the void
+./run_script.sh &gt;/dev/null 2&gt;&amp;1
+</code></pre>
+
+<h2 id="basics">Basics</h2>
+
+<pre><code class="language-bash"># Read top lines of file
+head -n 3 myfile
+
+# Read bottom lines of file
+tail -n 3 myfile
+
+# Watch all updates to file
+tail -f myfile
+
+# Read file in window (not cat)
+less myfile
+
+# Make all directories if not exist
+mkdir -p exist/not/dir
+
+# Visualise dir structure
+tree -L 2
+
+# Remove env variable
+unset myvar
+
+# Alias command to short one
+alias lc=&quot;ls -laht&quot; # unalias to remove
+
+# Piping output
+echo &quot;overwrite&quot; &gt; file # Same as 1&gt;
+echo &quot;append&quot; &gt;&gt; file
+</code></pre>
+
+<h2 id="system">System</h2>
+
+<pre><code class="language-bash"># See disk space usage (human readable)
+df -h
+
+# See file usage for dirs
+du (--max-depth=2)
+
+# Show running processes, a: show other user, u: show username, x: show non terminal
+ps -aux
+
+# Show usage
+top
+</code></pre>
+
+<h2 id="tricks">Tricks</h2>
+
+<pre><code class="language-bash"># Use command output as if it's file
+diff &lt;(grep string file1) &lt;(grep string file2)
+
+# Repeat last 3 command
+!!
+
+# Repeat last arg of the last command
+!$
+
+# Take all args from previous and use
+!:1-$
+</code></pre>
+
+<h1 id="io">IO</h1>
+
+<pre><code class="language-bash"># Secure input
+read -s -p &quot;Password: &quot; password
+
+# Default value
+read -p &quot;Address [http://127.0.0.1]: &quot; ADDR
+default=&quot;http://127.0.0.1&quot;
+ADDR=${ADDR:-$default}
+</code></pre>
+
+<h1 id="jq">jq</h1>
+
+<pre><code class="language-bash"># Get value from object within array within object
+jq -rec &quot;.parent.children | .[] | .name&quot; # raw:no quotes, e:null exit0, compact
+
+# Get object attr and value and format &quot;Key=$attr,Value=$val&quot;
+jq -r '.data | keys[] as $k | &quot;Key=\($k),Value=\(.[$k])&quot;'
+
+# Use output in for loop
+for object in $(echo &quot;${JSON}&quot; | jq -rec &quot;.entries[] | .whole | @base64&quot;); do
+  echo &quot;This is the value: $(echo ${val} | base64 -d | jq .attribute)&quot;
+done
+
+# Args
+curl localhost:8500/v1/catalog/nodes | \
+    jq \
+        --arg ip $(./get_host.sh) \
+        '.[] | select(.Address==$ip)'
+        
+# Output mulitple entries in list
+jq -rec '[.importItems[].itemId]'
+
+# Create object
+jq -rec '{} +{ Items:[.importItems[].itemId]}'
+
+</code></pre>
+
+<h2 id="behaviour">Behaviour</h2>
+
+<pre><code class="language-bash"># Exit script if commands return nonzero
+set -e
+
+# Output command as they run (debug)
+set -x
+</code></pre>
+
+  </section>
+</article>
+
+</main>
+
+</div>
+
+<footer>
+  <div class="container">
+    <span class="copyright">&copy; 2020 Dom Goodwin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+</footer>
+
+</body>
+</html>
+
