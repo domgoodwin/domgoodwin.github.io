@@ -1,0 +1,29 @@
+.inline-svg {
+    display: inline-block;
+    height: 1.15rem;
+    width: 1.15rem;
+    top: 0.15rem;
+    position: relative;
+}
+
+.social-icon {
+    height: 3rem;
+    width: 3rem;
+    margin: 0.25rem;
+}
+
+.fa-keybase:hover {
+    color: #ff6f21;
+}
+
+.fa-github:hover {
+    color: hsla(0,0%,100%,.7);
+}
+
+.fa-linkedin-in:hover {
+    color: #0073a4;
+}
+
+.fa-twitter:hover {
+    color: #00aced;;
+}

@@ -2,75 +2,87 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dom Goodwin</title>
-    <link>https://domgoodwin.github.io/</link>
+    <link>/</link>
     <description>Recent content on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <lastBuildDate>Mon, 20 Apr 2020 14:57:09 +0100</lastBuildDate>
     
-	<atom:link href="https://domgoodwin.github.io/index.xml" rel="self" type="application/rss+xml" />
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
       <title>Kubernetes Debugging</title>
-      <link>https://domgoodwin.github.io/post/kubernetes-debugging/</link>
+      <link>/post/kubernetes-debugging/</link>
       <pubDate>Mon, 20 Apr 2020 14:57:09 +0100</pubDate>
       
-      <guid>https://domgoodwin.github.io/post/kubernetes-debugging/</guid>
-      <description>Kubernetes debugging   Overview Basic flow to debug a problem accessing an application deployed on Kubernetes</description>
+      <guid>/post/kubernetes-debugging/</guid>
+      <description>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Shellscript Notes</title>
-      <link>https://domgoodwin.github.io/post/shellscript-day2/</link>
+      <link>/post/shellscript-day2/</link>
       <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
       
-      <guid>https://domgoodwin.github.io/post/shellscript-day2/</guid>
+      <guid>/post/shellscript-day2/</guid>
       <description>Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void .</description>
     </item>
     
     <item>
       <title>Podcasts reccomendations - 07/2019</title>
-      <link>https://domgoodwin.github.io/post/podcasts-2019-q2/</link>
+      <link>/post/podcasts-2019-q2/</link>
       <pubDate>Mon, 22 Jul 2019 11:28:19 +0100</pubDate>
       
-      <guid>https://domgoodwin.github.io/post/podcasts-2019-q2/</guid>
-      <description>&lt;p&gt;These are my currently podcast reccomendations for Q2-ish 2019&lt;/p&gt;</description>
+      <guid>/post/podcasts-2019-q2/</guid>
+      <description>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Books</title>
-      <link>https://domgoodwin.github.io/books/</link>
+      <link>/books/</link>
       <pubDate>Sat, 27 Apr 2019 17:12:07 +0100</pubDate>
       
-      <guid>https://domgoodwin.github.io/books/</guid>
+      <guid>/books/</guid>
       <description>article.single section, .article-list article { padding-left: 7rem !important; padding-right: 7rem !important; }  Currently reading    Share book reviews and ratings with Dom, and even join a book club on Goodreads.      Read                      Share book reviews and ratings with Dom, and even join a book club on Goodreads.</description>
     </item>
     
     <item>
       <title>Podcast reccomendations - 02/2019</title>
-      <link>https://domgoodwin.github.io/post/podcasts-2019-q1/</link>
+      <link>/post/podcasts-2019-q1/</link>
       <pubDate>Tue, 12 Feb 2019 14:31:03 +0000</pubDate>
       
-      <guid>https://domgoodwin.github.io/post/podcasts-2019-q1/</guid>
+      <guid>/post/podcasts-2019-q1/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;</description>
     </item>
     
     <item>
+      <title>About</title>
+      <link>/about/</link>
+      <pubDate>Sun, 27 May 2018 17:12:07 +0100</pubDate>
+      
+      <guid>/about/</guid>
+      <description> Dom Goodwin Software/Platform Engineer
+Key technologies: Terraform, Vault, Kubernetes, Linux
+Links        
+Certifications </description>
+    </item>
+    
+    <item>
       <title>Setting up a Hugo Blog</title>
-      <link>https://domgoodwin.github.io/post/setup/</link>
+      <link>/post/setup/</link>
       <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
       
-      <guid>https://domgoodwin.github.io/post/setup/</guid>
+      <guid>/post/setup/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;</description>
     </item>
     
     <item>
       <title>Podcast reccomendations - 04/2018</title>
-      <link>https://domgoodwin.github.io/post/podcasts/</link>
+      <link>/post/podcasts/</link>
       <pubDate>Wed, 04 Apr 2018 22:03:36 +0100</pubDate>
       
-      <guid>https://domgoodwin.github.io/post/podcasts/</guid>
+      <guid>/post/podcasts/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;</description>
     </item>
     

@@ -3,60 +3,61 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
-    <loc>https://domgoodwin.github.io/</loc>
-    <lastmod>2020-04-20T14:57:09+01:00</lastmod>
-    <priority>0</priority>
-  </url>
-  
-  <url>
-    <loc>https://domgoodwin.github.io/post/kubernetes-debugging/</loc>
+    <loc>/</loc>
     <lastmod>2020-04-20T14:57:09+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/post/</loc>
+    <loc>/post/kubernetes-debugging/</loc>
     <lastmod>2020-04-20T14:57:09+01:00</lastmod>
-    <priority>0</priority>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/post/shellscript-day2/</loc>
+    <loc>/post/</loc>
+    <lastmod>2020-04-20T14:57:09+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/shellscript-day2/</loc>
     <lastmod>2020-02-20T15:25:00+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/post/podcasts-2019-q2/</loc>
+    <loc>/post/podcasts-2019-q2/</loc>
     <lastmod>2019-07-22T11:28:19+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/books/</loc>
+    <loc>/books/</loc>
     <lastmod>2019-04-27T17:12:07+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/post/podcasts-2019-q1/</loc>
+    <loc>/post/podcasts-2019-q1/</loc>
     <lastmod>2019-02-12T14:31:03+00:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/post/setup/</loc>
+    <loc>/about/</loc>
+    <lastmod>2018-05-27T17:12:07+01:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>/post/setup/</loc>
     <lastmod>2018-04-06T11:03:53+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/post/podcasts/</loc>
+    <loc>/post/podcasts/</loc>
     <lastmod>2018-04-04T22:03:36+01:00</lastmod>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/categories/</loc>
-    <priority>0</priority>
+    <loc>/categories/</loc>
   </url>
   
   <url>
-    <loc>https://domgoodwin.github.io/tags/</loc>
-    <priority>0</priority>
+    <loc>/tags/</loc>
   </url>
   
 </urlset>

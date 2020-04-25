@@ -1,51 +1,146 @@
 <!DOCTYPE html>
-<html lang="en-us">
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="description" content="">
-<meta name="generator" content="Hugo 0.55.6" />
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="stylesheet" href="/css/style.css" type="text/css">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Code+Pro:400,700" type="text/css">
-<link rel="alternate" href="/index.xml" type="application/rss+xml" title="Dom Goodwin">
-<title>Shellscript Notes - Dom Goodwin</title>
-</head>
-<body>
-
-<header>
-  <div class="container clearfix">
-    <a class="path" href="https://domgoodwin.github.io/">[Dom Goodwin]</a>
-    <span class="caret"> # </span>
-    <a class="path" href="/post/">Posts</a>
-    <span class="caret"> # </span>
-    <a class="path" href="/books/">Books</a>
-    <span class="caret"> # </span>
-    <a class="path" href="http://api.domgoodw.in">API</a>
-    <div class="right">
-      
-    </div>
-  </div>
-</header>
-
-<div class="container">
-
-
-<main role="main" class="article">
   
-<article class="single" itemscope itemtype="http://schema.org/BlogPosting">
-  <div class="meta">
+    <title>Shellscript Notes :: Dom Goodwin — Posts, book updates and random notes</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+<meta name="description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void ." />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/post/shellscript-day2/" />
 
-    <span class="key">published on</span>
-    <span class="val"><time itemprop="datePublished" datetime="2020-02-20">February 20, 2020</time></span>
 
 
 
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/pink.css">
+
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon-precomposed" sizes="144x144" href="/img/apple-touch-icon-144-precomposed.png">
+
+  <link rel="shortcut icon" href="/img/favicon/pink.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  <meta name="twitter:site" content="domgoodwin_" />
+
+<meta name="twitter:creator" content="" />
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Shellscript Notes :: Dom Goodwin">
+<meta property="og:description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void ." />
+<meta property="og:url" content="/post/shellscript-day2/" />
+<meta property="og:site_name" content="Shellscript Notes" />
+
+  
+    <meta property="og:image" content="/img/favicon/pink.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2020-02-20 15:25:00 &#43;0100 &#43;0100" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="">
+
+
+<div class="container headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Dom Goodwin
   </div>
-  <h1 class="headline" itemprop="headline">Shellscript Notes</h1>
-  <section class="body" itemprop="articleBody">
+</a>
+
+    </div>
+    <div class="menu-trigger">menu</div>
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/">Posts</a></li>
+        
+      
+      
     
 
-<h2 id="commonly-used">Commonly used</h2>
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/">Posts</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/post/shellscript-day2/">Shellscript Notes</a></h1>
+  <div class="post-meta">
+      
+    <span class="post-date">
+      2020-02-20
+    </span>
+    
+    
+  </div>
+
+  
+
+  
+
+  <div class="post-content"><div>
+        
+
+<h2 id="commonly-used">Commonly used<a href="#commonly-used" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 
 <pre><code class="language-bash"># Check if variable contains mystring
 if [[ $var == *mystring*  ]]; then # The double closed brackets are essential for wildcard match
@@ -63,7 +158,7 @@ echo &quot;Hello I'm Dom&quot; | sed 's/Dom/&lt;void&gt;/g' # &quot;/&quot; coul
 ./run_script.sh &gt;/dev/null 2&gt;&amp;1
 </code></pre>
 
-<h2 id="basics">Basics</h2>
+<h2 id="basics">Basics<a href="#basics" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 
 <pre><code class="language-bash"># Read top lines of file
 head -n 3 myfile
@@ -94,7 +189,7 @@ echo &quot;overwrite&quot; &gt; file # Same as 1&gt;
 echo &quot;append&quot; &gt;&gt; file
 </code></pre>
 
-<h2 id="system">System</h2>
+<h2 id="system">System<a href="#system" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 
 <pre><code class="language-bash"># See disk space usage (human readable)
 df -h
@@ -109,7 +204,7 @@ ps -aux
 top
 </code></pre>
 
-<h2 id="tricks">Tricks</h2>
+<h2 id="tricks">Tricks<a href="#tricks" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 
 <pre><code class="language-bash"># Use command output as if it's file
 diff &lt;(grep string file1) &lt;(grep string file2)
@@ -124,7 +219,7 @@ diff &lt;(grep string file1) &lt;(grep string file2)
 !:1-$
 </code></pre>
 
-<h1 id="io">IO</h1>
+<h1 id="io">IO<a href="#io" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 
 <pre><code class="language-bash"># Secure input
 read -s -p &quot;Password: &quot; password
@@ -135,7 +230,7 @@ default=&quot;http://127.0.0.1&quot;
 ADDR=${ADDR:-$default}
 </code></pre>
 
-<h1 id="jq">jq</h1>
+<h1 id="jq">jq<a href="#jq" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 
 <pre><code class="language-bash"># Get value from object within array within object
 jq -rec &quot;.parent.children | .[] | .name&quot; # raw:no quotes, e:null exit0, compact
@@ -162,7 +257,7 @@ jq -rec '{} +{ Items:[.importItems[].itemId]}'
 
 </code></pre>
 
-<h2 id="behaviour">Behaviour</h2>
+<h2 id="behaviour">Behaviour<a href="#behaviour" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 
 <pre><code class="language-bash"># Exit script if commands return nonzero
 set -e
@@ -171,19 +266,62 @@ set -e
 set -x
 </code></pre>
 
-  </section>
-</article>
+      </div></div>
+  
+  <div class="pagination">
+    <div class="pagination__title">
+      <span
+        class="pagination__title-h">Read other posts</span>
+      <hr />
+    </div>
+    <div class="pagination__buttons">
+      
+      <span class="button previous">
+        <a href="/post/kubernetes-debugging/">
+          <span class="button__icon">←</span>
+          <span class="button__text">Kubernetes Debugging</span>
+        </a>
+      </span>
+      
+      
+      <span class="button next">
+        <a href="/post/podcasts-2019-q2/">
+          <span class="button__text">Podcasts reccomendations - 07/2019</span>
+          <span class="button__icon">→</span>
+        </a>
+      </span>
+      
+    </div>
+  </div>
+  
 
-</main>
+  
 
 </div>
 
-<footer>
-  <div class="container">
-    <span class="copyright">&copy; 2020 Dom Goodwin - <a rel="license" href="http://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a></span>
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2020 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
   </div>
 </footer>
 
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+  
+</div>
+
 </body>
 </html>
-
