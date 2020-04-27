@@ -26,7 +26,7 @@
       <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
       
       <guid>/post/shellscript-day2/</guid>
-      <description>Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;#34;it does&amp;#34;; fi # Split on &amp;#34;:&amp;#34; and get 1st echo &amp;#34;docker-image:0.1&amp;#34; | cut -d &amp;#34;:&amp;#34; -f1 # returns docker-image # Find and replace all via pipe echo &amp;#34;Hello I&amp;#39;m Dom&amp;#34; | sed &amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39; # &amp;#34;/&amp;#34; could be any char # Redirect stdout and stderr to the void .</description>
+      <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
     </item>
     
     <item>

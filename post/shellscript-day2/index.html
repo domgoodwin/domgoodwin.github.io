@@ -6,7 +6,8 @@
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;#34;it does&amp;#34;; fi # Split on &amp;#34;:&amp;#34; and get 1st echo &amp;#34;docker-image:0.1&amp;#34; | cut -d &amp;#34;:&amp;#34; -f1 # returns docker-image # Find and replace all via pipe echo &amp;#34;Hello I&amp;#39;m Dom&amp;#34; | sed &amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39; # &amp;#34;/&amp;#34; could be any char # Redirect stdout and stderr to the void ." />
+<meta name="description" content="Useful shellscript snippets
+" />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
 <link rel="canonical" href="/post/shellscript-day2/" />
@@ -39,7 +40,8 @@
 <meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="Shellscript Notes :: Dom Goodwin">
-<meta property="og:description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;#34;it does&amp;#34;; fi # Split on &amp;#34;:&amp;#34; and get 1st echo &amp;#34;docker-image:0.1&amp;#34; | cut -d &amp;#34;:&amp;#34; -f1 # returns docker-image # Find and replace all via pipe echo &amp;#34;Hello I&amp;#39;m Dom&amp;#34; | sed &amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39; # &amp;#34;/&amp;#34; could be any char # Redirect stdout and stderr to the void ." />
+<meta property="og:description" content="Useful shellscript snippets
+" />
 <meta property="og:url" content="/post/shellscript-day2/" />
 <meta property="og:site_name" content="Shellscript Notes" />
 
@@ -146,7 +148,8 @@
   
 
   <div class="post-content"><div>
-        <h2 id="commonly-used">Commonly used<a href="#commonly-used" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+        <p>Useful shellscript snippets</p>
+<h2 id="commonly-used">Commonly used<a href="#commonly-used" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 <div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Check if variable contains mystring</span>
 <span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $var <span style="color:#f92672">==</span> *mystring*  <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> <span style="color:#75715e"># The double closed brackets are essential for wildcard match</span>
     echo <span style="color:#e6db74">&#34;it does&#34;</span>;
