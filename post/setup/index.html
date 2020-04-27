@@ -70,7 +70,7 @@
 <body class="">
 
 
-<div class="container headings--one-size">
+<div class="container center headings--one-size">
 
   <header class="header">
   <div class="header__inner">
@@ -94,9 +94,21 @@
         
       
         
-          <li><a href="/">Posts</a></li>
+          <li><a href="/books">Books</a></li>
         
       
+      
+        <ul class="menu__sub-inner">
+          <li class="menu__sub-inner-more-trigger">Show more ▾</li>
+
+          <ul class="menu__sub-inner-more hidden">
+            
+              
+                <li><a href="/">Posts</a></li>
+              
+            
+          </ul>
+        </ul>
       
     
 
@@ -107,6 +119,10 @@
     
       
         <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/books">Books</a></li>
       
     
       
@@ -141,80 +157,51 @@
 
   <div class="post-content"><div>
         <p><a href="https://gohugo.io/">Hugo</a> is a Go based, static site generator. It has some <a href="https://www.youtube.com/watch?v=CdiDYZ51a2o">impressive</a> benchmarking figures, a <a href="https://themes.gohugo.io/">huge catalog</a> of impressive themes and means I don&rsquo;t have to write HTML.</p>
-
 <p>I&rsquo;m setting this up with the follow configuratons</p>
-
-<pre><code class="language-text">Ubuntu 16.04 LTS
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Ubuntu 16.04 LTS
 Hugo 0.32
 Go 1.9.4
-</code></pre>
-
-<h1 id="installing-hugo">Installing Hugo<a href="#installing-hugo" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-
-<p>Ubuntu/Debian:<br />
+</code></pre></div><h1 id="installing-hugo">Installing Hugo<a href="#installing-hugo" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<p>Ubuntu/Debian:<br>
 <code>sudo apt-get install hugo</code></p>
-
-<p>Check it&rsquo;s installed correctly:<br />
+<p>Check it&rsquo;s installed correctly:<br>
 <code>hugo version</code></p>
-
 <h1 id="creating-your-site">Creating your site<a href="#creating-your-site" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-
 <h2 id="basic-setup">Basic setup<a href="#basic-setup" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
-<p>To generate your base site:<br />
+<p>To generate your base site:<br>
 <code>hugo new site my-blog</code></p>
-
 <p><em>This will create a folder, my-blog, in your current directory</em></p>
-
 <p><strong>The folder structure will be:</strong></p>
-
-<pre><code class="language-file">+--archetypes/     Templates for content files  
+<pre><code class="language-file" data-lang="file">+--archetypes/     Templates for content files  
 +--content/        Where content for your site goes  
 +--data/           Config files for generating your site  
 +--layouts/        Html templates for content views  
 +--static/         All static content for site goes here  
 config.toml        General site properties like: theme, title  
-</code></pre>
-
-<p>Setup your site as a git repo:<br />
+</code></pre><p>Setup your site as a git repo:<br>
 <code>git init</code></p>
-
 <h2 id="using-a-theme">Using a theme<a href="#using-a-theme" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
 <p>Pick a theme you want to use from <a href="https://themes.gohugo.io/">here</a></p>
-
-<p>As themes are stored as git repos, the best way to use one is a submodule<br />
+<p>As themes are stored as git repos, the best way to use one is a submodule<br>
 <code>git submodule add {THEME-REPO} themes/{THEME-NAME}</code></p>
-
-<p>Once the submodule has been added, add this line to your <em>config.toml</em>:<br />
+<p>Once the submodule has been added, add this line to your <em>config.toml</em>:<br>
 <code>theme = &quot;{THEME-NAME}&quot;</code></p>
-
-<p>To see what your theme looks like, run the Hugo server:<br />
+<p>To see what your theme looks like, run the Hugo server:<br>
 <code>hugo server</code></p>
-
-<p>Your empty site should be availbale at:<br />
+<p>Your empty site should be availbale at:<br>
 <code>localhost:1313</code></p>
-
 <h2 id="adding-content">Adding content<a href="#adding-content" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
-<p>To create a new post for your site:<br />
+<p>To create a new post for your site:<br>
 <code>hugo new post/hello-world.md</code></p>
-
 <p>By default (because of the archetypes/default.md) your post file will look like this:</p>
-
-<pre><code class="language-text">title: &quot;Hello World&quot;  
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">title: &#34;Hello World&#34;  
 date: 2018-04-06T11:03:53+01:00  
 draft: true  
-</code></pre>
-
-<p>To see your page, you need to run the server with drafts enabled:<br />
+</code></pre></div><p>To see your page, you need to run the server with drafts enabled:<br>
 <code>hugo server -D</code></p>
-
 <h2 id="overriding-themes">Overriding themes<a href="#overriding-themes" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
-<p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:<br />
+<p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:<br>
 <code>themes/{THEME-NAME}/layouts/</code> to: <code>layouts/</code></p>
-
 <p>Then the files in the root layouts folder will override your theme ones</p>
       </div></div>
   

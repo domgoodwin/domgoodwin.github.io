@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Dom Goodwin</title>
@@ -6,7 +6,7 @@
     <description>Recent content on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Mon, 20 Apr 2020 14:57:09 +0100</lastBuildDate>
+    <lastBuildDate>Sat, 27 Apr 2019 17:12:07 +0100</lastBuildDate>
     
 	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     
@@ -26,7 +26,7 @@
       <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
       
       <guid>/post/shellscript-day2/</guid>
-      <description>Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void .</description>
+      <description>Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;#34;it does&amp;#34;; fi # Split on &amp;#34;:&amp;#34; and get 1st echo &amp;#34;docker-image:0.1&amp;#34; | cut -d &amp;#34;:&amp;#34; -f1 # returns docker-image # Find and replace all via pipe echo &amp;#34;Hello I&amp;#39;m Dom&amp;#34; | sed &amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39; # &amp;#34;/&amp;#34; could be any char # Redirect stdout and stderr to the void .</description>
     </item>
     
     <item>
@@ -62,10 +62,9 @@
       <pubDate>Sun, 27 May 2018 17:12:07 +0100</pubDate>
       
       <guid>/about/</guid>
-      <description> Dom Goodwin Software/Platform Engineer
+      <description>Dom Goodwin Software/Platform Engineer
 Key technologies: Terraform, Vault, Kubernetes, Linux
-Links        
-Certifications </description>
+Links Certifications </description>
     </item>
     
     <item>

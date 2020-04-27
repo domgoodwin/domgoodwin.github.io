@@ -6,7 +6,7 @@
   
   <meta http-equiv="content-type" content="text/html; charset=utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
-<meta name="description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void ." />
+<meta name="description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;#34;it does&amp;#34;; fi # Split on &amp;#34;:&amp;#34; and get 1st echo &amp;#34;docker-image:0.1&amp;#34; | cut -d &amp;#34;:&amp;#34; -f1 # returns docker-image # Find and replace all via pipe echo &amp;#34;Hello I&amp;#39;m Dom&amp;#34; | sed &amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39; # &amp;#34;/&amp;#34; could be any char # Redirect stdout and stderr to the void ." />
 <meta name="keywords" content="" />
 <meta name="robots" content="noodp" />
 <link rel="canonical" href="/post/shellscript-day2/" />
@@ -39,7 +39,7 @@
 <meta property="og:locale" content="en" />
 <meta property="og:type" content="article" />
 <meta property="og:title" content="Shellscript Notes :: Dom Goodwin">
-<meta property="og:description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;quot;it does&amp;quot;; fi # Split on &amp;quot;:&amp;quot; and get 1st echo &amp;quot;docker-image:0.1&amp;quot; | cut -d &amp;quot;:&amp;quot; -f1 # returns docker-image # Find and replace all via pipe echo &amp;quot;Hello I&#39;m Dom&amp;quot; | sed &#39;s/Dom/&amp;lt;void&amp;gt;/g&#39; # &amp;quot;/&amp;quot; could be any char # Redirect stdout and stderr to the void ." />
+<meta property="og:description" content="Commonly used # Check if variable contains mystring if [[ $var == *mystring* ]]; then # The double closed brackets are essential for wildcard match echo &amp;#34;it does&amp;#34;; fi # Split on &amp;#34;:&amp;#34; and get 1st echo &amp;#34;docker-image:0.1&amp;#34; | cut -d &amp;#34;:&amp;#34; -f1 # returns docker-image # Find and replace all via pipe echo &amp;#34;Hello I&amp;#39;m Dom&amp;#34; | sed &amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39; # &amp;#34;/&amp;#34; could be any char # Redirect stdout and stderr to the void ." />
 <meta property="og:url" content="/post/shellscript-day2/" />
 <meta property="og:site_name" content="Shellscript Notes" />
 
@@ -68,7 +68,7 @@
 <body class="">
 
 
-<div class="container headings--one-size">
+<div class="container center headings--one-size">
 
   <header class="header">
   <div class="header__inner">
@@ -92,9 +92,21 @@
         
       
         
-          <li><a href="/">Posts</a></li>
+          <li><a href="/books">Books</a></li>
         
       
+      
+        <ul class="menu__sub-inner">
+          <li class="menu__sub-inner-more-trigger">Show more ▾</li>
+
+          <ul class="menu__sub-inner-more hidden">
+            
+              
+                <li><a href="/">Posts</a></li>
+              
+            
+          </ul>
+        </ul>
       
     
 
@@ -105,6 +117,10 @@
     
       
         <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/books">Books</a></li>
       
     
       
@@ -138,134 +154,112 @@
   
 
   <div class="post-content"><div>
-        
+        <h2 id="commonly-used">Commonly used<a href="#commonly-used" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Check if variable contains mystring</span>
+<span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $var <span style="color:#f92672">==</span> *mystring*  <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> <span style="color:#75715e"># The double closed brackets are essential for wildcard match</span>
+    echo <span style="color:#e6db74">&#34;it does&#34;</span>;
+<span style="color:#66d9ef">fi</span>
 
-<h2 id="commonly-used">Commonly used<a href="#commonly-used" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<span style="color:#75715e"># Split on &#34;:&#34; and get 1st</span>
+echo <span style="color:#e6db74">&#34;docker-image:0.1&#34;</span> | cut -d <span style="color:#e6db74">&#34;:&#34;</span> -f1 <span style="color:#75715e"># returns docker-image</span>
 
-<pre><code class="language-bash"># Check if variable contains mystring
-if [[ $var == *mystring*  ]]; then # The double closed brackets are essential for wildcard match
-    echo &quot;it does&quot;;
-fi
-
-# Split on &quot;:&quot; and get 1st
-echo &quot;docker-image:0.1&quot; | cut -d &quot;:&quot; -f1 # returns docker-image
-
-# Find and replace all via pipe
-echo &quot;Hello I'm Dom&quot; | sed 's/Dom/&lt;void&gt;/g' # &quot;/&quot; could be any char
+<span style="color:#75715e"># Find and replace all via pipe</span>
+echo <span style="color:#e6db74">&#34;Hello I&#39;m Dom&#34;</span> | sed <span style="color:#e6db74">&#39;s/Dom/&lt;void&gt;/g&#39;</span> <span style="color:#75715e"># &#34;/&#34; could be any char</span>
 
 
-# Redirect stdout and stderr to the void
-./run_script.sh &gt;/dev/null 2&gt;&amp;1
-</code></pre>
+<span style="color:#75715e"># Redirect stdout and stderr to the void</span>
+./run_script.sh &gt;/dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>
+</code></pre></div><h2 id="basics">Basics<a href="#basics" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Read top lines of file</span>
+head -n <span style="color:#ae81ff">3</span> myfile
 
-<h2 id="basics">Basics<a href="#basics" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<span style="color:#75715e"># Read bottom lines of file</span>
+tail -n <span style="color:#ae81ff">3</span> myfile
 
-<pre><code class="language-bash"># Read top lines of file
-head -n 3 myfile
-
-# Read bottom lines of file
-tail -n 3 myfile
-
-# Watch all updates to file
+<span style="color:#75715e"># Watch all updates to file</span>
 tail -f myfile
 
-# Read file in window (not cat)
+<span style="color:#75715e"># Read file in window (not cat)</span>
 less myfile
 
-# Make all directories if not exist
+<span style="color:#75715e"># Make all directories if not exist</span>
 mkdir -p exist/not/dir
 
-# Visualise dir structure
-tree -L 2
+<span style="color:#75715e"># Visualise dir structure</span>
+tree -L <span style="color:#ae81ff">2</span>
 
-# Remove env variable
+<span style="color:#75715e"># Remove env variable</span>
 unset myvar
 
-# Alias command to short one
-alias lc=&quot;ls -laht&quot; # unalias to remove
+<span style="color:#75715e"># Alias command to short one</span>
+alias lc<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ls -laht&#34;</span> <span style="color:#75715e"># unalias to remove</span>
 
-# Piping output
-echo &quot;overwrite&quot; &gt; file # Same as 1&gt;
-echo &quot;append&quot; &gt;&gt; file
-</code></pre>
-
-<h2 id="system">System<a href="#system" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
-<pre><code class="language-bash"># See disk space usage (human readable)
+<span style="color:#75715e"># Piping output</span>
+echo <span style="color:#e6db74">&#34;overwrite&#34;</span> &gt; file <span style="color:#75715e"># Same as 1&gt;</span>
+echo <span style="color:#e6db74">&#34;append&#34;</span> &gt;&gt; file
+</code></pre></div><h2 id="system">System<a href="#system" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># See disk space usage (human readable)</span>
 df -h
 
-# See file usage for dirs
-du (--max-depth=2)
+<span style="color:#75715e"># See file usage for dirs</span>
+du <span style="color:#f92672">(</span>--max-depth<span style="color:#f92672">=</span>2<span style="color:#f92672">)</span>
 
-# Show running processes, a: show other user, u: show username, x: show non terminal
+<span style="color:#75715e"># Show running processes, a: show other user, u: show username, x: show non terminal</span>
 ps -aux
 
-# Show usage
+<span style="color:#75715e"># Show usage</span>
 top
-</code></pre>
+</code></pre></div><h2 id="tricks">Tricks<a href="#tricks" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Use command output as if it&#39;s file</span>
+diff &lt;<span style="color:#f92672">(</span>grep string file1<span style="color:#f92672">)</span> &lt;<span style="color:#f92672">(</span>grep string file2<span style="color:#f92672">)</span>
 
-<h2 id="tricks">Tricks<a href="#tricks" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
-<pre><code class="language-bash"># Use command output as if it's file
-diff &lt;(grep string file1) &lt;(grep string file2)
-
-# Repeat last 3 command
+<span style="color:#75715e"># Repeat last 3 command</span>
 !!
 
-# Repeat last arg of the last command
+<span style="color:#75715e"># Repeat last arg of the last command</span>
 !$
 
-# Take all args from previous and use
+<span style="color:#75715e"># Take all args from previous and use</span>
 !:1-$
-</code></pre>
+</code></pre></div><h1 id="io">IO<a href="#io" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Secure input</span>
+read -s -p <span style="color:#e6db74">&#34;Password: &#34;</span> password
 
-<h1 id="io">IO<a href="#io" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<span style="color:#75715e"># Default value</span>
+read -p <span style="color:#e6db74">&#34;Address [http://127.0.0.1]: &#34;</span> ADDR
+default<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://127.0.0.1&#34;</span>
+ADDR<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ADDR<span style="color:#66d9ef">:-</span>$default<span style="color:#e6db74">}</span>
+</code></pre></div><h1 id="jq">jq<a href="#jq" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Get value from object within array within object</span>
+jq -rec <span style="color:#e6db74">&#34;.parent.children | .[] | .name&#34;</span> <span style="color:#75715e"># raw:no quotes, e:null exit0, compact</span>
 
-<pre><code class="language-bash"># Secure input
-read -s -p &quot;Password: &quot; password
+<span style="color:#75715e"># Get object attr and value and format &#34;Key=$attr,Value=$val&#34;</span>
+jq -r <span style="color:#e6db74">&#39;.data | keys[] as $k | &#34;Key=\($k),Value=\(.[$k])&#34;&#39;</span>
 
-# Default value
-read -p &quot;Address [http://127.0.0.1]: &quot; ADDR
-default=&quot;http://127.0.0.1&quot;
-ADDR=${ADDR:-$default}
-</code></pre>
+<span style="color:#75715e"># Use output in for loop</span>
+<span style="color:#66d9ef">for</span> object in <span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>JSON<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | jq -rec <span style="color:#e6db74">&#34;.entries[] | .whole | @base64&#34;</span><span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
+  echo <span style="color:#e6db74">&#34;This is the value: </span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">${</span>val<span style="color:#e6db74">}</span> | base64 -d | jq .attribute<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+<span style="color:#66d9ef">done</span>
 
-<h1 id="jq">jq<a href="#jq" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
-
-<pre><code class="language-bash"># Get value from object within array within object
-jq -rec &quot;.parent.children | .[] | .name&quot; # raw:no quotes, e:null exit0, compact
-
-# Get object attr and value and format &quot;Key=$attr,Value=$val&quot;
-jq -r '.data | keys[] as $k | &quot;Key=\($k),Value=\(.[$k])&quot;'
-
-# Use output in for loop
-for object in $(echo &quot;${JSON}&quot; | jq -rec &quot;.entries[] | .whole | @base64&quot;); do
-  echo &quot;This is the value: $(echo ${val} | base64 -d | jq .attribute)&quot;
-done
-
-# Args
-curl localhost:8500/v1/catalog/nodes | \
-    jq \
-        --arg ip $(./get_host.sh) \
-        '.[] | select(.Address==$ip)'
+<span style="color:#75715e"># Args</span>
+curl localhost:8500/v1/catalog/nodes | <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>    jq <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        --arg ip <span style="color:#66d9ef">$(</span>./get_host.sh<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#39;.[] | select(.Address==$ip)&#39;</span>
         
-# Output mulitple entries in list
-jq -rec '[.importItems[].itemId]'
+<span style="color:#75715e"># Output mulitple entries in list</span>
+jq -rec <span style="color:#e6db74">&#39;[.importItems[].itemId]&#39;</span>
 
-# Create object
-jq -rec '{} +{ Items:[.importItems[].itemId]}'
+<span style="color:#75715e"># Create object</span>
+jq -rec <span style="color:#e6db74">&#39;{} +{ Items:[.importItems[].itemId]}&#39;</span>
 
-</code></pre>
-
-<h2 id="behaviour">Behaviour<a href="#behaviour" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
-
-<pre><code class="language-bash"># Exit script if commands return nonzero
+</code></pre></div><h2 id="behaviour">Behaviour<a href="#behaviour" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash"><span style="color:#75715e"># Exit script if commands return nonzero</span>
 set -e
 
-# Output command as they run (debug)
+<span style="color:#75715e"># Output command as they run (debug)</span>
 set -x
-</code></pre>
-
+</code></pre></div>
       </div></div>
   
   <div class="pagination">
