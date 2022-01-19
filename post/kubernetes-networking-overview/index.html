@@ -215,7 +215,8 @@ For this example:</p>
 
 
 <ol>
-<li><strong>pod-0</strong> requests the service’s Cluster IP from <code>kube-dns</code>
+<li>
+<p><strong>pod-0</strong> requests the service’s Cluster IP from <code>kube-dns</code></p>
 <ul>
 <li><code>kube-dns</code> has dynamic config which updates mapping the service name to a Service IP address lets say <code>172.16.10.10</code>
 <ul>
@@ -225,7 +226,8 @@ For this example:</p>
 <li>*technically this whole request to <code>kube-dns</code> goes via the same iptables→routing tables path since <code>kube-dns</code> runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask <code>kube-dns</code> to define <code>kube-dns</code>. But trying to show aswell would be madness.</li>
 </ul>
 </li>
-<li>With the cluster IP (<code>172.16.10.10</code>) the request hits iptables
+<li>
+<p>With the cluster IP (<code>172.16.10.10</code>) the request hits iptables</p>
 <ul>
 <li>iptables selects from a random one of the pod IP addresses for this particular service IP
 <ul>
@@ -235,7 +237,8 @@ For this example:</p>
 <li>These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.</li>
 </ul>
 </li>
-<li>The Pod IP is now resolved in the nodes routing tables <code>sudo route -n</code> or <code>ip route list</code>
+<li>
+<p>The Pod IP is now resolved in the nodes routing tables <code>sudo route -n</code> or <code>ip route list</code></p>
 <ul>
 <li>These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.</li>
 <li>Based on the Pod IP, it’ll be resolved through multiple sets of rules:
@@ -249,7 +252,8 @@ For this example:</p>
 <li>This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.</li>
 </ul>
 </li>
-<li>Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl node status</code>
+<li>
+<p>Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl node status</code></p>
 <ul>
 <li>By encapsulating the request’s original networking information is wrapped up as data and new network info is added</li>
 <li>Calico will send this as a vxlan or ipinip packet to the required node in another subnet</li>
@@ -263,12 +267,14 @@ For this example:</p>
 </li>
 </ul>
 </li>
-<li>Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.
+<li>
+<p>Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.</p>
 <ul>
 <li>This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.</li>
 </ul>
 </li>
-<li>The routing table on this node will now:
+<li>
+<p>The routing table on this node will now:</p>
 <ul>
 <li>Send the encapsulated packet to the local Calico to be unencapsulated</li>
 <li>The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go

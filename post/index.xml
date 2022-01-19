@@ -73,7 +73,8 @@ For this example:&lt;/p&gt;
 
 
 &lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;pod-0&lt;/strong&gt; requests the service’s Cluster IP from &lt;code&gt;kube-dns&lt;/code&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;strong&gt;pod-0&lt;/strong&gt; requests the service’s Cluster IP from &lt;code&gt;kube-dns&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;code&gt;kube-dns&lt;/code&gt; has dynamic config which updates mapping the service name to a Service IP address lets say &lt;code&gt;172.16.10.10&lt;/code&gt;
 &lt;ul&gt;
@@ -83,7 +84,8 @@ For this example:&lt;/p&gt;
 &lt;li&gt;*technically this whole request to &lt;code&gt;kube-dns&lt;/code&gt; goes via the same iptables→routing tables path since &lt;code&gt;kube-dns&lt;/code&gt; runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask &lt;code&gt;kube-dns&lt;/code&gt; to define &lt;code&gt;kube-dns&lt;/code&gt;. But trying to show aswell would be madness.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;With the cluster IP (&lt;code&gt;172.16.10.10&lt;/code&gt;) the request hits iptables
+&lt;li&gt;
+&lt;p&gt;With the cluster IP (&lt;code&gt;172.16.10.10&lt;/code&gt;) the request hits iptables&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;iptables selects from a random one of the pod IP addresses for this particular service IP
 &lt;ul&gt;
@@ -93,7 +95,8 @@ For this example:&lt;/p&gt;
 &lt;li&gt;These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;The Pod IP is now resolved in the nodes routing tables &lt;code&gt;sudo route -n&lt;/code&gt; or &lt;code&gt;ip route list&lt;/code&gt;
+&lt;li&gt;
+&lt;p&gt;The Pod IP is now resolved in the nodes routing tables &lt;code&gt;sudo route -n&lt;/code&gt; or &lt;code&gt;ip route list&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.&lt;/li&gt;
 &lt;li&gt;Based on the Pod IP, it’ll be resolved through multiple sets of rules:
@@ -107,7 +110,8 @@ For this example:&lt;/p&gt;
 &lt;li&gt;This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl node status&lt;/code&gt;
+&lt;li&gt;
+&lt;p&gt;Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl node status&lt;/code&gt;&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;By encapsulating the request’s original networking information is wrapped up as data and new network info is added&lt;/li&gt;
 &lt;li&gt;Calico will send this as a vxlan or ipinip packet to the required node in another subnet&lt;/li&gt;
@@ -121,12 +125,14 @@ For this example:&lt;/p&gt;
 &lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.
+&lt;li&gt;
+&lt;p&gt;Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;The routing table on this node will now:
+&lt;li&gt;
+&lt;p&gt;The routing table on this node will now:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;Send the encapsulated packet to the local Calico to be unencapsulated&lt;/li&gt;
 &lt;li&gt;The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
