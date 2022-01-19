@@ -222,11 +222,7 @@ For this example:</p>
 <li>`kubectl exec command for coredns</li>
 </ul>
 </li>
-<li>
-<ul>
-<li>technically this whole request to <code>kube-dns</code> goes via the same iptables→routing tables path since <code>kube-dns</code> runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask <code>kube-dns</code> to define <code>kube-dns</code>. But trying to show aswell would be madness.</li>
-</ul>
-</li>
+<li>*technically this whole request to <code>kube-dns</code> goes via the same iptables→routing tables path since <code>kube-dns</code> runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask <code>kube-dns</code> to define <code>kube-dns</code>. But trying to show aswell would be madness.</li>
 </ul>
 </li>
 <li>With the cluster IP (<code>172.16.10.10</code>) the request hits iptables
