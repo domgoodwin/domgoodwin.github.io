@@ -230,58 +230,58 @@ For this example:</p>
 </ul>
 </li>
 <li>With the cluster IP (<code>172.16.10.10</code>) the request hits iptables
-<ol>
+<ul>
 <li>iptables selects from a random one of the pod IP addresses for this particular service IP
-<ol>
+<ul>
 <li><code>iptables -L</code> or <code>iptables-save</code></li>
-</ol>
+</ul>
 </li>
-<li>These rules are all loaded in here and dynamically updated by <code>kube-proxy</code>. If a pod starts failing Readiness checks for instance, it gets removed from this list.</li>
-</ol>
+<li>These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.</li>
+</ul>
 </li>
 <li>The Pod IP is now resolved in the nodes routing tables <code>sudo route -n</code> or <code>ip route list</code>
-<ol>
+<ul>
 <li>These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.</li>
 <li>Based on the Pod IP, it’ll be resolved through multiple sets of rules:
-<ol>
+<ul>
 <li>This node will have a range of Pod IPs which resolve to the local node itself</li>
 <li>This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain</li>
 <li>This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.</li>
 <li>There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network</li>
-</ol>
+</ul>
 </li>
 <li>This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.</li>
-</ol>
+</ul>
 </li>
-<li>Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl list?</code>
-<ol>
+<li>Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl node status</code>
+<ul>
 <li>By encapsulating the request’s original networking information is wrapped up as data and new network info is added</li>
 <li>Calico will send this as a vxlan or ipinip packet to the required node in another subnet</li>
 <li>The encapsulated packet (shown as an orange line) will:
-<ol>
+<ul>
 <li>Go back through the route table on the node itself</li>
 <li>To the local subnet router, which will resolve which subnet it needs to go into</li>
 <li>Hit the destination subnet routing table which can direct it to the node</li>
 <li>To the other node itself</li>
-</ol>
+</ul>
 </li>
-</ol>
+</ul>
 </li>
 <li>Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.
-<ol>
+<ul>
 <li>This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.</li>
-</ol>
+</ul>
 </li>
 <li>The routing table on this node will now:
-<ol>
+<ul>
 <li>Send the encapsulated packet to the local Calico to be unencapsulated</li>
 <li>The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
-<ol>
+<ul>
 <li>This could also cause the packet to have to be routed again since the destination has moved</li>
-</ol>
+</ul>
 </li>
 <li>The request is directed to the pod running locally</li>
-</ol>
+</ul>
 </li>
 </ol>
 <h3 id="there-are-a-lot-of-things-missed-off-here">There are a lot of things missed off here:<a href="#there-are-a-lot-of-things-missed-off-here" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>

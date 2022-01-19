@@ -88,58 +88,58 @@ For this example:&lt;/p&gt;
 &lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;With the cluster IP (&lt;code&gt;172.16.10.10&lt;/code&gt;) the request hits iptables
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;iptables selects from a random one of the pod IP addresses for this particular service IP
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;&lt;code&gt;iptables -L&lt;/code&gt; or &lt;code&gt;iptables-save&lt;/code&gt;&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;These rules are all loaded in here and dynamically updated by &lt;code&gt;kube-proxy&lt;/code&gt;. If a pod starts failing Readiness checks for instance, it gets removed from this list.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;li&gt;These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.&lt;/li&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;The Pod IP is now resolved in the nodes routing tables &lt;code&gt;sudo route -n&lt;/code&gt; or &lt;code&gt;ip route list&lt;/code&gt;
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.&lt;/li&gt;
 &lt;li&gt;Based on the Pod IP, it’ll be resolved through multiple sets of rules:
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;This node will have a range of Pod IPs which resolve to the local node itself&lt;/li&gt;
 &lt;li&gt;This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain&lt;/li&gt;
 &lt;li&gt;This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.&lt;/li&gt;
 &lt;li&gt;There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
-&lt;li&gt;Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl list?&lt;/code&gt;
-&lt;ol&gt;
+&lt;li&gt;Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl node status&lt;/code&gt;
+&lt;ul&gt;
 &lt;li&gt;By encapsulating the request’s original networking information is wrapped up as data and new network info is added&lt;/li&gt;
 &lt;li&gt;Calico will send this as a vxlan or ipinip packet to the required node in another subnet&lt;/li&gt;
 &lt;li&gt;The encapsulated packet (shown as an orange line) will:
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;Go back through the route table on the node itself&lt;/li&gt;
 &lt;li&gt;To the local subnet router, which will resolve which subnet it needs to go into&lt;/li&gt;
 &lt;li&gt;Hit the destination subnet routing table which can direct it to the node&lt;/li&gt;
 &lt;li&gt;To the other node itself&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;The routing table on this node will now:
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;Send the encapsulated packet to the local Calico to be unencapsulated&lt;/li&gt;
 &lt;li&gt;The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
-&lt;ol&gt;
+&lt;ul&gt;
 &lt;li&gt;This could also cause the packet to have to be routed again since the destination has moved&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
 &lt;li&gt;The request is directed to the pod running locally&lt;/li&gt;
-&lt;/ol&gt;
+&lt;/ul&gt;
 &lt;/li&gt;
 &lt;/ol&gt;
 &lt;h3 id=&#34;there-are-a-lot-of-things-missed-off-here&#34;&gt;There are a lot of things missed off here:&lt;/h3&gt;
