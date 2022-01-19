@@ -6,10 +6,157 @@
     <description>Recent content on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
-    <lastBuildDate>Sun, 27 May 2018 17:12:07 +0100</lastBuildDate>
+    <lastBuildDate>Mon, 10 Jan 2022 12:06:09 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Networking: #1</title>
+      <link>/post/kubernetes-networking-overview/</link>
+      <pubDate>Mon, 10 Jan 2022 12:06:09 +0000</pubDate>
+      
+      <guid>/post/kubernetes-networking-overview/</guid>
+      <description>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;</description>
+      <content>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;
+&lt;h2 id=&#34;components&#34;&gt;Components&lt;/h2&gt;
+&lt;p&gt;The components we’re going to look at today are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;kube-dns/coredns&lt;/code&gt; resolves domain names for services (and pods) into an IP address
+&lt;ul&gt;
+&lt;li&gt;ℹ️ &lt;code&gt;kube-dns&lt;/code&gt; was replaced by &lt;code&gt;coredns&lt;/code&gt; but the in cluster service is still called &lt;code&gt;kube-dns&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;This is the resolver for any DNS requests inside your pods, if you wanted to resolve internal service domains or to a private DNS resolver, you could configure this to forward those requests.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;kube-proxy&lt;/code&gt; resolves network requests for the IP address of a service to the IP addresses of pods which match that service. This has different modes:
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Iptables&#34;&gt;iptables&lt;/a&gt; (default) - To see your iptables rules: &lt;code&gt;iptables -L&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/&#34;&gt;ipvs&lt;/a&gt; - To see your ipvs rules &lt;code&gt;ipvsadm -Ln&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Your chosen &lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/networking/#calico&#34;&gt;CNI&lt;/a&gt;, there’s a range of these, all which work differently. Generally a CNI will configure any networking around a Pod IP, routing to and from pods to:
+&lt;ul&gt;
+&lt;li&gt;Ensure pod network requests are routed properly to other pods&lt;/li&gt;
+&lt;li&gt;Ensure pod network requests can reach outside the cluster&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;An easy way of thinking about it can be, resolving between a service and healthy pods is &lt;code&gt;kube-dns&lt;/code&gt; and &lt;code&gt;kube-proxy&lt;/code&gt; but then that request will need to go through routing setup by the &lt;code&gt;CNI&lt;/code&gt;. For cloud environments, your &lt;code&gt;CNI&lt;/code&gt; will usually handle (or provide ways to setup) things like cross-subnet traffic as well.&lt;/p&gt;
+&lt;p&gt;To follow the resolution between components, say we wanted to go to a service called &lt;code&gt;myapp&lt;/code&gt; which sits in namespace &lt;code&gt;namespace001&lt;/code&gt; which had 2 healthy pods matching the service selector. The resolution would be:&lt;/p&gt;
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;CoreDNS:&lt;/strong&gt; (service FQDN)&lt;code&gt;myapp.namespace001.svc.cluster.local&lt;/code&gt; → &lt;code&gt;172.16.10.10&lt;/code&gt; (service cluster IP)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;iptables:&lt;/strong&gt; &lt;code&gt;172.16.10.10&lt;/code&gt; → &lt;code&gt;10.10.10.10&lt;/code&gt; (a pod IP, selected at random from healthy pods)&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;CNI:&lt;/strong&gt; Will route traffic for &lt;code&gt;10.10.10.10&lt;/code&gt; from the requester node, to the target node&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h2 id=&#34;example-journey-of-a-request&#34;&gt;Example journey of a request&lt;/h2&gt;
+&lt;p&gt;As an example, let’s explore in an example Kubernetes cluster how a pod will send a network request to another pod.
+For this example:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;The pod will try to talk to a pod on another node then itself&lt;/li&gt;
+&lt;li&gt;The 2 nodes will be in seperate subnets
+&lt;ul&gt;
+&lt;li&gt;Routing between subnets is presumed to be setup and fine and we’ll abstract that to a &lt;code&gt;router&lt;/code&gt; in the diagram&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;The &lt;code&gt;CNI&lt;/code&gt; will be Calico, but we won’t be looking too much into its internals&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;pod-0&lt;/strong&gt; will send a request to &lt;strong&gt;pod-3&lt;/strong&gt; through a service&lt;/li&gt;
+&lt;li&gt;We’ll assume Kubernetes and Calico are setup with defaults:
+&lt;ul&gt;
+&lt;li&gt;iptables mode for &lt;code&gt;kube-proxy&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;vxlan encapsulation for cross subnet traffic&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+
+  &lt;figure class=&#34;left&#34; &gt;
+    &lt;a href=&#34;/img/k8s_network_request_example.png&#34; &gt;
+    &lt;img src=&#34;/img/k8s_network_request_example.png&#34;   /&gt;
     
-	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
-    
+    &lt;/a&gt;
+  &lt;/figure&gt;
+
+
+&lt;ol&gt;
+&lt;li&gt;&lt;strong&gt;pod-0&lt;/strong&gt; requests the service’s Cluster IP from &lt;code&gt;kube-dns&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;kube-dns&lt;/code&gt; has dynamic config which updates mapping the service name to a Service IP address lets say &lt;code&gt;172.16.10.10&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;`kubectl exec command for coredns&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;ul&gt;
+&lt;li&gt;technically this whole request to &lt;code&gt;kube-dns&lt;/code&gt; goes via the same iptables→routing tables path since &lt;code&gt;kube-dns&lt;/code&gt; runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask &lt;code&gt;kube-dns&lt;/code&gt; to define &lt;code&gt;kube-dns&lt;/code&gt;. But trying to show aswell would be madness.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;With the cluster IP (&lt;code&gt;172.16.10.10&lt;/code&gt;) the request hits iptables
+&lt;ol&gt;
+&lt;li&gt;iptables selects from a random one of the pod IP addresses for this particular service IP
+&lt;ol&gt;
+&lt;li&gt;&lt;code&gt;iptables -L&lt;/code&gt; or &lt;code&gt;iptables-save&lt;/code&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;These rules are all loaded in here and dynamically updated by &lt;code&gt;kube-proxy&lt;/code&gt;. If a pod starts failing Readiness checks for instance, it gets removed from this list.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;The Pod IP is now resolved in the nodes routing tables &lt;code&gt;sudo route -n&lt;/code&gt; or &lt;code&gt;ip route list&lt;/code&gt;
+&lt;ol&gt;
+&lt;li&gt;These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.&lt;/li&gt;
+&lt;li&gt;Based on the Pod IP, it’ll be resolved through multiple sets of rules:
+&lt;ol&gt;
+&lt;li&gt;This node will have a range of Pod IPs which resolve to the local node itself&lt;/li&gt;
+&lt;li&gt;This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain&lt;/li&gt;
+&lt;li&gt;This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.&lt;/li&gt;
+&lt;li&gt;There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl list?&lt;/code&gt;
+&lt;ol&gt;
+&lt;li&gt;By encapsulating the request’s original networking information is wrapped up as data and new network info is added&lt;/li&gt;
+&lt;li&gt;Calico will send this as a vxlan or ipinip packet to the required node in another subnet&lt;/li&gt;
+&lt;li&gt;The encapsulated packet (shown as an orange line) will:
+&lt;ol&gt;
+&lt;li&gt;Go back through the route table on the node itself&lt;/li&gt;
+&lt;li&gt;To the local subnet router, which will resolve which subnet it needs to go into&lt;/li&gt;
+&lt;li&gt;Hit the destination subnet routing table which can direct it to the node&lt;/li&gt;
+&lt;li&gt;To the other node itself&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.
+&lt;ol&gt;
+&lt;li&gt;This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;The routing table on this node will now:
+&lt;ol&gt;
+&lt;li&gt;Send the encapsulated packet to the local Calico to be unencapsulated&lt;/li&gt;
+&lt;li&gt;The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
+&lt;ol&gt;
+&lt;li&gt;This could also cause the packet to have to be routed again since the destination has moved&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;li&gt;The request is directed to the pod running locally&lt;/li&gt;
+&lt;/ol&gt;
+&lt;/li&gt;
+&lt;/ol&gt;
+&lt;h3 id=&#34;there-are-a-lot-of-things-missed-off-here&#34;&gt;There are a lot of things missed off here:&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;http://www.adminsehow.com/2011/09/iptables-packet-traverse-map/&#34;&gt;Technically iptables is interacted with before, after (and sometimes during) a routing decision&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How the pod sits within it’s own &lt;a href=&#34;https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/&#34;&gt;network namespace&lt;/a&gt; with a virtual ethernet interface for traffic coming to the pod&lt;/li&gt;
+&lt;li&gt;How Calico uses &lt;a href=&#34;https://projectcalico.docs.tigera.io/reference/felix/&#34;&gt;Felix&lt;/a&gt; to program it’s routes and ACLs and &lt;a href=&#34;https://bird.network.cz/&#34;&gt;BIRD&lt;/a&gt; for distributing the routes to BGP peers on the network&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/networking/&#34;&gt;Alternate CNIs&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;How the whole kube-proxy aspects could be stipped out for an eBPF approach (Calico’s &lt;a href=&#34;https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf&#34;&gt;eBPF dataplane&lt;/a&gt; or Cilium and it’s &lt;a href=&#34;https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free/&#34;&gt;kube proxy replacement&lt;/a&gt;)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;related-docs&#34;&gt;Related docs:&lt;/h2&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://projectcalico.docs.tigera.io/reference/architecture/overview&#34;&gt;Calico Component Architecture&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/&#34;&gt;kube-proxy reference&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/&#34;&gt;Kubernetes DNS docs&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    </item>
     
     <item>
       <title>Kubernetes Debugging</title>
@@ -18,6 +165,15 @@
       
       <guid>/post/kubernetes-debugging/</guid>
       <description>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;</description>
+      <content>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;
+&lt;p&gt;Click on the image to see it in further detail&lt;/p&gt;
+
+  &lt;figure class=&#34;left&#34; &gt;
+    &lt;a href=&#34;/img/k8s_debugging_v1.svg&#34; &gt;
+    &lt;img src=&#34;/img/k8s_debugging_v1.svg&#34;   /&gt;
+    
+    &lt;/a&gt;
+  &lt;/figure&gt;</content>
     </item>
     
     <item>
@@ -27,6 +183,113 @@
       
       <guid>/post/shellscript-day2/</guid>
       <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
+      <content>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;
+&lt;h2 id=&#34;commonly-used&#34;&gt;Commonly used&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $var &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; *mystring*  &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The double closed brackets are essential for wildcard match&lt;/span&gt;
+    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;it does&amp;#34;&lt;/span&gt;;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Split on &amp;#34;:&amp;#34; and get 1st&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;docker-image:0.1&amp;#34;&lt;/span&gt; | cut -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; -f1 &lt;span style=&#34;color:#75715e&#34;&gt;# returns docker-image&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Find and replace all via pipe&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello I&amp;#39;m Dom&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/&amp;#34; could be any char&lt;/span&gt;
+
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Redirect stdout and stderr to the void&lt;/span&gt;
+./run_script.sh &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
+head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Read bottom lines of file&lt;/span&gt;
+tail -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Watch all updates to file&lt;/span&gt;
+tail -f myfile
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Read file in window (not cat)&lt;/span&gt;
+less myfile
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Make all directories if not exist&lt;/span&gt;
+mkdir -p exist/not/dir
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Visualise dir structure&lt;/span&gt;
+tree -L &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Remove env variable&lt;/span&gt;
+unset myvar
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Alias command to short one&lt;/span&gt;
+alias lc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ls -laht&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# unalias to remove&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Piping output&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;overwrite&amp;#34;&lt;/span&gt; &amp;gt; file &lt;span style=&#34;color:#75715e&#34;&gt;# Same as 1&amp;gt;&lt;/span&gt;
+echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;append&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; file
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
+df -h
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# See file usage for dirs&lt;/span&gt;
+du &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;--max-depth&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Show running processes, a: show other user, u: show username, x: show non terminal&lt;/span&gt;
+ps -aux
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Show usage&lt;/span&gt;
+top
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tricks&#34;&gt;Tricks&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
+diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last 3 command&lt;/span&gt;
+!!
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last arg of the last command&lt;/span&gt;
+!$
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Take all args from previous and use&lt;/span&gt;
+!:1-$
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;io&#34;&gt;IO&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
+read -s -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Password: &amp;#34;&lt;/span&gt; password
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Default value&lt;/span&gt;
+read -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Address [http://127.0.0.1]: &amp;#34;&lt;/span&gt; ADDR
+default&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://127.0.0.1&amp;#34;&lt;/span&gt;
+ADDR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;ADDR&lt;span style=&#34;color:#66d9ef&#34;&gt;:-&lt;/span&gt;$default&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;jq&#34;&gt;jq&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
+jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.parent.children | .[] | .name&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# raw:no quotes, e:null exit0, compact&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Get object attr and value and format &amp;#34;Key=$attr,Value=$val&amp;#34;&lt;/span&gt;
+jq -r &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.data | keys[] as $k | &amp;#34;Key=\($k),Value=\(.[$k])&amp;#34;&amp;#39;&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Use output in for loop&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; object in &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;JSON&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.entries[] | .whole | @base64&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+  echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This is the value: &lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;val&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt; | base64 -d | jq .attribute&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Args&lt;/span&gt;
+curl localhost:8500/v1/catalog/nodes | &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    jq &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        --arg ip &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;./get_host.sh&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.[] | select(.Address==$ip)&amp;#39;&lt;/span&gt;
+        
+&lt;span style=&#34;color:#75715e&#34;&gt;# Output mulitple entries in list&lt;/span&gt;
+jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[.importItems[].itemId]&amp;#39;&lt;/span&gt;
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Create object&lt;/span&gt;
+jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{} +{ Items:[.importItems[].itemId]}&amp;#39;&lt;/span&gt;
+
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;behaviour&#34;&gt;Behaviour&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
+set -e
+
+&lt;span style=&#34;color:#75715e&#34;&gt;# Output command as they run (debug)&lt;/span&gt;
+set -x
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
     </item>
     
     <item>
@@ -36,6 +299,54 @@
       
       <guid>/post/podcasts-2019-q2/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;</description>
+      <content>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;
+&lt;h2 id=&#34;the-teachers-pet&#34;&gt;The Teacher&amp;rsquo;s Pet&lt;/h2&gt;
+&lt;p&gt;A great true crime podcast exploring a 36 year old cold case around a woman who went missing and who&amp;rsquo;s husband brought his 17 year old, school girl, girlfriend into the house within 2 days.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Ep. 1: Bayview&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;the-weeds&#34;&gt;The Weeds&lt;/h2&gt;
+&lt;p&gt;Podcast from Vox where they do a deep dive into a topic for ~1hr. If you pick an episode with an good topic usually very informative and interesting listen.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-1&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Americas two housing crises&lt;/li&gt;
+&lt;li&gt;Into the weeds with Elizabeth Warren&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;gangster-capitalism&#34;&gt;Gangster Capitalism&lt;/h2&gt;
+&lt;p&gt;Series 1 of the podcast covers the admissions scandal with some truly horrific stories of entitled parents. The podcast really going into the inner works of the scams being done and the unprecedented scale of the system in place.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-2&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;S1 [1] The Side Door&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;the-shrink-next-door&#34;&gt;The Shrink Next Door&lt;/h2&gt;
+&lt;p&gt;A deeply interesting and weird story around a therapist who abused his position with his patients. Focuses mainly on this one individual who got taken advantage of to a ridiculous level, leading to him being ostracised from his family and friends.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-3&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Welcome To The Neighborhood | 1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;dissect&#34;&gt;Dissect&lt;/h2&gt;
+&lt;p&gt;Season 4 of Dissect covers Tyler the Creators album, Flower Boy. An amazing and indepth look into this brilliant album with some bonus episodes covering some of his over work including his new album, Igor.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-4&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;S4E1 - Tyler the Creator: Flower Boy&lt;/li&gt;
+&lt;li&gt;Dissecting Igor with Anthony Fantano&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;</content>
     </item>
     
     <item>
@@ -45,6 +356,56 @@
       
       <guid>/post/podcasts-2019-q1/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;</description>
+      <content>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;
+&lt;h2 id=&#34;the-butterfly-effect&#34;&gt;The Butterfly Effect&lt;/h2&gt;
+&lt;p&gt;Jon Ronson&amp;rsquo;s Audible exclusive (now available everywhere) where he explores the affect PornHub had on the porn industy. Very insighful and interesting, each episodes covering a broad area such as the impact on kids in school. Only 7 (+1 bonus) episodes but still covers a lot.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Ep. 1: A Nondescript Building in Montreal&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;the-last-days-of-august&#34;&gt;The Last Days of August&lt;/h2&gt;
+&lt;p&gt;Following on from The Butterfly Effect, released this year on Audible (public release in April), Jon explores the death of a famous porn star and the mystery surrounding her death and her husband.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-1&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Ep. 1&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;bear-brook&#34;&gt;Bear Brook&lt;/h2&gt;
+&lt;p&gt;True Crime stories focussed around two barrels of bodies found in the woods. The podcast covers how crime investigations methodologies were changed forever by the techniques used.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-2&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Ep. 1: Hide and Seek&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;this-american-life&#34;&gt;This American Life&lt;/h2&gt;
+&lt;p&gt;A classic podcast but some recent episodes are worth a mention, first covers&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-3&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;#661: But that&amp;rsquo;s what happened&lt;/li&gt;
+&lt;li&gt;#657: The Runaways&lt;/li&gt;
+&lt;li&gt;#486: Valentines Day (Act 2 in particular)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;cortex&#34;&gt;Cortex&lt;/h2&gt;
+&lt;p&gt;Two youtube/podcast company owners discuss productivity, goal planning, efficiency and technology&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-4&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;78: State of the Apps 2019&lt;/li&gt;
+&lt;li&gt;72: Adulting Complete&lt;/li&gt;
+&lt;li&gt;79: 2019 Yearly Themes&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;</content>
     </item>
     
     <item>
@@ -57,6 +418,28 @@
 Key technologies: Kubernetes, Vault, Terraform, Linux
 Links        
 Certifications  </description>
+      <content>&lt;p&gt;Dom Goodwin
+Software/Platform Engineer&lt;/p&gt;
+&lt;p&gt;Key technologies: Kubernetes, Vault, Terraform, Linux&lt;/p&gt;
+&lt;h2 id=&#34;links&#34;&gt;Links&lt;/h2&gt;
+&lt;p&gt;&lt;a class=&#34;inline-svg social-icon fa-github&#34; href=&#34;https://github.com/domgoodwin&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 496 512&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z&#34;/&gt;&lt;/svg&gt;
+&lt;/a&gt;
+&lt;a class=&#34;inline-svg social-icon fa-keybase&#34; href=&#34;https://keybase.io/domgoodwin&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 448 512&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M286.17 419a18 18 0 1 0 18 18 18 18 0 0 0-18-18zm111.92-147.6c-9.5-14.62-39.37-52.45-87.26-73.71q-9.1-4.06-18.38-7.27a78.43 78.43 0 0 0-47.88-104.13c-12.41-4.1-23.33-6-32.41-5.77-.6-2-1.89-11 9.4-35L198.66 32l-5.48 7.56c-8.69 12.06-16.92 23.55-24.34 34.89a51 51 0 0 0-8.29-1.25c-41.53-2.45-39-2.33-41.06-2.33-50.61 0-50.75 52.12-50.75 45.88l-2.36 36.68c-1.61 27 19.75 50.21 47.63 51.85l8.93.54a214 214 0 0 0-46.29 35.54C14 304.66 14 374 14 429.77v33.64l23.32-29.8a148.6 148.6 0 0 0 14.56 37.56c5.78 10.13 14.87 9.45 19.64 7.33 4.21-1.87 10-6.92 3.75-20.11a178.29 178.29 0 0 1-15.76-53.13l46.82-59.83-24.66 74.11c58.23-42.4 157.38-61.76 236.25-38.59 34.2 10.05 67.45.69 84.74-23.84.72-1 1.2-2.16 1.85-3.22a156.09 156.09 0 0 1 2.8 28.43c0 23.3-3.69 52.93-14.88 81.64-2.52 6.46 1.76 14.5 8.6 15.74 7.42 1.57 15.33-3.1 18.37-11.15C429 443 434 414 434 382.32c0-38.58-13-77.46-35.91-110.92zM142.37 128.58l-15.7-.93-1.39 21.79 13.13.78a93 93 0 0 0 .32 19.57l-22.38-1.34a12.28 12.28 0 0 1-11.76-12.79L107 119c1-12.17 13.87-11.27 13.26-11.32l29.11 1.73a144.35 144.35 0 0 0-7 19.17zm148.42 172.18a10.51 10.51 0 0 1-14.35-1.39l-9.68-11.49-34.42 27a8.09 8.09 0 0 1-11.13-1.08l-15.78-18.64a7.38 7.38 0 0 1 1.34-10.34l34.57-27.18-14.14-16.74-17.09 13.45a7.75 7.75 0 0 1-10.59-1s-3.72-4.42-3.8-4.53a7.38 7.38 0 0 1 1.37-10.34L214 225.19s-18.51-22-18.6-22.14a9.56 9.56 0 0 1 1.74-13.42 10.38 10.38 0 0 1 14.3 1.37l81.09 96.32a9.58 9.58 0 0 1-1.74 13.44zM187.44 419a18 18 0 1 0 18 18 18 18 0 0 0-18-18z&#34;/&gt;&lt;/svg&gt;
+&lt;/a&gt;
+&lt;a class=&#34;inline-svg social-icon fa-twitter&#34; href=&#34;https://twitter.com/domgoodwin_&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 512 512&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z&#34;/&gt;&lt;/svg&gt;
+&lt;/a&gt;
+&lt;a class=&#34;inline-svg social-icon fa-linkedin-in&#34; href=&#34;https://www.linkedin.com/in/dom-goodwin/&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 448 512&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z&#34;/&gt;&lt;/svg&gt;
+&lt;/a&gt;&lt;/p&gt;
+&lt;h2 id=&#34;certifications&#34;&gt;Certifications&lt;/h2&gt;
+&lt;p&gt;
+  &lt;img src=&#34;/img/logo_cka.png&#34;  alt=&#34;CKA&#34;  class=&#34;left&#34;  style=&#34;height: 8rem;display: inline;&#34;  /&gt;
+
+
+
+  &lt;img src=&#34;/img/logo_ckad.png&#34;  alt=&#34;CKA&#34;  class=&#34;left&#34;  style=&#34;height: 8rem; display: inline;&#34;  /&gt;
+
+&lt;/p&gt;
+</content>
     </item>
     
     <item>
@@ -66,6 +449,53 @@ Certifications  </description>
       
       <guid>/post/setup/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;</description>
+      <content>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;
+&lt;p&gt;I&amp;rsquo;m setting this up with the follow configuratons&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Ubuntu 16.04 LTS
+Hugo 0.32
+Go 1.9.4
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;installing-hugo&#34;&gt;Installing Hugo&lt;/h1&gt;
+&lt;p&gt;Ubuntu/Debian:&lt;br&gt;
+&lt;code&gt;sudo apt-get install hugo&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Check it&amp;rsquo;s installed correctly:&lt;br&gt;
+&lt;code&gt;hugo version&lt;/code&gt;&lt;/p&gt;
+&lt;h1 id=&#34;creating-your-site&#34;&gt;Creating your site&lt;/h1&gt;
+&lt;h2 id=&#34;basic-setup&#34;&gt;Basic setup&lt;/h2&gt;
+&lt;p&gt;To generate your base site:&lt;br&gt;
+&lt;code&gt;hugo new site my-blog&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;This will create a folder, my-blog, in your current directory&lt;/em&gt;&lt;/p&gt;
+&lt;p&gt;&lt;strong&gt;The folder structure will be:&lt;/strong&gt;&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-file&#34; data-lang=&#34;file&#34;&gt;+--archetypes/     Templates for content files  
++--content/        Where content for your site goes  
++--data/           Config files for generating your site  
++--layouts/        Html templates for content views  
++--static/         All static content for site goes here  
+config.toml        General site properties like: theme, title  
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Setup your site as a git repo:&lt;br&gt;
+&lt;code&gt;git init&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;using-a-theme&#34;&gt;Using a theme&lt;/h2&gt;
+&lt;p&gt;Pick a theme you want to use from &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;As themes are stored as git repos, the best way to use one is a submodule&lt;br&gt;
+&lt;code&gt;git submodule add {THEME-REPO} themes/{THEME-NAME}&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Once the submodule has been added, add this line to your &lt;em&gt;config.toml&lt;/em&gt;:&lt;br&gt;
+&lt;code&gt;theme = &amp;quot;{THEME-NAME}&amp;quot;&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;To see what your theme looks like, run the Hugo server:&lt;br&gt;
+&lt;code&gt;hugo server&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Your empty site should be availbale at:&lt;br&gt;
+&lt;code&gt;localhost:1313&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;adding-content&#34;&gt;Adding content&lt;/h2&gt;
+&lt;p&gt;To create a new post for your site:&lt;br&gt;
+&lt;code&gt;hugo new post/hello-world.md&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;By default (because of the archetypes/default.md) your post file will look like this:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;title: &amp;#34;Hello World&amp;#34;  
+date: 2018-04-06T11:03:53+01:00  
+draft: true  
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To see your page, you need to run the server with drafts enabled:&lt;br&gt;
+&lt;code&gt;hugo server -D&lt;/code&gt;&lt;/p&gt;
+&lt;h2 id=&#34;overriding-themes&#34;&gt;Overriding themes&lt;/h2&gt;
+&lt;p&gt;You might want to change how a theme renders something. To do this, it&amp;rsquo;s easy. Just copy the files you want to change from:&lt;br&gt;
+&lt;code&gt;themes/{THEME-NAME}/layouts/&lt;/code&gt; to: &lt;code&gt;layouts/&lt;/code&gt;&lt;/p&gt;
+&lt;p&gt;Then the files in the root layouts folder will override your theme ones&lt;/p&gt;</content>
     </item>
     
     <item>
@@ -75,6 +505,121 @@ Certifications  </description>
       
       <guid>/post/podcasts/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;</description>
+      <content>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;
+&lt;h2 id=&#34;reply-all&#34;&gt;Reply All&lt;/h2&gt;
+&lt;p&gt;Every week, you&amp;rsquo;re presented with an intersting tale relating to the internet. From online bounty hunters to crowdsourcing medical advice, this podcast&amp;rsquo;s range of stories are always interesting and worth a listen.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Long Distance : #102 / #103&lt;/li&gt;
+&lt;li&gt;The Secret Life of Alex Goldman : #96&lt;/li&gt;
+&lt;li&gt;Boy in Photo : #79&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;this-american-life&#34;&gt;This American Life&lt;/h2&gt;
+&lt;p&gt;This American Life is one of the most popular podcasts of all time. With over twenty years worth of archives, the amount of amazing episodes are endless.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-1&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Human Error in Voltile Situations : #634&lt;/li&gt;
+&lt;li&gt;20 Acts in 60 Minutes : #241&lt;/li&gt;
+&lt;li&gt;Five Women : #640&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;my-favourite-murder&#34;&gt;My Favourite Murder&lt;/h2&gt;
+&lt;p&gt;Every week, the hosts tell some of their favourite, most interesting true crime, murder stories.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-2&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;My Firstest Murder : #1&lt;/li&gt;
+&lt;li&gt;Decompressions : #102&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;sawbones&#34;&gt;Sawbones&lt;/h2&gt;
+&lt;p&gt;A look into the history of how illnesses and medcial problems were &lt;em&gt;solved&lt;/em&gt; throughout time. Makes you wonder if we&amp;rsquo;re as wrong now as our ancestors were.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-3&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;The Women Who Gave Birth to Rabbits&lt;/li&gt;
+&lt;li&gt;Opioid Addiction&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;no-such-thing-as-a-fish&#34;&gt;No Such Thing As A Fish&lt;/h2&gt;
+&lt;p&gt;The researches behind the facts for QI talk about their favourites facts of the week.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-4&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Really any, they&amp;rsquo;re all great&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;page-94-the-private-eye-podcast&#34;&gt;Page 94: The Private Eye Podcast&lt;/h2&gt;
+&lt;p&gt;A more detailed look into some stories within Private Eye.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-5&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Hospital and Hacks&lt;/li&gt;
+&lt;li&gt;Credit and Christmas&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;disect&#34;&gt;Disect&lt;/h2&gt;
+&lt;p&gt;Long form music analysis, each season focussing on an album.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-6&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;S2E1 - Kanye West: The Elephant in the Room&lt;/li&gt;
+&lt;li&gt;S1E9 - Alright by Kendrick Lamar&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;hello-internet&#34;&gt;Hello Internet&lt;/h2&gt;
+&lt;p&gt;Two very inteligent, insightful and interesting people discuss topics of note; always thought provoking.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-7&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Being Wrong on The Internet, #1&lt;/li&gt;
+&lt;li&gt;Mr Chompers, #93&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;freakonomics&#34;&gt;Freakonomics&lt;/h2&gt;
+&lt;p&gt;Two economist explore the hidden side of everything, from pizza stores to chuck e cheeses.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-8&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;What Are you Waiting For?&lt;/li&gt;
+&lt;li&gt;How Big is My Penis? (And Other Things We Ask Google)&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;my-dad-wrote-a-porno&#34;&gt;My Dad Wrote A Porno&lt;/h2&gt;
+&lt;p&gt;I think the title of this one really says it all.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-9&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;S1E1 - &amp;lsquo;The Job Interview;&amp;rsquo;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;mortified&#34;&gt;Mortified&lt;/h2&gt;
+&lt;p&gt;Adults tell the embarrassing stories of things they did as kids.&lt;/p&gt;
+&lt;h3 id=&#34;episodes-to-get-started-10&#34;&gt;Episodes to get started&lt;/h3&gt;
+&lt;blockquote&gt;
+&lt;ul&gt;
+&lt;li&gt;Titanic Ruined My Love Life, #88&lt;/li&gt;
+&lt;li&gt;How to Become a Catfish, #105&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/blockquote&gt;
+&lt;hr&gt;
+&lt;h2 id=&#34;notable-mentions&#34;&gt;Notable mentions&lt;/h2&gt;
+&lt;blockquote&gt;
+&lt;p&gt;S-Town, Serial, Crimetown&lt;/p&gt;
+&lt;/blockquote&gt;</content>
     </item>
     
     <item>
@@ -84,6 +629,115 @@ Certifications  </description>
       
       <guid>/books/</guid>
       <description>article.single section, .article-list article { padding-left: 7rem !important; padding-right: 7rem !important; }  Currently reading    Share book reviews and ratings with Dom, and even join a book club on Goodreads.      Read                      Share book reviews and ratings with Dom, and even join a book club on Goodreads.</description>
+      <content>&lt;style&gt;
+
+ article.single section, .article-list article {
+    padding-left: 7rem !important;
+    padding-right: 7rem !important;
+ }
+
+&lt;/style&gt;
+
+&lt;div class=&#34;books&#34;&gt;
+    &lt;h2 class=&#34;headline&#34;&gt;Currently reading&lt;/h2&gt;
+      &lt;div&gt;
+            &lt;div id=&#34;gr_grid_widget_1555969678&#34;&gt;
+              
+                &lt;div class=&#34;gr_grid_container&#34;&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Silk Roads: A New History of the World&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/25812847-the-silk-roads&#34;&gt;&lt;img alt=&#34;The Silk Roads: A New History of the World&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1472636067m/25812847.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Rethinking the Economics of Land and Housing&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/34448182-rethinking-the-economics-of-land-and-housing&#34;&gt;&lt;img alt=&#34;Rethinking the Economics of Land and Housing&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1489659764m/34448182.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+        &lt;noscript&gt;&lt;br/&gt;Share &lt;a rel=&#34;nofollow&#34; href=&#34;/&#34;&gt;book reviews&lt;/a&gt; and ratings with Dom, and even join a &lt;a rel=&#34;nofollow&#34; href=&#34;/group&#34;&gt;book club&lt;/a&gt; on Goodreads.&lt;/noscript&gt;
+        &lt;/div&gt;
+      
+            &lt;/div&gt;
+            &lt;script src=&#34;https://www.goodreads.com/review/grid_widget/87140010.Dom&#39;s%20currently-reading%20book%20montage?cover_size=medium&amp;hide_link=true&amp;hide_title=true&amp;num_books=20&amp;order=d&amp;shelf=currently-reading&amp;sort=date_read&amp;widget_id=1555969678&#34; type=&#34;text/javascript&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+      
+      &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&#34;books&#34;&gt;
+      &lt;h2 class=&#34;headline&#34;&gt;Read&lt;/h2&gt;
+      &lt;div&gt;
+            &lt;div id=&#34;gr_grid_widget_1555969331&#34;&gt;
+              
+                &lt;div class=&#34;gr_grid_container&#34;&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Collected Schizophrenias: Essays&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/40121993-the-collected-schizophrenias&#34;&gt;&lt;img alt=&#34;The Collected Schizophrenias: Essays&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1527408064m/40121993.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;A Walk in the Woods: Rediscovering America on the Appalachian Trail&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/9791.A_Walk_in_the_Woods&#34;&gt;&lt;img alt=&#34;A Walk in the Woods: Rediscovering America on the Appalachian Trail&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1388189974m/9791.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;How To Be Right: … in a world gone wrong&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/39078159-how-to-be-right&#34;&gt;&lt;img alt=&#34;How To Be Right: … in a world gone wrong&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1537877334m/39078159.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Undoing Project: A Friendship That Changed Our Minds&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/35631386-the-undoing-project&#34;&gt;&lt;img alt=&#34;The Undoing Project: A Friendship That Changed Our Minds&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1509135882m/35631386.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Stasiland: Stories from Behind the Berlin Wall&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/226369.Stasiland&#34;&gt;&lt;img alt=&#34;Stasiland: Stories from Behind the Berlin Wall&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1385280143m/226369.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Bad Blood: Secrets and Lies in a Silicon Valley Startup&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/37976541-bad-blood&#34;&gt;&lt;img alt=&#34;Bad Blood: Secrets and Lies in a Silicon Valley Startup&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1554560125m/37976541.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Inglorious Empire: What the British Did to India&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/34185892-inglorious-empire&#34;&gt;&lt;img alt=&#34;Inglorious Empire: What the British Did to India&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1490075230m/34185892.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Fall of Icarus&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/24874363-the-fall-of-icarus&#34;&gt;&lt;img alt=&#34;The Fall of Icarus&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1423765132m/24874363.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;SPQR: A History of Ancient Rome&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/28789711-spqr&#34;&gt;&lt;img alt=&#34;SPQR: A History of Ancient Rome&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1470421195m/28789711.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Princess: A True Story of Life Behind the Veil in Saudi Arabia&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/613283.Princess&#34;&gt;&lt;img alt=&#34;Princess: A True Story of Life Behind the Veil in Saudi Arabia&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1377538002m/613283.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Worth Dying For: The Power and Politics of Flags&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/28782793-worth-dying-for&#34;&gt;&lt;img alt=&#34;Worth Dying For: The Power and Politics of Flags&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1473682152m/28782793.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Original Gangstas: Tupac Shakur, Dr. Dre, Eazy-E, Ice Cube, and the Birth of West Coast Rap&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/33385676-original-gangstas&#34;&gt;&lt;img alt=&#34;Original Gangstas: Tupac Shakur, Dr. Dre, Eazy-E, Ice Cube, and the Birth of West Coast Rap&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1494925105m/33385676.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;I&#39;ll Be Gone in the Dark: One Woman&#39;s Obsessive Search for the Golden State Killer&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/35068432-i-ll-be-gone-in-the-dark&#34;&gt;&lt;img alt=&#34;I&#39;ll Be Gone in the Dark: One Woman&#39;s Obsessive Search for the Golden State Killer&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1499131009m/35068432.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;So You&#39;ve Been Publicly Shamed&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/22571552-so-you-ve-been-publicly-shamed&#34;&gt;&lt;img alt=&#34;So You&#39;ve Been Publicly Shamed&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1413749614m/22571552.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Modern Romance&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/23453112-modern-romance&#34;&gt;&lt;img alt=&#34;Modern Romance&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1432335014m/23453112.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Triggers: Creating Behavior That Lasts—Becoming the Person You Want to Be&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/22544758-triggers&#34;&gt;&lt;img alt=&#34;Triggers: Creating Behavior That Lasts—Becoming the Person You Want to Be&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1422811813m/22544758.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Quiet: The Power of Introverts in a World That Can&#39;t Stop Talking&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/8520610-quiet&#34;&gt;&lt;img alt=&#34;Quiet: The Power of Introverts in a World That Can&#39;t Stop Talking&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1328562861m/8520610.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Psychopath Test: A Journey Through the Madness Industry&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/12391521-the-psychopath-test&#34;&gt;&lt;img alt=&#34;The Psychopath Test: A Journey Through the Madness Industry&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1364166270m/12391521.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;How Adam Smith Can Change Your Life: An Unexpected Guide to Human Nature and Happiness&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/20821053-how-adam-smith-can-change-your-life&#34;&gt;&lt;img alt=&#34;How Adam Smith Can Change Your Life: An Unexpected Guide to Human Nature and Happiness&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1403713769m/20821053.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Harry Potter and the Sorcerer&#39;s Stone (Harry Potter, #1)&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/3.Harry_Potter_and_the_Sorcerer_s_Stone&#34;&gt;&lt;img alt=&#34;Harry Potter and the Sorcerer&#39;s Stone&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1474154022m/3.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+        &lt;noscript&gt;&lt;br/&gt;Share &lt;a rel=&#34;nofollow&#34; href=&#34;/&#34;&gt;book reviews&lt;/a&gt; and ratings with Dom, and even join a &lt;a rel=&#34;nofollow&#34; href=&#34;/group&#34;&gt;book club&lt;/a&gt; on Goodreads.&lt;/noscript&gt;
+        &lt;/div&gt;
+      
+            &lt;/div&gt;
+            &lt;script src=&#34;https://www.goodreads.com/review/grid_widget/87140010.Dom&#39;s%20bookshelf:%20read?cover_size=medium&amp;hide_link=true&amp;hide_title=true&amp;num_books=32&amp;order=d&amp;shelf=read&amp;sort=date_read&amp;widget_id=1555969331&#34; type=&#34;text/javascript&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+      
+      &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div class=&#34;books&#34;&gt;
+      &lt;h2 class=&#34;headline&#34;&gt;To read&lt;/h2&gt;
+      &lt;div&gt;
+            &lt;div id=&#34;gr_grid_widget_1555969916&#34;&gt;
+              
+                &lt;div class=&#34;gr_grid_container&#34;&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Autobiography of Malcolm X&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/92057.The_Autobiography_of_Malcolm_X&#34;&gt;&lt;img alt=&#34;The Autobiography of Malcolm X&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1434682864m/92057.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Brave New World&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/5129.Brave_New_World&#34;&gt;&lt;img alt=&#34;Brave New World&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1523061131m/5129.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;El Silmarillion&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/36059465-el-silmarillion&#34;&gt;&lt;img alt=&#34;El Silmarillion&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1502998754m/36059465.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Secular Cycles&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/8778747-secular-cycles&#34;&gt;&lt;img alt=&#34;Secular Cycles&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1348613399m/8778747.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Churchill&#39;s Secret War: The British Empire and the Ravaging of India During World War II&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/8890989-churchill-s-secret-war&#34;&gt;&lt;img alt=&#34;Churchill&#39;s Secret War: The British Empire and the Ravaging of India During World War II&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1282070397m/8890989.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Thinking, Fast and Slow&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/11468377-thinking-fast-and-slow&#34;&gt;&lt;img alt=&#34;Thinking, Fast and Slow&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1317793965m/11468377.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Dictator&#39;s Handbook: Why Bad Behavior is Almost Always Good Politics&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/11612989-the-dictator-s-handbook&#34;&gt;&lt;img alt=&#34;The Dictator&#39;s Handbook: Why Bad Behavior is Almost Always Good Politics&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1328737207m/11612989.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Spider Network: The Wild Story of a Math Genius, a Gang of Backstabbing Bankers, and One of the Greatest Scams in Financial History&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/30759083-the-spider-network&#34;&gt;&lt;img alt=&#34;The Spider Network: The Wild Story of a Math Genius, a Gang of Backstabbing Bankers, and One of the Greatest Scams in Financial History&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1470598651m/30759083.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;When Britain Went Bust - The 1976 IMF Crisis&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/32828859-when-britain-went-bust---the-1976-imf-crisis&#34;&gt;&lt;img alt=&#34;When Britain Went Bust - The 1976 IMF Crisis&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1477937272m/32828859.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Dictatorland: The Men Who Stole Africa&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/36260719-dictatorland&#34;&gt;&lt;img alt=&#34;Dictatorland: The Men Who Stole Africa&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1505728611m/36260719.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Divided: Why We&#39;re Living in an Age of Walls&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/39871440-divided&#34;&gt;&lt;img alt=&#34;Divided: Why We&#39;re Living in an Age of Walls&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1533553243m/39871440.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Identity: Contemporary Identity Politics and the Struggle for Recognition&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/40543827-identity&#34;&gt;&lt;img alt=&#34;Identity: Contemporary Identity Politics and the Struggle for Recognition&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1529635965m/40543827.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Lies That Bind: Rethinking Identity&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/38321385-the-lies-that-bind&#34;&gt;&lt;img alt=&#34;The Lies That Bind: Rethinking Identity&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1537820143m/38321385.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;Capitalism in America: A History&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/38712616-capitalism-in-america&#34;&gt;&lt;img alt=&#34;Capitalism in America: A History&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1519230031m/38712616.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+          &lt;div class=&#34;gr_grid_book_container&#34;&gt;&lt;a title=&#34;The Myth of Capitalism: Monopolies and the Death of Competition&#34; rel=&#34;nofollow&#34; href=&#34;https://www.goodreads.com/book/show/40751646-the-myth-of-capitalism&#34;&gt;&lt;img alt=&#34;The Myth of Capitalism: Monopolies and the Death of Competition&#34; border=&#34;0&#34; src=&#34;https://images.gr-assets.com/books/1538427937m/40751646.jpg&#34; /&gt;&lt;/a&gt;&lt;/div&gt;
+        &lt;noscript&gt;&lt;br/&gt;Share &lt;a rel=&#34;nofollow&#34; href=&#34;/&#34;&gt;book reviews&lt;/a&gt; and ratings with Dom, and even join a &lt;a rel=&#34;nofollow&#34; href=&#34;/group&#34;&gt;book club&lt;/a&gt; on Goodreads.&lt;/noscript&gt;
+        &lt;/div&gt;
+      
+            &lt;/div&gt;
+            &lt;script src=&#34;https://www.goodreads.com/review/grid_widget/87140010.Dom&#39;s%20to-read%20book%20montage?cover_size=medium&amp;hide_link=true&amp;hide_title=true&amp;num_books=18&amp;order=d&amp;shelf=to-read&amp;sort=date_read&amp;widget_id=1555969916&#34; type=&#34;text/javascript&#34; charset=&#34;utf-8&#34;&gt;&lt;/script&gt;
+      
+      &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;style&gt;
+
+.gr_grid_container {
+   
+}
+
+.gr_grid_book_container {
+   
+  float: left;
+  width: 98px;
+  height: 160px;
+  padding: 0px 0px;
+  overflow: hidden;
+}
+
+div.books {
+  display: grid;
+}
+  &lt;/style&gt;
+</content>
     </item>
     
   </channel>

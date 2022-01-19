@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Kubernetes Networking: #1 :: Dom Goodwin</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.
+" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/post/kubernetes-networking-overview/" />
+
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/pink.css">
+
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon" href="/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="/img/favicon/pink.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="domgoodwin_" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Kubernetes Networking: #1">
+<meta property="og:description" content="Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.
+" />
+<meta property="og:url" content="/post/kubernetes-networking-overview/" />
+<meta property="og:site_name" content="Dom Goodwin" />
+
+  
+    <meta property="og:image" content="/img/favicon/pink.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+
+  <meta property="article:published_time" content="2022-01-10 12:06:09 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="pink">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Dom Goodwin
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/books">Books</a></li>
+        
+      
+        
+          <li><a href="/">Posts</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/books">Books</a></li>
+      
+    
+      
+        <li><a href="/">Posts</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/post/kubernetes-networking-overview/">Kubernetes Networking: #1</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-01-10
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.</p>
+<h2 id="components">Components<a href="#components" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>The components we’re going to look at today are:</p>
+<ul>
+<li><code>kube-dns/coredns</code> resolves domain names for services (and pods) into an IP address
+<ul>
+<li>ℹ️ <code>kube-dns</code> was replaced by <code>coredns</code> but the in cluster service is still called <code>kube-dns</code></li>
+<li>This is the resolver for any DNS requests inside your pods, if you wanted to resolve internal service domains or to a private DNS resolver, you could configure this to forward those requests.</li>
+</ul>
+</li>
+<li><code>kube-proxy</code> resolves network requests for the IP address of a service to the IP addresses of pods which match that service. This has different modes:
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Iptables">iptables</a> (default) - To see your iptables rules: <code>iptables -L</code></li>
+<li><a href="https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/">ipvs</a> - To see your ipvs rules <code>ipvsadm -Ln</code></li>
+</ul>
+</li>
+<li>Your chosen <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/#calico">CNI</a>, there’s a range of these, all which work differently. Generally a CNI will configure any networking around a Pod IP, routing to and from pods to:
+<ul>
+<li>Ensure pod network requests are routed properly to other pods</li>
+<li>Ensure pod network requests can reach outside the cluster</li>
+</ul>
+</li>
+</ul>
+<p>An easy way of thinking about it can be, resolving between a service and healthy pods is <code>kube-dns</code> and <code>kube-proxy</code> but then that request will need to go through routing setup by the <code>CNI</code>. For cloud environments, your <code>CNI</code> will usually handle (or provide ways to setup) things like cross-subnet traffic as well.</p>
+<p>To follow the resolution between components, say we wanted to go to a service called <code>myapp</code> which sits in namespace <code>namespace001</code> which had 2 healthy pods matching the service selector. The resolution would be:</p>
+<ol>
+<li><strong>CoreDNS:</strong> (service FQDN)<code>myapp.namespace001.svc.cluster.local</code> → <code>172.16.10.10</code> (service cluster IP)</li>
+<li><strong>iptables:</strong> <code>172.16.10.10</code> → <code>10.10.10.10</code> (a pod IP, selected at random from healthy pods)</li>
+<li><strong>CNI:</strong> Will route traffic for <code>10.10.10.10</code> from the requester node, to the target node</li>
+</ol>
+<h2 id="example-journey-of-a-request">Example journey of a request<a href="#example-journey-of-a-request" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>As an example, let’s explore in an example Kubernetes cluster how a pod will send a network request to another pod.
+For this example:</p>
+<ul>
+<li>The pod will try to talk to a pod on another node then itself</li>
+<li>The 2 nodes will be in seperate subnets
+<ul>
+<li>Routing between subnets is presumed to be setup and fine and we’ll abstract that to a <code>router</code> in the diagram</li>
+</ul>
+</li>
+<li>The <code>CNI</code> will be Calico, but we won’t be looking too much into its internals</li>
+<li><strong>pod-0</strong> will send a request to <strong>pod-3</strong> through a service</li>
+<li>We’ll assume Kubernetes and Calico are setup with defaults:
+<ul>
+<li>iptables mode for <code>kube-proxy</code></li>
+<li>vxlan encapsulation for cross subnet traffic</li>
+</ul>
+</li>
+</ul>
+
+  <figure class="left" >
+    <a href="/img/k8s_network_request_example.png" >
+    <img src="/img/k8s_network_request_example.png"   />
+    
+    </a>
+  </figure>
+
+
+<ol>
+<li><strong>pod-0</strong> requests the service’s Cluster IP from <code>kube-dns</code>
+<ul>
+<li><code>kube-dns</code> has dynamic config which updates mapping the service name to a Service IP address lets say <code>172.16.10.10</code>
+<ul>
+<li>`kubectl exec command for coredns</li>
+</ul>
+</li>
+<li>
+<ul>
+<li>technically this whole request to <code>kube-dns</code> goes via the same iptables→routing tables path since <code>kube-dns</code> runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask <code>kube-dns</code> to define <code>kube-dns</code>. But trying to show aswell would be madness.</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>With the cluster IP (<code>172.16.10.10</code>) the request hits iptables
+<ol>
+<li>iptables selects from a random one of the pod IP addresses for this particular service IP
+<ol>
+<li><code>iptables -L</code> or <code>iptables-save</code></li>
+</ol>
+</li>
+<li>These rules are all loaded in here and dynamically updated by <code>kube-proxy</code>. If a pod starts failing Readiness checks for instance, it gets removed from this list.</li>
+</ol>
+</li>
+<li>The Pod IP is now resolved in the nodes routing tables <code>sudo route -n</code> or <code>ip route list</code>
+<ol>
+<li>These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.</li>
+<li>Based on the Pod IP, it’ll be resolved through multiple sets of rules:
+<ol>
+<li>This node will have a range of Pod IPs which resolve to the local node itself</li>
+<li>This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain</li>
+<li>This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.</li>
+<li>There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network</li>
+</ol>
+</li>
+<li>This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.</li>
+</ol>
+</li>
+<li>Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl list?</code>
+<ol>
+<li>By encapsulating the request’s original networking information is wrapped up as data and new network info is added</li>
+<li>Calico will send this as a vxlan or ipinip packet to the required node in another subnet</li>
+<li>The encapsulated packet (shown as an orange line) will:
+<ol>
+<li>Go back through the route table on the node itself</li>
+<li>To the local subnet router, which will resolve which subnet it needs to go into</li>
+<li>Hit the destination subnet routing table which can direct it to the node</li>
+<li>To the other node itself</li>
+</ol>
+</li>
+</ol>
+</li>
+<li>Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.
+<ol>
+<li>This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.</li>
+</ol>
+</li>
+<li>The routing table on this node will now:
+<ol>
+<li>Send the encapsulated packet to the local Calico to be unencapsulated</li>
+<li>The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
+<ol>
+<li>This could also cause the packet to have to be routed again since the destination has moved</li>
+</ol>
+</li>
+<li>The request is directed to the pod running locally</li>
+</ol>
+</li>
+</ol>
+<h3 id="there-are-a-lot-of-things-missed-off-here">There are a lot of things missed off here:<a href="#there-are-a-lot-of-things-missed-off-here" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<ul>
+<li><a href="http://www.adminsehow.com/2011/09/iptables-packet-traverse-map/">Technically iptables is interacted with before, after (and sometimes during) a routing decision</a></li>
+<li>How the pod sits within it’s own <a href="https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/">network namespace</a> with a virtual ethernet interface for traffic coming to the pod</li>
+<li>How Calico uses <a href="https://projectcalico.docs.tigera.io/reference/felix/">Felix</a> to program it’s routes and ACLs and <a href="https://bird.network.cz/">BIRD</a> for distributing the routes to BGP peers on the network</li>
+<li><a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">Alternate CNIs</a></li>
+<li>How the whole kube-proxy aspects could be stipped out for an eBPF approach (Calico’s <a href="https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf">eBPF dataplane</a> or Cilium and it’s <a href="https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free/">kube proxy replacement</a>)</li>
+</ul>
+<h2 id="related-docs">Related docs:<a href="#related-docs" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<ul>
+<li><a href="https://projectcalico.docs.tigera.io/reference/architecture/overview">Calico Component Architecture</a></li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/">kube-proxy reference</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/">Kubernetes DNS docs</a></li>
+</ul>
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="/post/kubernetes-debugging/">
+                <span class="button__text">Kubernetes Debugging</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2022 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
