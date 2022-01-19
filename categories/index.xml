@@ -5,6 +5,8 @@
     <link>/categories/</link>
     <description>Recent content in Categories on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <language>en-us</language>
+    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
+    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
   </channel>
 </rss>

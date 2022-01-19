@@ -6,12 +6,14 @@
     <description>Recent content on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
+    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
+    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
     <lastBuildDate>Mon, 10 Jan 2022 12:06:09 +0000</lastBuildDate><atom:link href="/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>Kubernetes Networking: #1</title>
       <link>/post/kubernetes-networking-overview/</link>
       <pubDate>Mon, 10 Jan 2022 12:06:09 +0000</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/kubernetes-networking-overview/</guid>
       <description>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;</description>
       <content>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;
@@ -164,7 +166,7 @@ For this example:&lt;/p&gt;
       <title>Kubernetes Debugging</title>
       <link>/post/kubernetes-debugging/</link>
       <pubDate>Mon, 20 Apr 2020 14:57:09 +0100</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/kubernetes-debugging/</guid>
       <description>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;</description>
       <content>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;
@@ -182,7 +184,7 @@ For this example:&lt;/p&gt;
       <title>Shellscript Notes</title>
       <link>/post/shellscript-day2/</link>
       <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/shellscript-day2/</guid>
       <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
       <content>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;
@@ -298,7 +300,7 @@ set -x
       <title>Podcasts reccomendations - 07/2019</title>
       <link>/post/podcasts-2019-q2/</link>
       <pubDate>Mon, 22 Jul 2019 11:28:19 +0100</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/podcasts-2019-q2/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;</description>
       <content>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;
@@ -355,7 +357,7 @@ set -x
       <title>Podcast reccomendations - 02/2019</title>
       <link>/post/podcasts-2019-q1/</link>
       <pubDate>Tue, 12 Feb 2019 14:31:03 +0000</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/podcasts-2019-q1/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;</description>
       <content>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;
@@ -414,7 +416,7 @@ set -x
       <title>About</title>
       <link>/about/</link>
       <pubDate>Sun, 27 May 2018 17:12:07 +0100</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/about/</guid>
       <description>Dom Goodwin Software/Platform Engineer
 Key technologies: Kubernetes, Vault, Terraform, Linux
@@ -448,7 +450,7 @@ Software/Platform Engineer&lt;/p&gt;
       <title>Setting up a Hugo Blog</title>
       <link>/post/setup/</link>
       <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/setup/</guid>
       <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;</description>
       <content>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;
@@ -504,7 +506,7 @@ draft: true
       <title>Podcast reccomendations - 04/2018</title>
       <link>/post/podcasts/</link>
       <pubDate>Wed, 04 Apr 2018 22:03:36 +0100</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/post/podcasts/</guid>
       <description>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;</description>
       <content>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;
@@ -628,7 +630,7 @@ draft: true
       <title>Books</title>
       <link>/books/</link>
       <pubDate>Mon, 01 Jan 0001 00:00:00 +0000</pubDate>
-      
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/books/</guid>
       <description>article.single section, .article-list article { padding-left: 7rem !important; padding-right: 7rem !important; }  Currently reading    Share book reviews and ratings with Dom, and even join a book club on Goodreads.      Read                      Share book reviews and ratings with Dom, and even join a book club on Goodreads.</description>
       <content>&lt;style&gt;
