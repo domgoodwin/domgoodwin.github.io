@@ -163,6 +163,25 @@ For this example:&lt;/p&gt;
     </item>
     
     <item>
+      <title>Blog² - Blog about blogs</title>
+      <link>/post/blog-squared/</link>
+      <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
+      <guid>/post/blog-squared/</guid>
+      <description>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;</description>
+      <content>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://jvns.ca/&#34;&gt;https://jvns.ca/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://jlelse.blog/&#34;&gt;https://jlelse.blog/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://drewdevault.com/&#34;&gt;https://drewdevault.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zwischenzugs.com/&#34;&gt;https://zwischenzugs.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kevq.uk/&#34;&gt;https://kevq.uk/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.gnoack.org/post/&#34;&gt;https://blog.gnoack.org/post/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.jessfraz.com/&#34;&gt;https://blog.jessfraz.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    </item>
+    
+    <item>
       <title>Kubernetes Debugging</title>
       <link>/post/kubernetes-debugging/</link>
       <pubDate>Mon, 20 Apr 2020 14:57:09 +0100</pubDate>
