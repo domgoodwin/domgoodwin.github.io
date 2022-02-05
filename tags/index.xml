@@ -7,6 +7,17 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en-us</language>
     <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
+    <lastBuildDate>Mon, 22 Jul 2019 11:28:19 +0100</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Podcasts</title>
+      <link>/tags/podcasts/</link>
+      <pubDate>Mon, 22 Jul 2019 11:28:19 +0100</pubDate>
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
+      <guid>/tags/podcasts/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
   </channel>
 </rss>

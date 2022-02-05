@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Ways of working on Dom Goodwin</title>
+    <link>/categories/ways-of-working/</link>
+    <description>Recent content in Ways of working on Dom Goodwin</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en-us</language>
+    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
+    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
+    <lastBuildDate>Mon, 03 Jan 2022 12:06:09 +0000</lastBuildDate><atom:link href="/categories/ways-of-working/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Blog² - Blog about blogs</title>
+      <link>/post/case-for-timetracking/</link>
+      <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
+      <guid>/post/case-for-timetracking/</guid>
+      <description>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;</description>
+      <content>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://jvns.ca/&#34;&gt;https://jvns.ca/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://jlelse.blog/&#34;&gt;https://jlelse.blog/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://drewdevault.com/&#34;&gt;https://drewdevault.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://zwischenzugs.com/&#34;&gt;https://zwischenzugs.com/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kevq.uk/&#34;&gt;https://kevq.uk/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.gnoack.org/post/&#34;&gt;https://blog.gnoack.org/post/&lt;/a&gt;&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://blog.jessfraz.com/&#34;&gt;https://blog.jessfraz.com/&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content>
+    </item>
+    
+  </channel>
+</rss>
