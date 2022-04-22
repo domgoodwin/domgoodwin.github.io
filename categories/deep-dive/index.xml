@@ -47,12 +47,10 @@ How does a service know which pods it can talk to?&lt;/p&gt;
 &lt;p&gt;The &lt;code&gt;ClusterIP&lt;/code&gt; service type is ✨&lt;em&gt;special&lt;/em&gt;✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types &lt;code&gt;NodePort&lt;/code&gt; and &lt;code&gt;LoadBalancer&lt;/code&gt; (by extension of LoadBalancer using &lt;code&gt;NodePort&lt;/code&gt;) as part of their implementations.&lt;/p&gt;
 
   &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;&#34; &gt;
     &lt;img src=&#34;/img/k8s-services-2-types.png&#34;   /&gt;
     
       &lt;figcaption class=&#34;center&#34; &gt;Just like a Matryoshka doll&lt;/figcaption&gt;
     
-    &lt;/a&gt;
   &lt;/figure&gt;
 
 
@@ -187,7 +185,7 @@ example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
 &lt;h3 id=&#34;from-outside-the-cluster&#34;&gt;From outside the cluster&lt;/h3&gt;
 
   &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;&#34; &gt;
+    &lt;a href=&#34;/img/k8s-services-2-lb-external.png&#34; &gt;
     &lt;img src=&#34;/img/k8s-services-2-lb-external.png&#34;   /&gt;
     
     &lt;/a&gt;
@@ -204,7 +202,7 @@ example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
 &lt;h3 id=&#34;from-a-pod-within-the-cluster&#34;&gt;From a pod within the cluster&lt;/h3&gt;
 
   &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;&#34; &gt;
+    &lt;a href=&#34;/img/k8s-services-2-lb-internal.png&#34; &gt;
     &lt;img src=&#34;/img/k8s-services-2-lb-internal.png&#34;   /&gt;
     
     &lt;/a&gt;

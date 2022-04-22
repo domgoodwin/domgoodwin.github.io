@@ -208,12 +208,10 @@ How does a service know which pods it can talk to?</p>
 <p>The <code>ClusterIP</code> service type is ✨<em>special</em>✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types <code>NodePort</code> and <code>LoadBalancer</code> (by extension of LoadBalancer using <code>NodePort</code>) as part of their implementations.</p>
 
   <figure class="left" >
-    <a href="" >
     <img src="/img/k8s-services-2-types.png"   />
     
       <figcaption class="center" >Just like a Matryoshka doll</figcaption>
     
-    </a>
   </figure>
 
 
@@ -348,7 +346,7 @@ example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
 <h3 id="from-outside-the-cluster">From outside the cluster<a href="#from-outside-the-cluster" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 
   <figure class="left" >
-    <a href="" >
+    <a href="/img/k8s-services-2-lb-external.png" >
     <img src="/img/k8s-services-2-lb-external.png"   />
     
     </a>
@@ -365,7 +363,7 @@ example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
 <h3 id="from-a-pod-within-the-cluster">From a pod within the cluster<a href="#from-a-pod-within-the-cluster" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 
   <figure class="left" >
-    <a href="" >
+    <a href="/img/k8s-services-2-lb-internal.png" >
     <img src="/img/k8s-services-2-lb-internal.png"   />
     
     </a>
