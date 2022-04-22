@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  
+    <title>Kubernetes Networking #2: Services :: Dom Goodwin</title>
+  
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?
+" />
+<meta name="keywords" content="" />
+<meta name="robots" content="noodp" />
+<link rel="canonical" href="/post/kubernetes-networking-2-services/" />
+
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-65KQ87541E"></script>
+<script>
+var doNotTrack = false;
+if (!doNotTrack) {
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+	gtag('config', 'G-65KQ87541E', { 'anonymize_ip': false });
+}
+</script>
+
+
+
+<link rel="stylesheet" href="/assets/style.css">
+
+  <link rel="stylesheet" href="/assets/pink.css">
+
+
+
+<link rel="stylesheet" href="/style.css">
+
+
+<link rel="apple-touch-icon" href="/img/apple-touch-icon-192x192.png">
+
+  <link rel="shortcut icon" href="/img/favicon/pink.png">
+
+
+
+<meta name="twitter:card" content="summary" />
+
+  
+    <meta name="twitter:site" content="domgoodwin_" />
+  
+    <meta name="twitter:creator" content="" />
+
+
+
+<meta property="og:locale" content="en" />
+<meta property="og:type" content="article" />
+<meta property="og:title" content="Kubernetes Networking #2: Services">
+<meta property="og:description" content="Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?
+" />
+<meta property="og:url" content="/post/kubernetes-networking-2-services/" />
+<meta property="og:site_name" content="Dom Goodwin" />
+
+  
+    <meta property="og:image" content="/img/favicon/pink.png">
+  
+
+<meta property="og:image:width" content="2048">
+<meta property="og:image:height" content="1024">
+
+  <meta property="article:section" content="Deep dive" />
+
+
+  <meta property="article:published_time" content="2022-04-21 10:06:09 &#43;0000 UTC" />
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+<body class="pink">
+
+
+<div class="container center headings--one-size">
+
+  <header class="header">
+  <div class="header__inner">
+    <div class="header__logo">
+      <a href="/">
+  <div class="logo">
+    Dom Goodwin
+  </div>
+</a>
+
+    </div>
+    
+      <div class="menu-trigger">menu</div>
+    
+  </div>
+  
+    <nav class="menu">
+  <ul class="menu__inner menu__inner--desktop">
+    
+      
+        
+          <li><a href="/about">About</a></li>
+        
+      
+        
+          <li><a href="/books">Books</a></li>
+        
+      
+        
+          <li><a href="/">Posts</a></li>
+        
+      
+        
+          <li><a href="/index.xml">RSS</a></li>
+        
+      
+      
+    
+
+    
+  </ul>
+
+  <ul class="menu__inner menu__inner--mobile">
+    
+      
+        <li><a href="/about">About</a></li>
+      
+    
+      
+        <li><a href="/books">Books</a></li>
+      
+    
+      
+        <li><a href="/">Posts</a></li>
+      
+    
+      
+        <li><a href="/index.xml">RSS</a></li>
+      
+    
+    
+  </ul>
+</nav>
+
+  
+</header>
+
+
+  <div class="content">
+    
+<div class="post">
+  <h1 class="post-title">
+    <a href="/post/kubernetes-networking-2-services/">Kubernetes Networking #2: Services</a></h1>
+  <div class="post-meta">
+    
+      <span class="post-date">
+        2022-04-21
+        
+      </span>
+    
+    
+    
+  </div>
+
+  
+  
+
+
+  
+
+  <div class="post-content"><div>
+        <p>Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?</p>
+<p>In Kubernetes pods are ephemeral (or <a href="https://thenewstack.io/how-to-treat-your-kubernetes-clusters-like-cattle-not-pets/">cattle</a>), you should expect them to be killed, scaled and replaced whenever. So how do you talk to a set of pods which might have changed the next second? A service.</p>
+<p>Services sit in front of your application and mean you only have to call the service address and magic Kubernetes components will get that request to the right Pod(s).
+How does a service know which pods it can talk to?</p>
+<h2 id="selectors">Selectors<a href="#selectors" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Services map to pods via label selectors. You have a pod with label <code>app=etizer</code> and then create a service with <code>.spec.selector</code> for the same and that service will forward traffic to any Ready pods matching that label.</p>
+<p>Behind the scenes, a service resource also creates an <code>Endpoints</code> resource which maintains a list of Pod IPs based on your service selector. It’s worth noting here, the readyiness checks you implement for your Pods are what controls whether the IP goes into this <code>Endpoints</code> resource and allow traffic.</p>
+<p>The exception here is selector-less services, these don’t have a label selector so won’t also have an <code>Endpoint</code> resource. To use these you also need to create an endpoint resource of the same name as your service, you can add any IPs and ports you want to this resource. This is a great way to map a service to something not in your cluster so your pods can talk to it as if it was a service.</p>
+<p>But what are the different types of services and how do they work?</p>
+<h2 id="service-types">Service Types<a href="#service-types" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<h3 id="clusterip">ClusterIP<a href="#clusterip" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>When you create a <code>ClusterIP</code> type service you’ll will get:</p>
+<ul>
+<li>A virtual IP for the service
+<ul>
+<li>This is within the <code>--service-cluster-ip-range</code> your <code>api-server</code> has been configured with</li>
+<li><code>kube-proxy</code> is responsible for this virtual IP routing to one of your Pod IPs</li>
+<li>This virtual IP will forward requests to one of your pod IPs based on the <code>Endpoints</code> resource associated with your service.</li>
+</ul>
+</li>
+<li>A local cluster DNS address, eg. <code>&lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local</code>
+<ul>
+<li>This is resolved by your <code>kube-dns</code> (CoreDNS) to your virtual service IP</li>
+<li>This is why your service name must be <a href="https://datatracker.ietf.org/doc/html/rfc1035">RFC 1035 compliant</a></li>
+</ul>
+</li>
+</ul>
+<p>The normal way of utilising this would be giving your application the service DNS address so it can talk to another application running on the cluster. This DNS address resolves to the virtual IP and then the configuration <code>kube-proxy</code> controls handles that IP resolving to actual pod IP addresses. From there your CNI will route your request using the pod IP.</p>
+<p>The <code>ClusterIP</code> service type is ✨<em>special</em>✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types <code>NodePort</code> and <code>LoadBalancer</code> (by extension of LoadBalancer using <code>NodePort</code>) as part of their implementations.</p>
+
+  <figure class="left" >
+    <a href="" >
+    <img src="/img/k8s-services-2-types.png"   />
+    
+      <figcaption class="center" >Just like a Matryoshka doll</figcaption>
+    
+    </a>
+  </figure>
+
+
+<p><code>&lt;service-ip&gt;:&lt;service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="nodeport">NodePort<a href="#nodeport" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>A <code>NodePort</code> type service opens up a port on <strong>every node</strong> in your cluster, this port then proxies requests to your service’s virtual IP address.</p>
+<p>The port range defaults to <code>30000-32767</code>, interestingly enough just below the Linux kernel default <a href="https://www.kernel.org/doc/html/latest//networking/ip-sysctl.html#ip-variables">ephemeral port range</a>. It can also be configured with the flag <code>--service-node-port-range</code> if you need these ports for some use case.</p>
+<p>At a high level a <code>NodePort</code> is a single rule configured by <code>kube-proxy</code> onto every node, to forward requests to an underlying <code>ClusterIP</code> service.</p>
+<p><code>&lt;node-ip&gt;:&lt;node-port&gt; → &lt;service-ip&gt;:&lt;service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="loadbalancer">LoadBalancer<a href="#loadbalancer" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p>A <code>LoadBalancer</code> type service only really works in a cloud environment. When created, asyncronously, the <a href="https://kubernetes.io/docs/concepts/architecture/cloud-controller/">cloud-controller-manager</a> will provision you a load balancer which directs traffic to your pods.</p>
+<p>The implementation of the different cloud load balancers varys wildly. It used to be different clouds were implemented <a href="https://github.com/kubernetes/kubernetes/tree/release-1.11/pkg/cloudprovider/providers/aws">in-tree</a>, committing directly to kubernetes but now it must be done via out-of-tree implementations, eg. <a href="https://github.com/kubernetes/cloud-provider-aws">cloud-provider-aws</a>.</p>
+<p>Cloud implementations aside, once you have a <em>cloud</em> load balancer it works by pointing to a <code>NodePort</code> service running. This means that you have a load balancer with every Kubernetes worker node as a listener, forwarding traffic to any nodes on a particular port. From there it follows the standard <code>NodePort</code> → <code>ClusterIP</code> route.</p>
+<p>If you didn’t want to write a whole <a href="https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/">cloud control manager</a> to expose your application on your own servers, a <code>NodePort</code> service with that port pointed to from your existing load balancer would do the trick.</p>
+<p><code>&lt;load-balancer-ip&gt;:&lt;lb-port&gt; -&gt; &lt;node-ip&gt;:&lt;node-port&gt; → &lt;service-ip&gt;:service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="externalname">ExternalName<a href="#externalname" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+<p><code>ExternalName</code> services are the odd one out. Instead of using good ol’ <code>ClusterIP</code> and getting a virtual IP, they create a <code>CNAME</code> record to map your service DNS to another DNS address.</p>
+<p>As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a <code>ExternalName</code> service:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: prod
+spec:
+  type: ExternalName
+  externalName: prod.database.example.com
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: database
+  namespace: dev
+spec:
+  type: ExternalName
+  externalName: dev.database.example.com
+</code></pre></div><p>Now all the service-owners have to do is point their code to <code>database.svc.cluster.local</code> and they will talk to the right database every time.</p>
+<p><code>database.svc.cluster.local</code> = <code>CNAME test.database.example.com</code></p>
+<p>It’s worth noting since the pod requesting the service will get the <code>CNAME</code> record back, the pod also has to be configured to resolve whatever domain the <code>CNAME</code> returns. If it’s a private record, you might want to <a href="https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/">configure revolvers in CoreDNS</a>.</p>
+<h2 id="how-virtual-ips-work">How Virtual IPs work<a href="#how-virtual-ips-work" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p><em>Most</em> services (sorry, <code>ExternalName</code>) use a virtual IP to forward requests to the proper pods. It’s the responsibility of <code>kube-proxy</code> to provide this virtual IP and make sure the traffic is actually forwarded. <code>kube-proxy</code> runs on every node so the steps below happen per worker node.</p>
+<p>How this works depends on the mode of <code>kube-proxy</code> is given with <code>-proxy-mode</code> flag:</p>
+<aside>
+ℹ️ **For all of these `kube-proxy` will monitor the control plane for new/updated/removed `Service` and `Endpoint` resources and run the following steps**
+</aside>
+<ul>
+<li><strong>userspace</strong> (legacy)
+<ul>
+<li>For each <code>Service</code> it opens a random proxy port on the node</li>
+<li>This proxy port is then told to iptables to capture traffic to this particular virtual IP and port to redirect to the Pod IPs in the <code>Endpoint</code> resource</li>
+<li>The backend pod is chosen based on the <code>SessionAffinity</code> of the service</li>
+<li><strong>The traffic here is actually proxied via <code>kube-proxy</code> itself</strong></li>
+</ul>
+</li>
+<li><strong>iptables</strong>
+<ul>
+<li>For each <code>Service</code> it creates iptables rules which redirect traffic to the virtual IP and service port</li>
+<li>These redirect rules point to sets of pod IPs based on what is in the endpoint resource</li>
+<li>The backend pod is chosen at random by default</li>
+<li><strong>The traffic is all handled within the Linux <a href="https://www.netfilter.org/">netfilter</a> so all within the kernelspace, <code>kube-proxy</code> doesn’t handle the traffic it just sets up rules to process it</strong></li>
+</ul>
+</li>
+<li><strong>IPVS</strong>
+<ul>
+<li>Whilst iptables was designed to be a firewall and <code>kube-proxy</code> just uses it to redirect network traffic, IPVS was made for load balancing</li>
+<li>At a high level this works similar to iptables, cluster IP and port → set of pod IPs</li>
+<li>IPVS is important when working at scale, if you have &gt;1000 services (or 10,000 pods) in your cluster IPVS is the performant choice</li>
+</ul>
+</li>
+<li><strong>kernelspace</strong> (windows)</li>
+</ul>
+<h2 id="bringing-it-all-together">Bringing it all together<a href="#bringing-it-all-together" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
+<p>Let’s create an example <code>LoadBalancer</code> service and see what components come together to get traffic from a client to your pods. We’ll show how traffic from outside, via the load balancer, gets to your pods and how another pod in the cluster can also use this service without going via the load balancer.</p>
+<p>In this example let’s say we’re running on a Kubernetes cluster in AWS with the AWS cloud controller manager properly configured, we have pods running with label <code>app=alpha</code> which listens on port <code>8080</code> for traffic and <code>kube-proxy</code> is in the default <code>iptables</code> mode.</p>
+<ul>
+<li>
+<p>Service YAML</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apiVersion: v1
+kind: Service
+metadata:
+<span style="color:#75715e"># This doesn&#39;t affect routing but it&#39;s best practice to label components together</span>
+  labels:
+    app: alpha
+  name: example
+spec:
+  ports:
+  - name: main
+    port: <span style="color:#ae81ff">8081</span>
+    protocol: TCP
+<span style="color:#75715e"># Target port is the port your pod has open</span>
+    targetPort: <span style="color:#ae81ff">8080</span>
+<span style="color:#75715e"># This is what tells the service which pods to route to</span>
+  selector:
+    app: alpha
+  type: LoadBalancer
+</code></pre></div></li>
+</ul>
+<p>Lets create the service and have a look:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl apply -f service.yaml
+service/example created
+
+$ kubectl get service example
+NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>          AGE
+example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
+</code></pre></div><p>I now have:</p>
+<ul>
+<li>An Endpoints resource corresponding to ready pods matching my label selector
+<ul>
+<li><code>kubectl get endpoints example</code></li>
+</ul>
+</li>
+<li>A cluster IP setup for my service <code>10.43.205.153</code></li>
+<li>A DNS address for the service configured
+<ul>
+<li>(from inside a Pod)</li>
+<li><code>dig example.default.svc.cluster.local</code></li>
+</ul>
+</li>
+<li>A external (to the cluster) IP which maps to my load balancer <code>192.168.0.147</code></li>
+<li>A NodePort setup <code>32255</code> so all my workers now have this port open
+<ul>
+<li><code>netstat -tulnp | grep 32255</code></li>
+</ul>
+</li>
+<li>iptables rules setup
+<ul>
+<li><code>sudo iptables -L | grep example</code></li>
+<li><code>sudo iptables -L | grep 10.43.205.153</code></li>
+</ul>
+</li>
+</ul>
+<p>Lets see how this request goes through to our pod from outside the cluster and a pod within.</p>
+<h3 id="from-outside-the-cluster">From outside the cluster<a href="#from-outside-the-cluster" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+
+  <figure class="left" >
+    <a href="" >
+    <img src="/img/k8s-services-2-lb-external.png"   />
+    
+    </a>
+  </figure>
+
+
+<ol>
+<li>The client makes a request to the load balancer to try and talk to the application, for how this is configured see my post on ingress into a cluster</li>
+<li>The load balancer selects one of the configured listeners, this is usually either random or round robin but depends on your load balancer and configuration</li>
+<li>The node has port 32255 open, requests here are configured in iptables to forward the request to the virtual IP of the service. These rules were configured by <code>kube-proxy</code></li>
+<li>iptables then resolves the virtual/service IP into a Pod IP address, one is chosen by random and the request heads there. Now the traffic is inside the cluster the CNI controls the network movements between nodes (see <a href="https://dgood.win/post/kubernetes-networking-overview/">here</a> for more info on what the CNI sets up)</li>
+<li>Once the request has reached the node with the pod on it, the CNI and iptables will forward it to the Pod as expected</li>
+</ol>
+<h3 id="from-a-pod-within-the-cluster">From a pod within the cluster<a href="#from-a-pod-within-the-cluster" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
+
+  <figure class="left" >
+    <a href="" >
+    <img src="/img/k8s-services-2-lb-internal.png"   />
+    
+    </a>
+  </figure>
+
+
+<ol>
+<li>The requesting pod will have been configured with the service DNS address <code>example.default.svc.cluster.local</code>. As it makes this request from within the cluster CoreDNS running will be the DNS resolver. This request will be resolved to the Service (virtual) IP address: <code>10.43.205.153</code></li>
+<li>Making a request to this address will hit the rules in iptables, configured by <code>kube-proxy</code>, this resolves the service IP into a Pod IP by randomly selecting a pod</li>
+<li>The rest of the request continues as in the external example.</li>
+</ol>
+      </div></div>
+
+  
+  
+<div class="pagination">
+    <div class="pagination__title">
+        <span class="pagination__title-h">Read other posts</span>
+        <hr />
+    </div>
+    <div class="pagination__buttons">
+        
+        
+        <span class="button next">
+            <a href="/post/case-for-timetracking/">
+                <span class="button__text">The case for time-tracking</span>
+                <span class="button__icon">→</span>
+            </a>
+        </span>
+        
+    </div>
+</div>
+
+  
+
+  
+  
+
+  
+</div>
+
+  </div>
+
+  
+    <footer class="footer">
+  <div class="footer__inner">
+    
+      <div class="copyright">
+        <span>© 2022 Powered by <a href="http://gohugo.io">Hugo</a></span>
+    
+        <span>:: Theme made by <a href="https://twitter.com/panr">panr</a></span>
+      </div>
+  </div>
+</footer>
+
+<script src="/assets/main.js"></script>
+<script src="/assets/prism.js"></script>
+
+
+
+
+
+
+
+  
+</div>
+
+</body>
+</html>
