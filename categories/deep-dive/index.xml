@@ -94,9 +94,9 @@ spec:
 &lt;h2 id=&#34;how-virtual-ips-work&#34;&gt;How Virtual IPs work&lt;/h2&gt;
 &lt;p&gt;&lt;em&gt;Most&lt;/em&gt; services (sorry, &lt;code&gt;ExternalName&lt;/code&gt;) use a virtual IP to forward requests to the proper pods. It’s the responsibility of &lt;code&gt;kube-proxy&lt;/code&gt; to provide this virtual IP and make sure the traffic is actually forwarded. &lt;code&gt;kube-proxy&lt;/code&gt; runs on every node so the steps below happen per worker node.&lt;/p&gt;
 &lt;p&gt;How this works depends on the mode of &lt;code&gt;kube-proxy&lt;/code&gt; is given with &lt;code&gt;-proxy-mode&lt;/code&gt; flag:&lt;/p&gt;
-&lt;aside&gt;
-ℹ️ **For all of these `kube-proxy` will monitor the control plane for new/updated/removed `Service` and `Endpoint` resources and run the following steps**
-&lt;/aside&gt;
+&lt;blockquote&gt;
+&lt;p&gt;ℹ️ &lt;strong&gt;For all of these &lt;code&gt;kube-proxy&lt;/code&gt; will monitor the control plane for new/updated/removed &lt;code&gt;Service&lt;/code&gt; and &lt;code&gt;Endpoint&lt;/code&gt; resources and run the following steps&lt;/strong&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
 &lt;ul&gt;
 &lt;li&gt;&lt;strong&gt;userspace&lt;/strong&gt; (legacy)
 &lt;ul&gt;
