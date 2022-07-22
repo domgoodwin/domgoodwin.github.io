@@ -8,13 +8,293 @@
     <language>en-us</language>
     <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
     <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Thu, 21 Apr 2022 10:06:09 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Fri, 22 Jul 2022 18:06:09 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Kubernetes Networking #3: Ingress</title>
+      <link>/post/kubernetes-networking-ingress/</link>
+      <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
+      <guid>/post/kubernetes-networking-ingress/</guid>
+      <description>&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;</description>
+      <content>&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;
+&lt;p&gt;In a &lt;a href=&#34;https://en.wikipedia.org/wiki/Utopia&#34;&gt;world without Kubernetes&lt;/a&gt;, you might have a reverse proxy deployed where you write the configuration file to detail how to expose your applications in the backend. An ingress controller takes that reverse proxy and automatically generates the config based on the &lt;code&gt;Ingress&lt;/code&gt; Kubernetes resources you create. You don’t have to create a new &lt;code&gt;LoadBalancer&lt;/code&gt; service and cloud load balancer for each service you want to expose.&lt;/p&gt;
+&lt;p&gt;In this guide, we’ll use the Kubernetes maintained ingress controller, &lt;a href=&#34;https://github.com/kubernetes/ingress-nginx&#34;&gt;ingress-nginx&lt;/a&gt;, which uses nginx as it’s reverse proxy. It’s important to note, this isn’t the &lt;a href=&#34;https://docs.nginx.com/nginx-ingress-controller/&#34;&gt;nginx-ingress-controller&lt;/a&gt; from NGINX themselves which has hooks into NGINX plus and other paid offerings. The docs for ingress-nginx can be found &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
+&lt;h2 id=&#34;-why-not-just-loadbalancer&#34;&gt;🤷 Why not just LoadBalancer?&lt;/h2&gt;
+&lt;p&gt;Kubernetes provides a way for a cloud provisioned load balancer (an &lt;a href=&#34;https://aws.amazon.com/elasticloadbalancing/&#34;&gt;AWS elastic load balancer&lt;/a&gt; for instance) to be deployed by the control plane, see my &lt;a href=&#34;https://dgood.win/post/kubernetes-networking-2-services/&#34;&gt;services post&lt;/a&gt; for more info. We can use these to expose a single service (and collection of pods) from a load balancer. But what happens when you have 50 services deployed onto your cluster? Would you have 50 load balancers for them all? That’s ~$810 in standing charges every month not including paying for the traffic that goes through them.&lt;/p&gt;
+&lt;p&gt;This is where an ingress controller comes in. An Ingress controller is a centralized place for traffic to enter your cluster via a single load balancer which then is routed to your backend services automatically. This is all based on &lt;code&gt;Ingress&lt;/code&gt; resources deployed on the cluster, through the reverse proxy.
+It also introduces a place to add some control over your traffic routing. kube-proxy will default (when in &lt;code&gt;iptables&lt;/code&gt; mode) to TCP load balancing traffic randomly, the traffic coming in via a load balancer goes to any pods. With the controls you can configure affinities, round-robin routing, rate limits, CORS etc. to really shape the traffic going to your pods centrally.&lt;/p&gt;
+&lt;p&gt;These diagrams compare the path a request would take with/without an ingress controller exposing your pod:&lt;/p&gt;
+
+  &lt;figure class=&#34;left&#34; &gt;
+    &lt;img src=&#34;/img/ingress-lb-to-pod.png&#34;   /&gt;
+    
+      &lt;figcaption class=&#34;center&#34; &gt;Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods&lt;/figcaption&gt;
+    
+  &lt;/figure&gt;
+
+
+
+  &lt;figure class=&#34;left&#34; &gt;
+    &lt;img src=&#34;/img/ingress-controller-to-pod.png&#34;   /&gt;
+    
+      &lt;figcaption class=&#34;center&#34; &gt;With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP&lt;/figcaption&gt;
+    
+  &lt;/figure&gt;
+
+
+&lt;p&gt;There are some tradeoffs to using an ingress controller:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;This introduces an extra hop for your network requests to reach your pod. If you have high throughput - and low latency is important - this could be a consideration&lt;/li&gt;
+&lt;li&gt;In the same vein, the ingress controller pods also use resources. If you have the ingress controller doing a lot of TLS termination or handling high load the resource usage will increase significantly&lt;/li&gt;
+&lt;li&gt;You can only really use this for (mostly) Layer 7 traffic, TCP or UDP cannot directly be exposed this way&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-so-what-does-an-ingress-controller-actually-do&#34;&gt;🛠️ So what does an ingress controller actually do?&lt;/h2&gt;
+&lt;p&gt;At a high level you have the following components:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Kubernetes resources:&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Service: type &lt;code&gt;LoadBalancer&lt;/code&gt;, meaning your ingress-controller pods are fronted by a cloud load balancer and exposed outside the cluster&lt;/li&gt;
+&lt;li&gt;Deployment: Ingress Controller itself (see components below for a breakdown)&lt;/li&gt;
+&lt;li&gt;(sometimes)Deployment: default backend, this is where the ingress controller routes traffic to when there isn’t a matching host/path rule for the traffic coming in&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Components of the ingress controller:&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Reverse proxy: This is what actually routes the traffic coming in to downstream services/pods. If you installed nginx on a service and ran it it’s this basically&lt;/li&gt;
+&lt;li&gt;Config generator: This continuously gets the state of Ingress resources in the Kubernetes cluster (think of it as spamming &lt;code&gt;kubectl get ingress -A&lt;/code&gt; every X-seconds) and uses that to generate config that the reverse proxy (nginx in this case) understands&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The &lt;em&gt;reverse proxy&lt;/em&gt; continually has it’s config updated by the &lt;em&gt;config generator&lt;/em&gt; and then traffic coming into the cluster via the &lt;em&gt;Loadbalancer service&lt;/em&gt; hits the reverse proxy and is routed to the proper backend service/pods.&lt;/p&gt;
+&lt;h2 id=&#34;-what-about-ssl&#34;&gt;🔒 What about SSL?&lt;/h2&gt;
+&lt;p&gt;For HTTPS traffic, we can configure the ingress-controller to terminate the SSL and provide the certs as needed.&lt;/p&gt;
+&lt;p&gt;When creating an ingress resource you can specify a Kubernetes Secret of type &lt;code&gt;tls&lt;/code&gt; and the ingress-controller will use that secret to terminate the SSL of the request at the reverse proxy.&lt;/p&gt;
+&lt;p&gt;This could also be coupled with a tool like &lt;a href=&#34;https://cert-manager.io/docs/&#34;&gt;cert-manager&lt;/a&gt; to dynamically issue and renew certificates for you.&lt;/p&gt;
+&lt;h2 id=&#34;-load-balancerreverse-proxy-controls&#34;&gt;🎛️ Load balancer/Reverse proxy controls&lt;/h2&gt;
+&lt;p&gt;As mentioned before, by having your pods traffic route via a reverse proxy in the cluster you gain more control over the routing and connection. Some useful examples for ingress-nginx are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;Authentication&lt;/strong&gt;: Setup &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc2617&#34;&gt;basic or digest access authentication&lt;/a&gt; on routes
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/auth-type: basic&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Session affinity:&lt;/strong&gt; Allows for things like sticky sessions, keeping a user going to the same backend pod or use cookie affinity to apply a &lt;code&gt;SameSite&lt;/code&gt; sticky cookie
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/affinity: sticky&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;SSL passthrough:&lt;/strong&gt; Instead of terminating TLS at the load balancer you can let the backend handle it directly
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/ssl-passthrough: &amp;quot;true&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Redirections:&lt;/strong&gt; Both &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#permanent-redirect&#34;&gt;permanent&lt;/a&gt; and &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#temporal-redirect&#34;&gt;temporary&lt;/a&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/permanent-redirect: https://www.google.com&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;Security controls&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#ssl-ciphers&#34;&gt;SSL ciphers&lt;/a&gt; can be configured controlling which SSL ciphers you support
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/ssl-ciphers: &amp;quot;ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#enable-cors&#34;&gt;CORS rules&lt;/a&gt; to configure the cross-original resource sharing rules
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/enable-cors: &amp;quot;true&amp;quot;&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;A lot of these controls can be configured either as &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/&#34;&gt;annotations&lt;/a&gt; directly on Ingress resources affecting only those specific routes, or can be provided in the &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/&#34;&gt;Configmap&lt;/a&gt; to be applied at a global level.&lt;/p&gt;
+&lt;h2 id=&#34;-can-i-have-multiple-ingress-controllers&#34;&gt;🤹‍♂️ Can I have multiple ingress-controllers?&lt;/h2&gt;
+&lt;p&gt;&lt;strong&gt;Yes&lt;/strong&gt;. Let’s say you want to be able to accept traffic from the public internet as well as internally from inside your private network.&lt;/p&gt;
+&lt;p&gt;We would:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Deploy two sets of ingress-controllers, &lt;em&gt;ingress-public&lt;/em&gt; and &lt;em&gt;ingress-private&lt;/em&gt;&lt;/li&gt;
+&lt;li&gt;Configure them to be public and private. This is done usually by the annotations given to the different &lt;code&gt;Service&lt;/code&gt; resources (&lt;code&gt;service.beta.kubernetes.io/aws-load-balancer-scheme: &amp;quot;internet-facing&amp;quot;&lt;/code&gt; for instance)&lt;/li&gt;
+&lt;li&gt;Setup the Ingress classes
+&lt;ul&gt;
+&lt;li&gt;This is a relatively new resource, it used to be managed by an annotation &lt;code&gt;kubernetes.io/ingress.class&lt;/code&gt; which is being deprecated&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;When creating &lt;code&gt;Ingress&lt;/code&gt; resources you can target the &lt;code&gt;IngressClass&lt;/code&gt; to specify which controller should setup routing for your traffic&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-what-about-hostnames&#34;&gt;📮 What about hostnames?&lt;/h2&gt;
+&lt;p&gt;Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.&lt;/p&gt;
+&lt;p&gt;To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to &lt;code&gt;friendly-address.domain.com&lt;/code&gt; would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.&lt;/p&gt;
+&lt;p&gt;Then any routes off this hostname would be directed to your specified pods, ie.:&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
+`friendly-address.domain.com/app-b` → `svc/app-b` in the cluster and so on
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But what if you wanted to have multiple different hostnames, maybe 1 per application.&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;`app-a.friendly-address.domain.com/` → `svc/app-a`
+`app-b.friendly-address.domain.com/` → `svc/app-b`
+&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.&lt;/p&gt;
+&lt;p&gt;That’s where a tool like &lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns&#34;&gt;external-dns&lt;/a&gt; comes in.&lt;/p&gt;
+&lt;h3 id=&#34;external-dns&#34;&gt;external-dns&lt;/h3&gt;
+&lt;p&gt;external-dns allows you to automatically configure your DNS services based on your Kubernetes Ingress resources (and services!).&lt;/p&gt;
+&lt;p&gt;As an example, if you have deployed external-dns and wanted to setup a new &lt;code&gt;app-c.friendly-address.domain.com&lt;/code&gt; to point to your service all you would need to do is create an &lt;code&gt;Ingress&lt;/code&gt; resource with the &lt;code&gt;Host&lt;/code&gt; field set to &lt;code&gt;app-c.friendly-address.domain.com&lt;/code&gt; and external-dns would provision you an A record pointing to your load balancer.&lt;/p&gt;
+&lt;h2 id=&#34;-bringing-it-all-together&#34;&gt;🍵 Bringing it all together&lt;/h2&gt;
+&lt;p&gt;To give an example of all of this in use, lets build resources for the following requirements:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;We have 3 applications: &lt;code&gt;alpha&lt;/code&gt; &lt;code&gt;beta&lt;/code&gt; and &lt;code&gt;gamma&lt;/code&gt; running on our cluster&lt;/li&gt;
+&lt;li&gt;We want &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt; exposed via the same Hostname but with separate routes:
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;public.example.com/alpha&lt;/code&gt; and &lt;code&gt;public.example.com/beta&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;We want &lt;code&gt;gamma&lt;/code&gt; to have it’s own hostname as it’s a separate, unrelated application
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;gamma.public.example.com&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;We have the TLS key and cert for &lt;code&gt;public.example.com&lt;/code&gt; and want the ingress-controller to terminate TLS for this host&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;gamma&lt;/code&gt; handles it’s own TLS so we shouldn’t terminate it at the reverse proxy,&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We already have:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;A Kubernetes cluster running in AWS&lt;/li&gt;
+&lt;li&gt;Deployed external-dns onto our cluster configured for AWS Route 53, [&lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md&#34;&gt;link&lt;/a&gt;]&lt;/li&gt;
+&lt;li&gt;Deployed ingress-nginx onto our cluster configured for AWS, [&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/deploy/&#34;&gt;link&lt;/a&gt;]. Ingress class is set to &lt;code&gt;default&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Feel free to try these steps above for yourself the implementation and breakdown of what we’re doing come below though so spoiler alert.&lt;/p&gt;
+&lt;hr&gt;
+&lt;ol&gt;
+&lt;li&gt;
+&lt;p&gt;Create the TLS secret for our alpha/beta endpoint&lt;/p&gt;
+&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;kubectl create secret tls public \
+  --cert=tls.cert \
+  --key=tls.key
+&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;YAML for the Ingress of &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha-beta&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;ingressClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;tls&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  - &lt;span style=&#34;color:#f92672&#34;&gt;hosts&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#ae81ff&#34;&gt;public.example.com&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;secretName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;public&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  - &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;public.example.com&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;http&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/alpha&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/beta&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;beta&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;YAML for the Ingress of &lt;code&gt;gamma&lt;/code&gt;&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;nginx.ingress.kubernetes.io/ssl-passthrough&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;ingressClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  &lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  - &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma.public.example.com&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    &lt;span style=&#34;color:#f92672&#34;&gt;http&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      &lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;/ol&gt;
+&lt;blockquote&gt;
+&lt;p&gt;☝ SSL Passthrough also needs to be enabled on the ingress-nginx deployment with the flag &lt;code&gt;--enable-ssl-passthrough&lt;/code&gt;&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;&lt;strong&gt;What happens with these resources?&lt;/strong&gt;&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;strong&gt;ingress-nginx:&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Constantly checks for new/updated &lt;code&gt;Ingress&lt;/code&gt; resources&lt;/li&gt;
+&lt;li&gt;Detects &lt;code&gt;alpha-beta&lt;/code&gt;:
+&lt;ul&gt;
+&lt;li&gt;Adds nginx config to route to the services
+&lt;ul&gt;
+&lt;li&gt;Can be checked with: &lt;code&gt;kubectl exec -it &amp;lt;ingress-controller-pod-name&amp;gt; -- cat /etc/nginx/nginx.conf&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;This config includes the secret mentioned to be able to terminate TLS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Updates the &lt;code&gt;Ingress&lt;/code&gt; resource &lt;code&gt;Address&lt;/code&gt; field with the DNS of the Cloud load balancer the controller knows is pointing at it&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;curl https://public.example.com/alpha -v&lt;/code&gt; shows it routing correctly and the cert as expected&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;curl https://public.example.com/wrong -v&lt;/code&gt; shows the default backend&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Detects &lt;code&gt;gamma&lt;/code&gt;:
+&lt;ul&gt;
+&lt;li&gt;Adds nginx config to route to the services
+&lt;ul&gt;
+&lt;li&gt;Again, can be checked with: &lt;code&gt;kubectl exec -it &amp;lt;ingress-controller-pod-name&amp;gt; -- cat /etc/nginx/nginx.conf&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;This config will show the ssl_passthrough is set to not handle any TLS&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Updates the &lt;code&gt;Ingress&lt;/code&gt; resource &lt;code&gt;Address&lt;/code&gt; field with the DNS of the Cloud load balancer that the controller knows is pointing at it.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;curl https://gamma.public.example.com -v&lt;/code&gt; shows traffic routing correctly and with our in-application TLS handling&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;strong&gt;external-dns:&lt;/strong&gt;
+&lt;ul&gt;
+&lt;li&gt;Constantly checking for new/updated &lt;code&gt;Ingress&lt;/code&gt; resources&lt;/li&gt;
+&lt;li&gt;Sees the two new resources but with empty &lt;code&gt;Address&lt;/code&gt; fields - needs these to be set before it can point the specified host to the address the service sits behind.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Address&lt;/code&gt; field is now updated for &lt;code&gt;alpha-beta&lt;/code&gt;:
+&lt;ul&gt;
+&lt;li&gt;Checks if the hostname has already been created
+&lt;ul&gt;
+&lt;li&gt;external-dns defaults to using &lt;code&gt;txt&lt;/code&gt; records in the chosen DNS service to persist information about the domains it manages&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;Creates an &lt;code&gt;A&lt;/code&gt; record pointing &lt;code&gt;public.example.com&lt;/code&gt; to the value of &lt;code&gt;Address&lt;/code&gt; in the ingress&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;Address&lt;/code&gt; field is now updated for &lt;code&gt;gamma&lt;/code&gt;
+&lt;ul&gt;
+&lt;li&gt;This does the same as &lt;code&gt;alpha-beta&lt;/code&gt; but for &lt;code&gt;gamma.public.example.com&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2 id=&#34;-other-controllers-are-available&#34;&gt;🦦 Other controllers are available&lt;/h2&gt;
+&lt;p&gt;Other ingress controllers are available too, notable/interesting ones include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme&#34;&gt;AWS Load balancer controller&lt;/a&gt; can manage ALBs out of cluster for ingress resources and NLBs for service resources&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://doc.traefik.io/traefik/providers/kubernetes-ingress/&#34;&gt;Traefix ingress controller&lt;/a&gt; an ingress controller using the Kubernetes native edge router&lt;/li&gt;
+&lt;li&gt;&lt;a href=&#34;https://www.getambassador.io/docs/edge-stack/latest/topics/running/ingress-controller/&#34;&gt;Ambassador&lt;/a&gt; uses Envoy to act as an ingress controller and API gateway&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The benefit of having all of your configuration directly in Kubernetes as an &lt;code&gt;Ingress&lt;/code&gt; resource comes from every compliant ingress-controllers reading and interacting with Ingress in the same way. The only change between them would be the implementation specific things you control via annotations, the general routes and hosts work regardless of your choice.&lt;/p&gt;</content>
+    </item>
+    
     <item>
       <title>Kubernetes Networking #2: Services</title>
-      <link>/post/kubernetes-networking-2-services/</link>
+      <link>/post/kubernetes-networking-services/</link>
       <pubDate>Thu, 21 Apr 2022 10:06:09 +0000</pubDate>
       <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-2-services/</guid>
+      <guid>/post/kubernetes-networking-services/</guid>
       <description>&lt;p&gt;Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?&lt;/p&gt;</description>
       <content>&lt;p&gt;Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?&lt;/p&gt;
 &lt;p&gt;In Kubernetes pods are ephemeral (or &lt;a href=&#34;https://thenewstack.io/how-to-treat-your-kubernetes-clusters-like-cattle-not-pets/&#34;&gt;cattle&lt;/a&gt;), you should expect them to be killed, scaled and replaced whenever. So how do you talk to a set of pods which might have changed the next second? A service.&lt;/p&gt;
@@ -69,24 +349,24 @@ How does a service know which pods it can talk to?&lt;/p&gt;
 &lt;h3 id=&#34;externalname&#34;&gt;ExternalName&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;ExternalName&lt;/code&gt; services are the odd one out. Instead of using good ol’ &lt;code&gt;ClusterIP&lt;/code&gt; and getting a virtual IP, they create a &lt;code&gt;CNAME&lt;/code&gt; record to map your service DNS to another DNS address.&lt;/p&gt;
 &lt;p&gt;As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a &lt;code&gt;ExternalName&lt;/code&gt; service:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: database
-  namespace: prod
-spec:
-  type: ExternalName
-  externalName: prod.database.example.com
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: database
-  namespace: dev
-spec:
-  type: ExternalName
-  externalName: dev.database.example.com
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now all the service-owners have to do is point their code to &lt;code&gt;database.svc.cluster.local&lt;/code&gt; and they will talk to the right database every time.&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;apiVersion: v1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kind: Service
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;metadata:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  name: database
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  namespace: prod
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  type: ExternalName
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  externalName: prod.database.example.com
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;---
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;apiVersion: v1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kind: Service
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;metadata:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  name: database
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  namespace: dev
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  type: ExternalName
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  externalName: dev.database.example.com
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now all the service-owners have to do is point their code to &lt;code&gt;database.svc.cluster.local&lt;/code&gt; and they will talk to the right database every time.&lt;/p&gt;
 &lt;p&gt;&lt;code&gt;database.svc.cluster.local&lt;/code&gt; = &lt;code&gt;CNAME test.database.example.com&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;It’s worth noting since the pod requesting the service will get the &lt;code&gt;CNAME&lt;/code&gt; record back, the pod also has to be configured to resolve whatever domain the &lt;code&gt;CNAME&lt;/code&gt; returns. If it’s a private record, you might want to &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/&#34;&gt;configure revolvers in CoreDNS&lt;/a&gt;.&lt;/p&gt;
 &lt;h2 id=&#34;how-virtual-ips-work&#34;&gt;How Virtual IPs work&lt;/h2&gt;
@@ -127,34 +407,34 @@ spec:
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;Service YAML&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
-kind: Service
-metadata:
-&lt;span style=&#34;color:#75715e&#34;&gt;# This doesn&amp;#39;t affect routing but it&amp;#39;s best practice to label components together&lt;/span&gt;
-  labels:
-    app: alpha
-  name: example
-spec:
-  ports:
-  - name: main
-    port: &lt;span style=&#34;color:#ae81ff&#34;&gt;8081&lt;/span&gt;
-    protocol: TCP
-&lt;span style=&#34;color:#75715e&#34;&gt;# Target port is the port your pod has open&lt;/span&gt;
-    targetPort: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;span style=&#34;color:#75715e&#34;&gt;# This is what tells the service which pods to route to&lt;/span&gt;
-  selector:
-    app: alpha
-  type: LoadBalancer
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;apiVersion: v1
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;kind: Service
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;metadata:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# This doesn&amp;#39;t affect routing but it&amp;#39;s best practice to label components together&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  labels:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    app: alpha
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  name: example
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;spec:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  ports:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  - name: main
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    port: &lt;span style=&#34;color:#ae81ff&#34;&gt;8081&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    protocol: TCP
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Target port is the port your pod has open&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    targetPort: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# This is what tells the service which pods to route to&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  selector:
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    app: alpha
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  type: LoadBalancer
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Lets create the service and have a look:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl apply -f service.yaml
-service/example created
-
-$ kubectl get service example
-NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;S&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;          AGE
-example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I now have:&lt;/p&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ kubectl apply -f service.yaml
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;service/example created
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;$ kubectl get service example
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;S&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;          AGE
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I now have:&lt;/p&gt;
 &lt;ul&gt;
 &lt;li&gt;An Endpoints resource corresponding to ready pods matching my label selector
 &lt;ul&gt;
@@ -493,111 +773,110 @@ For this example:&lt;/p&gt;
       <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
       <content>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;
 &lt;h2 id=&#34;commonly-used&#34;&gt;Commonly used&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $var &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; *mystring*  &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The double closed brackets are essential for wildcard match&lt;/span&gt;
-    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;it does&amp;#34;&lt;/span&gt;;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Split on &amp;#34;:&amp;#34; and get 1st&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;docker-image:0.1&amp;#34;&lt;/span&gt; | cut -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; -f1 &lt;span style=&#34;color:#75715e&#34;&gt;# returns docker-image&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Find and replace all via pipe&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello I&amp;#39;m Dom&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/&amp;#34; could be any char&lt;/span&gt;
-
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Redirect stdout and stderr to the void&lt;/span&gt;
-./run_script.sh &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
-head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Read bottom lines of file&lt;/span&gt;
-tail -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Watch all updates to file&lt;/span&gt;
-tail -f myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Read file in window (not cat)&lt;/span&gt;
-less myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Make all directories if not exist&lt;/span&gt;
-mkdir -p exist/not/dir
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Visualise dir structure&lt;/span&gt;
-tree -L &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Remove env variable&lt;/span&gt;
-unset myvar
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Alias command to short one&lt;/span&gt;
-alias lc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ls -laht&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# unalias to remove&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Piping output&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;overwrite&amp;#34;&lt;/span&gt; &amp;gt; file &lt;span style=&#34;color:#75715e&#34;&gt;# Same as 1&amp;gt;&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;append&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; file
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
-df -h
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# See file usage for dirs&lt;/span&gt;
-du &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;--max-depth&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Show running processes, a: show other user, u: show username, x: show non terminal&lt;/span&gt;
-ps -aux
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Show usage&lt;/span&gt;
-top
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tricks&#34;&gt;Tricks&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
-diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last 3 command&lt;/span&gt;
-!!
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last arg of the last command&lt;/span&gt;
-!$
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Take all args from previous and use&lt;/span&gt;
-!:1-$
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;io&#34;&gt;IO&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
-read -s -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Password: &amp;#34;&lt;/span&gt; password
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Default value&lt;/span&gt;
-read -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Address [http://127.0.0.1]: &amp;#34;&lt;/span&gt; ADDR
-default&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://127.0.0.1&amp;#34;&lt;/span&gt;
-ADDR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;ADDR&lt;span style=&#34;color:#66d9ef&#34;&gt;:-&lt;/span&gt;$default&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;jq&#34;&gt;jq&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
-jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.parent.children | .[] | .name&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# raw:no quotes, e:null exit0, compact&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Get object attr and value and format &amp;#34;Key=$attr,Value=$val&amp;#34;&lt;/span&gt;
-jq -r &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.data | keys[] as $k | &amp;#34;Key=\($k),Value=\(.[$k])&amp;#34;&amp;#39;&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Use output in for loop&lt;/span&gt;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; object in &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;JSON&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.entries[] | .whole | @base64&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
-  echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This is the value: &lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;val&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt; | base64 -d | jq .attribute&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Args&lt;/span&gt;
-curl localhost:8500/v1/catalog/nodes | &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    jq &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        --arg ip &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;./get_host.sh&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.[] | select(.Address==$ip)&amp;#39;&lt;/span&gt;
-        
-&lt;span style=&#34;color:#75715e&#34;&gt;# Output mulitple entries in list&lt;/span&gt;
-jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[.importItems[].itemId]&amp;#39;&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Create object&lt;/span&gt;
-jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{} +{ Items:[.importItems[].itemId]}&amp;#39;&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;behaviour&#34;&gt;Behaviour&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
-set -e
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Output command as they run (debug)&lt;/span&gt;
-set -x
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $var &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; *mystring*  &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The double closed brackets are essential for wildcard match&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;it does&amp;#34;&lt;/span&gt;;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Split on &amp;#34;:&amp;#34; and get 1st&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;docker-image:0.1&amp;#34;&lt;/span&gt; | cut -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; -f1 &lt;span style=&#34;color:#75715e&#34;&gt;# returns docker-image&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Find and replace all via pipe&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello I&amp;#39;m Dom&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/&amp;#34; could be any char&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Redirect stdout and stderr to the void&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;./run_script.sh &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read bottom lines of file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tail -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Watch all updates to file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tail -f myfile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read file in window (not cat)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;less myfile
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Make all directories if not exist&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;mkdir -p exist/not/dir
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Visualise dir structure&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;tree -L &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Remove env variable&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;unset myvar
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Alias command to short one&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;alias lc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ls -laht&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# unalias to remove&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Piping output&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;overwrite&amp;#34;&lt;/span&gt; &amp;gt; file &lt;span style=&#34;color:#75715e&#34;&gt;# Same as 1&amp;gt;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;append&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; file
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;df -h
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See file usage for dirs&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;du &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;--max-depth&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Show running processes, a: show other user, u: show username, x: show non terminal&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ps -aux
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Show usage&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;top
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tricks&#34;&gt;Tricks&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last 3 command&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;!!
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last arg of the last command&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;!$
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Take all args from previous and use&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;!:1-$
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;io&#34;&gt;IO&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;read -s -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Password: &amp;#34;&lt;/span&gt; password
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Default value&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;read -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Address [http://127.0.0.1]: &amp;#34;&lt;/span&gt; ADDR
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;default&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://127.0.0.1&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;ADDR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;ADDR&lt;span style=&#34;color:#66d9ef&#34;&gt;:-&lt;/span&gt;$default&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;jq&#34;&gt;jq&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.parent.children | .[] | .name&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# raw:no quotes, e:null exit0, compact&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get object attr and value and format &amp;#34;Key=$attr,Value=$val&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;jq -r &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.data | keys[] as $k | &amp;#34;Key=\($k),Value=\(.[$k])&amp;#34;&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use output in for loop&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; object in &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;JSON&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.entries[] | .whole | @base64&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;  echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This is the value: &lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;val&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt; | base64 -d | jq .attribute&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Args&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;curl localhost:8500/v1/catalog/nodes | &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    jq &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        --arg ip &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;./get_host.sh&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
+&lt;/span&gt;&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.[] | select(.Address==$ip)&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;        
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Output mulitple entries in list&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[.importItems[].itemId]&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Create object&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{} +{ Items:[.importItems[].itemId]}&amp;#39;&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;behaviour&#34;&gt;Behaviour&lt;/h2&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set -e
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Output command as they run (debug)&lt;/span&gt;
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;set -x
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
     </item>
     
     <item>
@@ -725,10 +1004,10 @@ set -x
       <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;</description>
       <content>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;m setting this up with the follow configuratons&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Ubuntu 16.04 LTS
-Hugo 0.32
-Go 1.9.4
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;installing-hugo&#34;&gt;Installing Hugo&lt;/h1&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Ubuntu 16.04 LTS
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Hugo 0.32
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;Go 1.9.4
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;installing-hugo&#34;&gt;Installing Hugo&lt;/h1&gt;
 &lt;p&gt;Ubuntu/Debian:&lt;br&gt;
 &lt;code&gt;sudo apt-get install hugo&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;Check it&amp;rsquo;s installed correctly:&lt;br&gt;
@@ -761,10 +1040,10 @@ config.toml        General site properties like: theme, title
 &lt;p&gt;To create a new post for your site:&lt;br&gt;
 &lt;code&gt;hugo new post/hello-world.md&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;By default (because of the archetypes/default.md) your post file will look like this:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;title: &amp;#34;Hello World&amp;#34;  
-date: 2018-04-06T11:03:53+01:00  
-draft: true  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To see your page, you need to run the server with drafts enabled:&lt;br&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;title: &amp;#34;Hello World&amp;#34;  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;date: 2018-04-06T11:03:53+01:00  
+&lt;/span&gt;&lt;/span&gt;&lt;span style=&#34;display:flex;&#34;&gt;&lt;span&gt;draft: true  
+&lt;/span&gt;&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To see your page, you need to run the server with drafts enabled:&lt;br&gt;
 &lt;code&gt;hugo server -D&lt;/code&gt;&lt;/p&gt;
 &lt;h2 id=&#34;overriding-themes&#34;&gt;Overriding themes&lt;/h2&gt;
 &lt;p&gt;You might want to change how a theme renders something. To do this, it&amp;rsquo;s easy. Just copy the files you want to change from:&lt;br&gt;

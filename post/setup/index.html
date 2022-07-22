@@ -177,10 +177,10 @@ if (!doNotTrack) {
   <div class="post-content"><div>
         <p><a href="https://gohugo.io/">Hugo</a> is a Go based, static site generator. It has some <a href="https://www.youtube.com/watch?v=CdiDYZ51a2o">impressive</a> benchmarking figures, a <a href="https://themes.gohugo.io/">huge catalog</a> of impressive themes and means I don&rsquo;t have to write HTML.</p>
 <p>I&rsquo;m setting this up with the follow configuratons</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">Ubuntu 16.04 LTS
-Hugo 0.32
-Go 1.9.4
-</code></pre></div><h1 id="installing-hugo">Installing Hugo<a href="#installing-hugo" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Ubuntu 16.04 LTS
+</span></span><span style="display:flex;"><span>Hugo 0.32
+</span></span><span style="display:flex;"><span>Go 1.9.4
+</span></span></code></pre></div><h1 id="installing-hugo">Installing Hugo<a href="#installing-hugo" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h1>
 <p>Ubuntu/Debian:<br>
 <code>sudo apt-get install hugo</code></p>
 <p>Check it&rsquo;s installed correctly:<br>
@@ -213,10 +213,10 @@ config.toml        General site properties like: theme, title
 <p>To create a new post for your site:<br>
 <code>hugo new post/hello-world.md</code></p>
 <p>By default (because of the archetypes/default.md) your post file will look like this:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-text" data-lang="text">title: &#34;Hello World&#34;  
-date: 2018-04-06T11:03:53+01:00  
-draft: true  
-</code></pre></div><p>To see your page, you need to run the server with drafts enabled:<br>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>title: &#34;Hello World&#34;  
+</span></span><span style="display:flex;"><span>date: 2018-04-06T11:03:53+01:00  
+</span></span><span style="display:flex;"><span>draft: true  
+</span></span></code></pre></div><p>To see your page, you need to run the server with drafts enabled:<br>
 <code>hugo server -D</code></p>
 <h2 id="overriding-themes">Overriding themes<a href="#overriding-themes" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h2>
 <p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:<br>
