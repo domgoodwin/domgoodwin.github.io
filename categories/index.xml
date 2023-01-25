@@ -8,7 +8,27 @@
     <language>en-us</language>
     <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
     <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Fri, 22 Jul 2022 18:06:09 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Productivity</title>
+      <link>/categories/productivity/</link>
+      <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
+      <guid>/categories/productivity/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
+    <item>
+      <title>Ways of working</title>
+      <link>/categories/ways-of-working/</link>
+      <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
+      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
+      <guid>/categories/ways-of-working/</guid>
+      <description></description>
+      <content></content>
+    </item>
+    
     <item>
       <title>Deep dive</title>
       <link>/categories/deep-dive/</link>
@@ -35,26 +55,6 @@
       <pubDate>Mon, 10 Jan 2022 12:06:09 +0000</pubDate>
       <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/categories/helpful/</guid>
-      <description></description>
-      <content></content>
-    </item>
-    
-    <item>
-      <title>Productivity</title>
-      <link>/categories/productivity/</link>
-      <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/productivity/</guid>
-      <description></description>
-      <content></content>
-    </item>
-    
-    <item>
-      <title>Ways of working</title>
-      <link>/categories/ways-of-working/</link>
-      <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/ways-of-working/</guid>
       <description></description>
       <content></content>
     </item>
