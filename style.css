@@ -17,7 +17,7 @@
 }
 
 .fa-github:hover {
-    color: hsla(0,0%,100%,.7);
+    color: hsla(0, 0%, 100%, .7);
 }
 
 .fa-linkedin-in:hover {
@@ -25,5 +25,19 @@
 }
 
 .fa-twitter:hover {
-    color: #00aced;;
+    color: #00aced;
+    ;
+}
+
+.fa-mastodon:hover {
+    color: #6364ff;
+    ;
+}
+
+.fa-rss:hover {
+    color: #be3115;
+}
+
+.fa-message:hover {
+    color: #15be26;
 }
