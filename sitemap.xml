@@ -1,82 +1,134 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
   <url>
     <loc>/categories/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/dont-say-hello/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/categories/productivity/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/categories/ways-of-working/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/categories/monzo/</loc>
     <lastmod>2023-01-15T10:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/monzo-gcp-egress/</loc>
     <lastmod>2023-01-15T10:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/categories/deep-dive/</loc>
     <lastmod>2022-07-22T18:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/kubernetes-networking-ingress/</loc>
     <lastmod>2022-07-22T18:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/kubernetes-networking-services/</loc>
     <lastmod>2022-04-21T10:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/categories/reccomendations/</loc>
     <lastmod>2022-02-05T15:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/case-for-timetracking/</loc>
     <lastmod>2022-02-05T15:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/categories/helpful/</loc>
     <lastmod>2022-01-10T12:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/kubernetes-networking-overview/</loc>
     <lastmod>2022-01-10T12:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/blog-squared/</loc>
     <lastmod>2022-01-03T12:06:09+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/kubernetes-debugging/</loc>
     <lastmod>2020-04-20T14:57:09+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/shellscript-day2/</loc>
     <lastmod>2020-02-20T15:25:00+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/tags/podcasts/</loc>
     <lastmod>2019-07-22T11:28:19+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/podcasts-2019-q2/</loc>
     <lastmod>2019-07-22T11:28:19+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/tags/</loc>
     <lastmod>2019-07-22T11:28:19+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/podcasts-2019-q1/</loc>
     <lastmod>2019-02-12T14:31:03+00:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/about/</loc>
     <lastmod>2018-05-27T17:12:07+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/setup/</loc>
     <lastmod>2018-04-06T11:03:53+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/post/podcasts/</loc>
     <lastmod>2018-04-04T22:03:36+01:00</lastmod>
-  </url><url>
+  </url>
+  
+  <url>
     <loc>/books/</loc>
   </url>
+  
 </urlset>

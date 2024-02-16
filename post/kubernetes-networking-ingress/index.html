@@ -14,17 +14,6 @@
 <link rel="canonical" href="/post/kubernetes-networking-ingress/" />
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-65KQ87541E"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-65KQ87541E', { 'anonymize_ip': false });
-}
-</script>
-
 
 
 
@@ -48,11 +37,6 @@ if (!doNotTrack) {
 
 
 <meta name="twitter:card" content="summary" />
-
-  
-    <meta name="twitter:site" content="domgoodwin_" />
-  
-    <meta name="twitter:creator" content="" />
 
 
 
@@ -297,10 +281,10 @@ It also introduces a place to add some control over your traffic routing. kube-p
 <p>Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.</p>
 <p>To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to <code>friendly-address.domain.com</code> would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.</p>
 <p>Then any routes off this hostname would be directed to your specified pods, ie.:</p>
-<pre tabindex="0"><code>`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
+<pre><code>`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
 `friendly-address.domain.com/app-b` → `svc/app-b` in the cluster and so on
 </code></pre><p>But what if you wanted to have multiple different hostnames, maybe 1 per application.</p>
-<pre tabindex="0"><code>`app-a.friendly-address.domain.com/` → `svc/app-a`
+<pre><code>`app-a.friendly-address.domain.com/` → `svc/app-a`
 `app-b.friendly-address.domain.com/` → `svc/app-b`
 </code></pre><p>These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.</p>
 <p>That’s where a tool like <a href="https://github.com/kubernetes-sigs/external-dns">external-dns</a> comes in.</p>
@@ -335,13 +319,13 @@ It also introduces a place to add some control over your traffic routing. kube-p
 <ol>
 <li>
 <p>Create the TLS secret for our alpha/beta endpoint</p>
-<pre tabindex="0"><code>kubectl create secret tls public \
+<pre><code>kubectl create secret tls public \
   --cert=tls.cert \
   --key=tls.key
 </code></pre></li>
 <li>
 <p>YAML for the Ingress of <code>alpha</code> and <code>beta</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
 <span style="color:#f92672">metadata</span>:
   <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha-beta</span>
@@ -372,7 +356,7 @@ It also introduces a place to add some control over your traffic routing. kube-p
 </code></pre></div></li>
 <li>
 <p>YAML for the Ingress of <code>gamma</code></p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-yaml" data-lang="yaml"><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
 <span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
 <span style="color:#f92672">metadata</span>:
   <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
@@ -502,7 +486,7 @@ It also introduces a place to add some control over your traffic routing. kube-p
   <div class="footer__inner">
     
       <div class="copyright">
-        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
+        <span>© 2024 Powered by <a href="http://gohugo.io">Hugo</a></span>
     
       <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
       </div>

@@ -14,17 +14,6 @@
 <link rel="canonical" href="/post/kubernetes-networking-services/" />
 
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-65KQ87541E"></script>
-<script>
-var doNotTrack = false;
-if (!doNotTrack) {
-	window.dataLayer = window.dataLayer || [];
-	function gtag(){dataLayer.push(arguments);}
-	gtag('js', new Date());
-	gtag('config', 'G-65KQ87541E', { 'anonymize_ip': false });
-}
-</script>
-
 
 
 
@@ -48,11 +37,6 @@ if (!doNotTrack) {
 
 
 <meta name="twitter:card" content="summary" />
-
-  
-    <meta name="twitter:site" content="domgoodwin_" />
-  
-    <meta name="twitter:creator" content="" />
 
 
 
@@ -240,7 +224,7 @@ How does a service know which pods it can talk to?</p>
 <h3 id="externalname">ExternalName<a href="#externalname" class="hanchor" ariaLabel="Anchor">&#8983;</a> </h3>
 <p><code>ExternalName</code> services are the odd one out. Instead of using good ol’ <code>ClusterIP</code> and getting a virtual IP, they create a <code>CNAME</code> record to map your service DNS to another DNS address.</p>
 <p>As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a <code>ExternalName</code> service:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apiVersion: v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apiVersion: v1
 kind: Service
 metadata:
   name: database
@@ -298,7 +282,7 @@ spec:
 <ul>
 <li>
 <p>Service YAML</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apiVersion: v1
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">apiVersion: v1
 kind: Service
 metadata:
 <span style="color:#75715e"># This doesn&#39;t affect routing but it&#39;s best practice to label components together</span>
@@ -319,7 +303,7 @@ spec:
 </code></pre></div></li>
 </ul>
 <p>Lets create the service and have a look:</p>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl apply -f service.yaml
+<div class="highlight"><pre style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-bash" data-lang="bash">$ kubectl apply -f service.yaml
 service/example created
 
 $ kubectl get service example
@@ -429,7 +413,7 @@ example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
   <div class="footer__inner">
     
       <div class="copyright">
-        <span>© 2023 Powered by <a href="http://gohugo.io">Hugo</a></span>
+        <span>© 2024 Powered by <a href="http://gohugo.io">Hugo</a></span>
     
       <span>:: <a href="https://github.com/panr/hugo-theme-terminal" target="_blank">Theme</a> made by <a href="https://github.com/panr" target="_blank">panr</a></span>
       </div>

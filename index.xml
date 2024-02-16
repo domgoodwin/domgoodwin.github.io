@@ -209,10 +209,10 @@ It also introduces a place to add some control over your traffic routing. kube-p
 &lt;p&gt;Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.&lt;/p&gt;
 &lt;p&gt;To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to &lt;code&gt;friendly-address.domain.com&lt;/code&gt; would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.&lt;/p&gt;
 &lt;p&gt;Then any routes off this hostname would be directed to your specified pods, ie.:&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
+&lt;pre&gt;&lt;code&gt;`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
 `friendly-address.domain.com/app-b` → `svc/app-b` in the cluster and so on
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But what if you wanted to have multiple different hostnames, maybe 1 per application.&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;`app-a.friendly-address.domain.com/` → `svc/app-a`
+&lt;pre&gt;&lt;code&gt;`app-a.friendly-address.domain.com/` → `svc/app-a`
 `app-b.friendly-address.domain.com/` → `svc/app-b`
 &lt;/code&gt;&lt;/pre&gt;&lt;p&gt;These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.&lt;/p&gt;
 &lt;p&gt;That’s where a tool like &lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns&#34;&gt;external-dns&lt;/a&gt; comes in.&lt;/p&gt;
@@ -247,13 +247,13 @@ It also introduces a place to add some control over your traffic routing. kube-p
 &lt;ol&gt;
 &lt;li&gt;
 &lt;p&gt;Create the TLS secret for our alpha/beta endpoint&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code&gt;kubectl create secret tls public \
+&lt;pre&gt;&lt;code&gt;kubectl create secret tls public \
   --cert=tls.cert \
   --key=tls.key
 &lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;YAML for the Ingress of &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha-beta&lt;/span&gt;
@@ -284,7 +284,7 @@ It also introduces a place to add some control over your traffic routing. kube-p
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;li&gt;
 &lt;p&gt;YAML for the Ingress of &lt;code&gt;gamma&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
 &lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
   &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
@@ -432,7 +432,7 @@ How does a service know which pods it can talk to?&lt;/p&gt;
 &lt;h3 id=&#34;externalname&#34;&gt;ExternalName&lt;/h3&gt;
 &lt;p&gt;&lt;code&gt;ExternalName&lt;/code&gt; services are the odd one out. Instead of using good ol’ &lt;code&gt;ClusterIP&lt;/code&gt; and getting a virtual IP, they create a &lt;code&gt;CNAME&lt;/code&gt; record to map your service DNS to another DNS address.&lt;/p&gt;
 &lt;p&gt;As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a &lt;code&gt;ExternalName&lt;/code&gt; service:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
 kind: Service
 metadata:
   name: database
@@ -490,7 +490,7 @@ spec:
 &lt;ul&gt;
 &lt;li&gt;
 &lt;p&gt;Service YAML&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
 kind: Service
 metadata:
 &lt;span style=&#34;color:#75715e&#34;&gt;# This doesn&amp;#39;t affect routing but it&amp;#39;s best practice to label components together&lt;/span&gt;
@@ -511,7 +511,7 @@ spec:
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
 &lt;/ul&gt;
 &lt;p&gt;Lets create the service and have a look:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl apply -f service.yaml
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl apply -f service.yaml
 service/example created
 
 $ kubectl get service example
@@ -856,7 +856,7 @@ For this example:&lt;/p&gt;
       <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
       <content>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;
 &lt;h2 id=&#34;commonly-used&#34;&gt;Commonly used&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $var &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; *mystring*  &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The double closed brackets are essential for wildcard match&lt;/span&gt;
     echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;it does&amp;#34;&lt;/span&gt;;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
@@ -871,7 +871,7 @@ echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello I&amp;#39;m Dom&am
 &lt;span style=&#34;color:#75715e&#34;&gt;# Redirect stdout and stderr to the void&lt;/span&gt;
 ./run_script.sh &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
 head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Read bottom lines of file&lt;/span&gt;
@@ -899,7 +899,7 @@ alias lc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&
 echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;overwrite&amp;#34;&lt;/span&gt; &amp;gt; file &lt;span style=&#34;color:#75715e&#34;&gt;# Same as 1&amp;gt;&lt;/span&gt;
 echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;append&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; file
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
 df -h
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# See file usage for dirs&lt;/span&gt;
@@ -911,7 +911,7 @@ ps -aux
 &lt;span style=&#34;color:#75715e&#34;&gt;# Show usage&lt;/span&gt;
 top
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tricks&#34;&gt;Tricks&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
 diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last 3 command&lt;/span&gt;
@@ -923,7 +923,7 @@ diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string
 &lt;span style=&#34;color:#75715e&#34;&gt;# Take all args from previous and use&lt;/span&gt;
 !:1-$
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;io&#34;&gt;IO&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
 read -s -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Password: &amp;#34;&lt;/span&gt; password
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Default value&lt;/span&gt;
@@ -931,7 +931,7 @@ read -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Address [http://127.0
 default&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://127.0.0.1&amp;#34;&lt;/span&gt;
 ADDR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;ADDR&lt;span style=&#34;color:#66d9ef&#34;&gt;:-&lt;/span&gt;$default&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;jq&#34;&gt;jq&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
 jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.parent.children | .[] | .name&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# raw:no quotes, e:null exit0, compact&lt;/span&gt;
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Get object attr and value and format &amp;#34;Key=$attr,Value=$val&amp;#34;&lt;/span&gt;
@@ -955,7 +955,7 @@ jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[.importItems[].itemI
 jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{} +{ Items:[.importItems[].itemId]}&amp;#39;&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;behaviour&#34;&gt;Behaviour&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
 set -e
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Output command as they run (debug)&lt;/span&gt;
@@ -1086,8 +1086,8 @@ set -x
       <author>dom@domgoodwin.dev (Dom Goodwin)</author>
       <guid>/about/</guid>
       <description>Dom Goodwin Backend Engineer @ Monzo
-Links            
-Certifications  </description>
+Links         
+     </description>
       <content>&lt;p&gt;Dom Goodwin
 Backend Engineer @ Monzo&lt;/p&gt;
 &lt;h2 id=&#34;links&#34;&gt;Links&lt;/h2&gt;
@@ -1099,19 +1099,15 @@ Backend Engineer @ Monzo&lt;/p&gt;
 &lt;/a&gt;
 &lt;a class=&#34;inline-svg social-icon fa-linkedin-in&#34; href=&#34;https://www.linkedin.com/in/dom-goodwin/&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 448 512&#34;&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M100.28 448H7.4V148.9h92.88zM53.79 108.1C24.09 108.1 0 83.5 0 53.8a53.79 53.79 0 0 1 107.58 0c0 29.7-24.1 54.3-53.79 54.3zM447.9 448h-92.68V302.4c0-34.7-.7-79.2-48.29-79.2-48.29 0-55.69 37.7-55.69 76.7V448h-92.78V148.9h89.08v40.8h1.3c12.4-23.5 42.69-48.3 87.88-48.3 94 0 111.28 61.9 111.28 142.3V448z&#34;/&gt;&lt;/svg&gt;
 &lt;/a&gt;
+&lt;a class=&#34;inline-svg social-icon fa-mastodon&#34; href=&#34;https://www.linkedin.com/in/dom-goodwin/&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; width=&#34;61.076954mm&#34; height=&#34;65.47831mm&#34; viewBox=&#34;0 0 216.4144 232.00976&#34;&gt;
+&lt;path fill=&#34;currentColor&#34; fill=&#34;#2b90d9&#34; d=&#34;M211.80734 139.0875c-3.18125 16.36625-28.4925 34.2775-57.5625 37.74875-15.15875 1.80875-30.08375 3.47125-45.99875 2.74125-26.0275-1.1925-46.565-6.2125-46.565-6.2125 0 2.53375.15625 4.94625.46875 7.2025 3.38375 25.68625 25.47 27.225 46.39125 27.9425 21.11625.7225 39.91875-5.20625 39.91875-5.20625l.8675 19.09s-14.77 7.93125-41.08125 9.39c-14.50875.7975-32.52375-.365-53.50625-5.91875C9.23234 213.82 1.40609 165.31125.20859 116.09125c-.365-14.61375-.14-28.39375-.14-39.91875 0-50.33 32.97625-65.0825 32.97625-65.0825C49.67234 3.45375 78.20359.2425 107.86484 0h.72875c29.66125.2425 58.21125 3.45375 74.8375 11.09 0 0 32.975 14.7525 32.975 65.0825 0 0 .41375 37.13375-4.59875 62.915&#34;/&gt;
+&lt;path fill=&#34;currentColor&#34; fill=&#34;#fff&#34; d=&#34;M177.50984 80.077v60.94125h-24.14375v-59.15c0-12.46875-5.24625-18.7975-15.74-18.7975-11.6025 0-17.4175 7.5075-17.4175 22.3525v32.37625H96.20734V85.42325c0-14.845-5.81625-22.3525-17.41875-22.3525-10.49375 0-15.74 6.32875-15.74 18.7975v59.15H38.90484V80.077c0-12.455 3.17125-22.3525 9.54125-29.675 6.56875-7.3225 15.17125-11.07625 25.85-11.07625 12.355 0 21.71125 4.74875 27.8975 14.2475l6.01375 10.08125 6.015-10.08125c6.185-9.49875 15.54125-14.2475 27.8975-14.2475 10.6775 0 19.28 3.75375 25.85 11.07625 6.36875 7.3225 9.54 17.22 9.54 29.675&#34;/&gt;
+&lt;/svg&gt;&lt;/p&gt;
+&lt;/a&gt;
 &lt;a class=&#34;inline-svg social-icon fa-rss&#34; href=&#34;index.xml&#34;&gt;&lt;svg aria-hidden=&#34;true&#34; focusable=&#34;false&#34; data-prefix=&#34;fas&#34; data-icon=&#34;rss&#34; class=&#34;svg-inline--fa fa-rss fa-w-14&#34; role=&#34;img&#34; xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 448 512&#34;&gt;&lt;path fill=&#34;currentColor&#34; fill=&#34;currentColor&#34; d=&#34;M128.081 415.959c0 35.369-28.672 64.041-64.041 64.041S0 451.328 0 415.959s28.672-64.041 64.041-64.041 64.04 28.673 64.04 64.041zm175.66 47.25c-8.354-154.6-132.185-278.587-286.95-286.95C7.656 175.765 0 183.105 0 192.253v48.069c0 8.415 6.49 15.472 14.887 16.018 111.832 7.284 201.473 96.702 208.772 208.772.547 8.397 7.604 14.887 16.018 14.887h48.069c9.149.001 16.489-7.655 15.995-16.79zm144.249.288C439.596 229.677 251.465 40.445 16.503 32.01 7.473 31.686 0 38.981 0 48.016v48.068c0 8.625 6.835 15.645 15.453 15.999 191.179 7.839 344.627 161.316 352.465 352.465.353 8.618 7.373 15.453 15.999 15.453h48.068c9.034-.001 16.329-7.474 16.005-16.504z&#34;&gt;&lt;/path&gt;&lt;/svg&gt;
 &lt;/a&gt;
 &lt;a class=&#34;inline-svg social-icon fa-message&#34; href=&#34;mailto:site@dgood.win&#34;&gt;&lt;svg xmlns=&#34;http://www.w3.org/2000/svg&#34; viewBox=&#34;0 0 512 512&#34;&gt;&lt;!--! Font Awesome Free 6.2.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2022 Fonticons, Inc. --&gt;&lt;path fill=&#34;currentColor&#34; d=&#34;M447.1 0h-384c-35.25 0-64 28.75-64 63.1v287.1c0 35.25 28.75 63.1 64 63.1h96v83.98c0 9.836 11.02 15.55 19.12 9.7l124.9-93.68h144c35.25 0 64-28.75 64-63.1V63.1C511.1 28.75 483.2 0 447.1 0zM464 352c0 8.75-7.25 16-16 16h-160l-80 60v-60H64c-8.75 0-16-7.25-16-16V64c0-8.75 7.25-16 16-16h384c8.75 0 16 7.25 16 16V352z&#34;/&gt;&lt;/svg&gt;
-&lt;/a&gt;&lt;/p&gt;
-&lt;h2 id=&#34;certifications&#34;&gt;Certifications&lt;/h2&gt;
-&lt;p&gt;
-  &lt;img src=&#34;/img/logo_cka.png&#34;  alt=&#34;CKA&#34;  class=&#34;left&#34;  style=&#34;height: 8rem;display: inline;&#34;  /&gt;
-
-
-
-  &lt;img src=&#34;/img/logo_ckad.png&#34;  alt=&#34;CKA&#34;  class=&#34;left&#34;  style=&#34;height: 8rem; display: inline;&#34;  /&gt;
-
-&lt;/p&gt;
+&lt;/a&gt;
 </content>
     </item>
     
@@ -1124,7 +1120,7 @@ Backend Engineer @ Monzo&lt;/p&gt;
       <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;</description>
       <content>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;
 &lt;p&gt;I&amp;rsquo;m setting this up with the follow configuratons&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Ubuntu 16.04 LTS
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Ubuntu 16.04 LTS
 Hugo 0.32
 Go 1.9.4
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;installing-hugo&#34;&gt;Installing Hugo&lt;/h1&gt;
@@ -1138,7 +1134,7 @@ Go 1.9.4
 &lt;code&gt;hugo new site my-blog&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;&lt;em&gt;This will create a folder, my-blog, in your current directory&lt;/em&gt;&lt;/p&gt;
 &lt;p&gt;&lt;strong&gt;The folder structure will be:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre tabindex=&#34;0&#34;&gt;&lt;code class=&#34;language-file&#34; data-lang=&#34;file&#34;&gt;+--archetypes/     Templates for content files  
+&lt;pre&gt;&lt;code class=&#34;language-file&#34; data-lang=&#34;file&#34;&gt;+--archetypes/     Templates for content files  
 +--content/        Where content for your site goes  
 +--data/           Config files for generating your site  
 +--layouts/        Html templates for content views  
@@ -1160,7 +1156,7 @@ config.toml        General site properties like: theme, title
 &lt;p&gt;To create a new post for your site:&lt;br&gt;
 &lt;code&gt;hugo new post/hello-world.md&lt;/code&gt;&lt;/p&gt;
 &lt;p&gt;By default (because of the archetypes/default.md) your post file will look like this:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;title: &amp;#34;Hello World&amp;#34;  
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;title: &amp;#34;Hello World&amp;#34;  
 date: 2018-04-06T11:03:53+01:00  
 draft: true  
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To see your page, you need to run the server with drafts enabled:&lt;br&gt;

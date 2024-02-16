@@ -189,7 +189,7 @@ For this example:&lt;/p&gt;
       <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
       <content>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;
 &lt;h2 id=&#34;commonly-used&#34;&gt;Commonly used&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $var &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; *mystring*  &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The double closed brackets are essential for wildcard match&lt;/span&gt;
     echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;it does&amp;#34;&lt;/span&gt;;
 &lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
@@ -204,7 +204,7 @@ echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello I&amp;#39;m Dom&am
 &lt;span style=&#34;color:#75715e&#34;&gt;# Redirect stdout and stderr to the void&lt;/span&gt;
 ./run_script.sh &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
 head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Read bottom lines of file&lt;/span&gt;
@@ -232,7 +232,7 @@ alias lc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&
 echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;overwrite&amp;#34;&lt;/span&gt; &amp;gt; file &lt;span style=&#34;color:#75715e&#34;&gt;# Same as 1&amp;gt;&lt;/span&gt;
 echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;append&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; file
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
 df -h
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# See file usage for dirs&lt;/span&gt;
@@ -244,7 +244,7 @@ ps -aux
 &lt;span style=&#34;color:#75715e&#34;&gt;# Show usage&lt;/span&gt;
 top
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tricks&#34;&gt;Tricks&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
 diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last 3 command&lt;/span&gt;
@@ -256,7 +256,7 @@ diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string
 &lt;span style=&#34;color:#75715e&#34;&gt;# Take all args from previous and use&lt;/span&gt;
 !:1-$
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;io&#34;&gt;IO&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
 read -s -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Password: &amp;#34;&lt;/span&gt; password
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Default value&lt;/span&gt;
@@ -264,7 +264,7 @@ read -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Address [http://127.0
 default&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://127.0.0.1&amp;#34;&lt;/span&gt;
 ADDR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;ADDR&lt;span style=&#34;color:#66d9ef&#34;&gt;:-&lt;/span&gt;$default&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;jq&#34;&gt;jq&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
 jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.parent.children | .[] | .name&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# raw:no quotes, e:null exit0, compact&lt;/span&gt;
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Get object attr and value and format &amp;#34;Key=$attr,Value=$val&amp;#34;&lt;/span&gt;
@@ -288,7 +288,7 @@ jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[.importItems[].itemI
 jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{} +{ Items:[.importItems[].itemId]}&amp;#39;&lt;/span&gt;
 
 &lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;behaviour&#34;&gt;Behaviour&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre tabindex=&#34;0&#34; style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
+&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
 set -e
 
 &lt;span style=&#34;color:#75715e&#34;&gt;# Output command as they run (debug)&lt;/span&gt;
