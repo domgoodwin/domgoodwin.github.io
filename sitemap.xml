@@ -20,10 +20,10 @@
     <loc>https://dgood.win/tags/ways-of-working/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
   </url><url>
-    <loc>https://dgood.win/categories/</loc>
+    <loc>https://dgood.win/tags/external/</loc>
     <lastmod>2023-01-15T10:06:09+00:00</lastmod>
   </url><url>
-    <loc>https://dgood.win/categories/monzo/</loc>
+    <loc>https://dgood.win/tags/monzo/</loc>
     <lastmod>2023-01-15T10:06:09+00:00</lastmod>
   </url><url>
     <loc>https://dgood.win/posts/monzo-gcp-egress/</loc>
@@ -83,6 +83,8 @@
     <loc>https://dgood.win/pages/about/</loc>
   </url><url>
     <loc>https://dgood.win/pages/books/</loc>
+  </url><url>
+    <loc>https://dgood.win/categories/</loc>
   </url><url>
     <loc>https://dgood.win/manifest/index.json</loc>
   </url><url>

@@ -5,20 +5,7 @@
     <description>Recent content in Categories on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
-    <copyright>Dom Goodwin</copyright>
-    <lastBuildDate>Sun, 15 Jan 2023 10:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/categories/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
-    
-    
-    <item>
-      <title>Monzo</title>
-      <link>https://dgood.win/categories/monzo/</link>
-      <pubDate>Sun, 15 Jan 2023 10:06:09 +0000</pubDate>
-      
-      <guid>https://dgood.win/categories/monzo/</guid>
-      <description><![CDATA[]]></description>
-      
-    </item>
-    
+    <copyright>Dom Goodwin</copyright><atom:link href="https://dgood.win/categories/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
     
   </channel>
 </rss>
