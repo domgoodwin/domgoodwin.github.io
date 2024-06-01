@@ -1,0 +1,38 @@
+
+{
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+        
+    
+        
+        
+        
+    
+        
+        
+        
+    
+        
+        
+        
+    
+        
+        
+        
+    
+    "articles": [{"date":"2022-01-10","image":"","imageAlt":"","link":"https://dgood.win/posts/kubernetes-networking-overview/","summary":"\u003cp\u003eKubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.\u003c/p\u003e","tags":["deep-dive","kubernetes"],"title":"Kubernetes Networking #1"},{"date":"2022-01-03","image":"","imageAlt":"","link":"https://dgood.win/posts/blog-squared/","summary":"\u003cp\u003eHere\u0026rsquo;s a list I (hopefully) update around tech blogs I enjoy\u003c/p\u003e","tags":["reccomendations"],"title":"Blog² - Blog about blogs"},{"date":"2020-04-20","image":"","imageAlt":"","link":"https://dgood.win/posts/kubernetes-debugging/","summary":"\u003cp\u003eThis is a workflow to debug common Kubernetes problems when deploying applications.\u003c/p\u003e","tags":["kubernetes"],"title":"Kubernetes Debugging"},{"date":"2020-02-20","image":"","imageAlt":"","link":"https://dgood.win/posts/shellscript-day2/","summary":"\u003cp\u003eUseful shellscript snippets\u003c/p\u003e","tags":["cheatsheet"],"title":"Shellscript Notes"},{"date":"2019-07-22","image":"","imageAlt":"","link":"https://dgood.win/posts/podcasts-2019-q2/","summary":"\u003cp\u003eThese are my currently podcast reccomendations for Q2 2019\u003c/p\u003e","tags":["podcasts"],"title":"Podcasts reccomendations - 07/2019"}],
+    "test": "Don’t just say ‘hello’ to me   Reducing our NAT Gateway cost with private networking between AWS and GCP   Kubernetes Networking #3: Ingress   Kubernetes Networking #2: Services   The case for time-tracking   Kubernetes Networking #1   Blog² - Blog about blogs   Kubernetes Debugging   Shellscript Notes   Podcasts reccomendations - 07/2019   Podcast reccomendations - 02/2019   Setting up a Hugo Blog   Podcast reccomendations - 04/2018   Manifest   Search   ",
+    "page": "2",
+    "next": 
+        "https://dgood.win/page/3/index.json"
+    
+}
+

@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
+  <channel>
+    <title>Cheatsheet on Dom Goodwin</title>
+    <link>https://dgood.win/tags/cheatsheet/</link>
+    <description>Recent content in Cheatsheet on Dom Goodwin</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Thu, 20 Feb 2020 15:25:00 +0100</lastBuildDate><atom:link href="https://dgood.win/tags/cheatsheet/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    
+    
+    <item>
+      <title>Shellscript Notes</title>
+      <link>https://dgood.win/posts/shellscript-day2/</link>
+      <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
+      
+      <guid>https://dgood.win/posts/shellscript-day2/</guid>
+      <description><![CDATA[<p>Useful shellscript snippets</p>
+<h2 id="commonly-used">Commonly used</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Check if variable contains mystring</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $var <span style="color:#f92672">==</span> *mystring*  <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> <span style="color:#75715e"># The double closed brackets are essential for wildcard match</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;it does&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Split on &#34;:&#34; and get 1st</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;docker-image:0.1&#34;</span> | cut -d <span style="color:#e6db74">&#34;:&#34;</span> -f1 <span style="color:#75715e"># returns docker-image</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Find and replace all via pipe</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Hello I&#39;m Dom&#34;</span> | sed <span style="color:#e6db74">&#39;s/Dom/&lt;void&gt;/g&#39;</span> <span style="color:#75715e"># &#34;/&#34; could be any char</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Redirect stdout and stderr to the void</span>
+</span></span><span style="display:flex;"><span>./run_script.sh &gt;/dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><h2 id="basics">Basics</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Read top lines of file</span>
+</span></span><span style="display:flex;"><span>head -n <span style="color:#ae81ff">3</span> myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read bottom lines of file</span>
+</span></span><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">3</span> myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Watch all updates to file</span>
+</span></span><span style="display:flex;"><span>tail -f myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read file in window (not cat)</span>
+</span></span><span style="display:flex;"><span>less myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Make all directories if not exist</span>
+</span></span><span style="display:flex;"><span>mkdir -p exist/not/dir
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Visualise dir structure</span>
+</span></span><span style="display:flex;"><span>tree -L <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Remove env variable</span>
+</span></span><span style="display:flex;"><span>unset myvar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Alias command to short one</span>
+</span></span><span style="display:flex;"><span>alias lc<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ls -laht&#34;</span> <span style="color:#75715e"># unalias to remove</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Piping output</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;overwrite&#34;</span> &gt; file <span style="color:#75715e"># Same as 1&gt;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;append&#34;</span> &gt;&gt; file
+</span></span></code></pre></div><h2 id="system">System</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># See disk space usage (human readable)</span>
+</span></span><span style="display:flex;"><span>df -h
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See file usage for dirs</span>
+</span></span><span style="display:flex;"><span>du <span style="color:#f92672">(</span>--max-depth<span style="color:#f92672">=</span>2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Show running processes, a: show other user, u: show username, x: show non terminal</span>
+</span></span><span style="display:flex;"><span>ps -aux
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Show usage</span>
+</span></span><span style="display:flex;"><span>top
+</span></span></code></pre></div><h2 id="tricks">Tricks</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Use command output as if it&#39;s file</span>
+</span></span><span style="display:flex;"><span>diff &lt;<span style="color:#f92672">(</span>grep string file1<span style="color:#f92672">)</span> &lt;<span style="color:#f92672">(</span>grep string file2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Repeat last 3 command</span>
+</span></span><span style="display:flex;"><span>!!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Repeat last arg of the last command</span>
+</span></span><span style="display:flex;"><span>!$
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Take all args from previous and use</span>
+</span></span><span style="display:flex;"><span>!:1-$
+</span></span></code></pre></div><h1 id="io">IO</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Secure input</span>
+</span></span><span style="display:flex;"><span>read -s -p <span style="color:#e6db74">&#34;Password: &#34;</span> password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Default value</span>
+</span></span><span style="display:flex;"><span>read -p <span style="color:#e6db74">&#34;Address [http://127.0.0.1]: &#34;</span> ADDR
+</span></span><span style="display:flex;"><span>default<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://127.0.0.1&#34;</span>
+</span></span><span style="display:flex;"><span>ADDR<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ADDR<span style="color:#66d9ef">:-</span>$default<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><h1 id="jq">jq</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Get value from object within array within object</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#34;.parent.children | .[] | .name&#34;</span> <span style="color:#75715e"># raw:no quotes, e:null exit0, compact</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Get object attr and value and format &#34;Key=$attr,Value=$val&#34;</span>
+</span></span><span style="display:flex;"><span>jq -r <span style="color:#e6db74">&#39;.data | keys[] as $k | &#34;Key=\($k),Value=\(.[$k])&#34;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Use output in for loop</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> object in <span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>JSON<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | jq -rec <span style="color:#e6db74">&#34;.entries[] | .whole | @base64&#34;</span><span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;This is the value: </span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">${</span>val<span style="color:#e6db74">}</span> | base64 -d | jq .attribute<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Args</span>
+</span></span><span style="display:flex;"><span>curl localhost:8500/v1/catalog/nodes | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    jq <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        --arg ip <span style="color:#66d9ef">$(</span>./get_host.sh<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#39;.[] | select(.Address==$ip)&#39;</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Output mulitple entries in list</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#39;[.importItems[].itemId]&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create object</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#39;{} +{ Items:[.importItems[].itemId]}&#39;</span>
+</span></span></code></pre></div><h2 id="behaviour">Behaviour</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Exit script if commands return nonzero</span>
+</span></span><span style="display:flex;"><span>set -e
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Output command as they run (debug)</span>
+</span></span><span style="display:flex;"><span>set -x
+</span></span></code></pre></div>]]></description>
+      
+    </item>
+    
+    
+  </channel>
+</rss>

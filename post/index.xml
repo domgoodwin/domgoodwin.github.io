@@ -1,1263 +1,1335 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
     <title>Posts on Dom Goodwin</title>
-    <link>/post/</link>
+    <link>http://localhost:1313/post/</link>
     <description>Recent content in Posts on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="http://localhost:1313/post/index.xml" rel="self" type="application/rss+xml" /><icon>http://localhost:1313/logo.svg</icon>
+    
+    
     <item>
       <title>Don’t just say ‘hello’ to me</title>
-      <link>/post/dont-say-hello/</link>
+      <link>http://localhost:1313/post/dont-say-hello/</link>
       <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/dont-say-hello/</guid>
-      <description>&lt;p&gt;I was recently in a 1-1 with my new EM and was asked what annoys me at work. The one thing that immediately popped to mind was:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;‘I hate it when someone just messages me “Hello” or “Hi, how are you” when they message me for something on Slack’&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;It became immediately apparent that, without proper context, this could be taken the wrong way. So I thought I’d explain my thoughts here.&lt;/p&gt;</description>
-      <content>&lt;p&gt;I was recently in a 1-1 with my new EM and was asked what annoys me at work. The one thing that immediately popped to mind was:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;‘I hate it when someone just messages me “Hello” or “Hi, how are you” when they message me for something on Slack’&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;It became immediately apparent that, without proper context, this could be taken the wrong way. So I thought I’d explain my thoughts here.&lt;/p&gt;
-&lt;p&gt;It has annoyed me since the advent of instant messaging at work, but as more people now work remotely the problem has only got worse.&lt;/p&gt;
-&lt;p&gt;At a high level, the issue is this: instant messaging is asynchronous, unlike a verbal conversation, each participant can be doing something else at the beginning of the chat and might continue doing so for the duration of the conversation.&lt;/p&gt;
-&lt;p&gt;With a phone call, communication is instantaneous, so the time for pleasantries is tiny compared to the actual discussion of a problem. When it’s via chat there’s delay, even if both parties are watching the chat, waiting to respond as soon as possible, they still take time to type and find the right emojis.&lt;/p&gt;
-&lt;p&gt;Let’s use a sequence diagram to show what I mean:&lt;/p&gt;
+      
+      <guid>http://localhost:1313/post/dont-say-hello/</guid>
+      <description><![CDATA[<p>I was recently in a 1-1 with my new EM and was asked what annoys me at work. The one thing that immediately popped to mind was:</p>
+<blockquote>
+<p>‘I hate it when someone just messages me “Hello” or “Hi, how are you” when they message me for something on Slack’</p>
+</blockquote>
+<p>It became immediately apparent that, without proper context, this could be taken the wrong way. So I thought I’d explain my thoughts here.</p>
+<p>It has annoyed me since the advent of instant messaging at work, but as more people now work remotely the problem has only got worse.</p>
+<p>At a high level, the issue is this: instant messaging is asynchronous, unlike a verbal conversation, each participant can be doing something else at the beginning of the chat and might continue doing so for the duration of the conversation.</p>
+<p>With a phone call, communication is instantaneous, so the time for pleasantries is tiny compared to the actual discussion of a problem. When it’s via chat there’s delay, even if both parties are watching the chat, waiting to respond as soon as possible, they still take time to type and find the right emojis.</p>
+<p>Let’s use a sequence diagram to show what I mean:</p>
+<figure><img src="/img/nohello-1.1.png"
+    alt="Bob and Alice talk in serial"><figcaption>
+      <h4>Bob and Alice talk in serial</h4><p>Bob and Alice talk in serial</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-1.1.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice talk in serial&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
+<p>This is a pretty typical conversation, even ignoring Bob’s rudeness of not asking after Alice. Alice needs to ask Bob a question, but starts the conversation as you would in-person or by phone. If we think of humans as single core processors, both are basically ‘blocked’ for the entire duration, unable to do anything else until this conversation is over.</p>
+<p>This gets worse if you factor delays into the responses:</p>
+<figure><img src="/img/nohello-1.2.png"
+    alt="Bob and Alice talk in serial with delays"><figcaption>
+      <h4>Bob and Alice talk in serial with delays</h4><p>Bob and Alice talk in serial with delays</p>
+    </figcaption>
+</figure>
 
+<p>Now obviously this is a worst case scenario, both parties could be doing other things whilst waiting for responses, but that would also introduce more interruptions to their work. Adding a context switch every time someone sends a message would slow down whatever work they were doing, as an example:</p>
+<figure><img src="/img/nohello-1.3.png"
+    alt="Bob and Alice talk in serial with context switch delays"><figcaption>
+      <h4>Bob and Alice talk in serial with context swtich delays</h4><p>Bob and Alice talk in serial with context switch delays</p>
+    </figcaption>
+</figure>
 
-&lt;p&gt;This is a pretty typical conversation, even ignoring Bob’s rudeness of not asking after Alice. Alice needs to ask Bob a question, but starts the conversation as you would in-person or by phone. If we think of humans as single core processors, both are basically ‘blocked’ for the entire duration, unable to do anything else until this conversation is over.&lt;/p&gt;
-&lt;p&gt;This gets worse if you factor delays into the responses:&lt;/p&gt;
+<p>Here, Bob is trying to complete his work whilst also responding to Alice. Each time he responds then returns to his work. However, this means he needs to context switch and remember what he was working on before the interruption.</p>
+<p>Now, how could this be improved:</p>
+<figure><img src="/img/nohello-2.1.png"
+    alt="Bob and Alice exchange a single question"><figcaption>
+      <h4>Bob and Alice exchange a single question</h4><p>Bob and Alice exchange a single question</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-1.2.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice talk in serial with delays&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;Now obviously this is a worst case scenario, both parties could be doing other things whilst waiting for responses, but that would also introduce more interruptions to their work. Adding a context switch every time someone sends a message would slow down whatever work they were doing, as an example:&lt;/p&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-1.3.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice talk in serial with context switch delays&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;Here, Bob is trying to complete his work whilst also responding to Alice. Each time he responds then returns to his work. However, this means he needs to context switch and remember what he was working on before the interruption.&lt;/p&gt;
-&lt;p&gt;Now, how could this be improved:&lt;/p&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-2.1.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice exchange a single question&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;Alice has a question, she messages Bob the question but then go back to their work (if possible).&lt;/p&gt;
-&lt;p&gt;Bob receives the question, thinks through an answer and sends it back to Alice who is then unblocked.&lt;/p&gt;
-&lt;p&gt;Alternatively, Bob is working on a tough problem so doesn’t see the message until 30 minutes later, he then responds and Alice who was looking at a different problem can then get her answer.&lt;/p&gt;
-&lt;p&gt;Regardless of how long a response takes, both parties spend the same time on the communication. Compare that to earlier examples, even if Bob context switched with every message, the time consumed with the same outcome (Alice has her answer) is far greater.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;ℹ️ A lot of this boils down to just sending someone &lt;a href=&#34;https://www.nohello.com/&#34;&gt;https://www.nohello.com/&lt;/a&gt; which explains this a lot more succinctly than I could.&lt;/p&gt;
-&lt;/blockquote&gt;</content>
+<p>Alice has a question, she messages Bob the question but then go back to their work (if possible).</p>
+<p>Bob receives the question, thinks through an answer and sends it back to Alice who is then unblocked.</p>
+<p>Alternatively, Bob is working on a tough problem so doesn’t see the message until 30 minutes later, he then responds and Alice who was looking at a different problem can then get her answer.</p>
+<p>Regardless of how long a response takes, both parties spend the same time on the communication. Compare that to earlier examples, even if Bob context switched with every message, the time consumed with the same outcome (Alice has her answer) is far greater.</p>
+<blockquote>
+<p>ℹ️ A lot of this boils down to just sending someone <a href="https://www.nohello.com/">https://www.nohello.com/</a> which explains this a lot more succinctly than I could.</p>
+</blockquote>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Reducing our NAT Gateway cost with private networking between AWS and GCP</title>
-      <link>/post/monzo-gcp-egress/</link>
+      <link>http://localhost:1313/post/monzo-gcp-egress/</link>
       <pubDate>Sun, 15 Jan 2023 10:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/monzo-gcp-egress/</guid>
-      <description>&lt;p&gt;This post is hosted on the Monzo Blog:&lt;/p&gt;</description>
-      <content>&lt;p&gt;This post is hosted on the Monzo Blog:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;a href=&#34;https://monzo.com/blog/2022/11/25/reducing-nat-gateway-cost-with-private-networking-between-aws-and-gcp&#34;&gt;Reducing our NAT Gateway cost with private networking between AWS and GCP&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</content>
+      
+      <guid>http://localhost:1313/post/monzo-gcp-egress/</guid>
+      <description><![CDATA[<p>This post is hosted on the Monzo Blog:</p>
+<blockquote>
+<p><a href="https://monzo.com/blog/2022/11/25/reducing-nat-gateway-cost-with-private-networking-between-aws-and-gcp">Reducing our NAT Gateway cost with private networking between AWS and GCP</a></p>
+</blockquote>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Kubernetes Networking #3: Ingress</title>
-      <link>/post/kubernetes-networking-ingress/</link>
+      <link>http://localhost:1313/post/kubernetes-networking-ingress/</link>
       <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-ingress/</guid>
-      <description>&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;</description>
-      <content>&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;
-&lt;p&gt;In a &lt;a href=&#34;https://en.wikipedia.org/wiki/Utopia&#34;&gt;world without Kubernetes&lt;/a&gt;, you might have a reverse proxy deployed where you write the configuration file to detail how to expose your applications in the backend. An ingress controller takes that reverse proxy and automatically generates the config based on the &lt;code&gt;Ingress&lt;/code&gt; Kubernetes resources you create. You don’t have to create a new &lt;code&gt;LoadBalancer&lt;/code&gt; service and cloud load balancer for each service you want to expose.&lt;/p&gt;
-&lt;p&gt;In this guide, we’ll use the Kubernetes maintained ingress controller, &lt;a href=&#34;https://github.com/kubernetes/ingress-nginx&#34;&gt;ingress-nginx&lt;/a&gt;, which uses nginx as it’s reverse proxy. It’s important to note, this isn’t the &lt;a href=&#34;https://docs.nginx.com/nginx-ingress-controller/&#34;&gt;nginx-ingress-controller&lt;/a&gt; from NGINX themselves which has hooks into NGINX plus and other paid offerings. The docs for ingress-nginx can be found &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;-why-not-just-loadbalancer&#34;&gt;🤷 Why not just LoadBalancer?&lt;/h2&gt;
-&lt;p&gt;Kubernetes provides a way for a cloud provisioned load balancer (an &lt;a href=&#34;https://aws.amazon.com/elasticloadbalancing/&#34;&gt;AWS elastic load balancer&lt;/a&gt; for instance) to be deployed by the control plane, see my &lt;a href=&#34;https://dgood.win/post/kubernetes-networking-2-services/&#34;&gt;services post&lt;/a&gt; for more info. We can use these to expose a single service (and collection of pods) from a load balancer. But what happens when you have 50 services deployed onto your cluster? Would you have 50 load balancers for them all? That’s ~$810 in standing charges every month not including paying for the traffic that goes through them.&lt;/p&gt;
-&lt;p&gt;This is where an ingress controller comes in. An Ingress controller is a centralized place for traffic to enter your cluster via a single load balancer which then is routed to your backend services automatically. This is all based on &lt;code&gt;Ingress&lt;/code&gt; resources deployed on the cluster, through the reverse proxy.
-It also introduces a place to add some control over your traffic routing. kube-proxy will default (when in &lt;code&gt;iptables&lt;/code&gt; mode) to TCP load balancing traffic randomly, the traffic coming in via a load balancer goes to any pods. With the controls you can configure affinities, round-robin routing, rate limits, CORS etc. to really shape the traffic going to your pods centrally.&lt;/p&gt;
-&lt;p&gt;These diagrams compare the path a request would take with/without an ingress controller exposing your pod:&lt;/p&gt;
+      
+      <guid>http://localhost:1313/post/kubernetes-networking-ingress/</guid>
+      <description><![CDATA[<p>Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define <em>how</em> the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.</p>
+<p>In a <a href="https://en.wikipedia.org/wiki/Utopia">world without Kubernetes</a>, you might have a reverse proxy deployed where you write the configuration file to detail how to expose your applications in the backend. An ingress controller takes that reverse proxy and automatically generates the config based on the <code>Ingress</code> Kubernetes resources you create. You don’t have to create a new <code>LoadBalancer</code> service and cloud load balancer for each service you want to expose.</p>
+<p>In this guide, we’ll use the Kubernetes maintained ingress controller, <a href="https://github.com/kubernetes/ingress-nginx">ingress-nginx</a>, which uses nginx as it’s reverse proxy. It’s important to note, this isn’t the <a href="https://docs.nginx.com/nginx-ingress-controller/">nginx-ingress-controller</a> from NGINX themselves which has hooks into NGINX plus and other paid offerings. The docs for ingress-nginx can be found <a href="https://kubernetes.github.io/ingress-nginx/">here</a>.</p>
+<h2 id="-why-not-just-loadbalancer">🤷 Why not just LoadBalancer?</h2>
+<p>Kubernetes provides a way for a cloud provisioned load balancer (an <a href="https://aws.amazon.com/elasticloadbalancing/">AWS elastic load balancer</a> for instance) to be deployed by the control plane, see my <a href="https://dgood.win/post/kubernetes-networking-2-services/">services post</a> for more info. We can use these to expose a single service (and collection of pods) from a load balancer. But what happens when you have 50 services deployed onto your cluster? Would you have 50 load balancers for them all? That’s ~$810 in standing charges every month not including paying for the traffic that goes through them.</p>
+<p>This is where an ingress controller comes in. An Ingress controller is a centralized place for traffic to enter your cluster via a single load balancer which then is routed to your backend services automatically. This is all based on <code>Ingress</code> resources deployed on the cluster, through the reverse proxy.
+It also introduces a place to add some control over your traffic routing. kube-proxy will default (when in <code>iptables</code> mode) to TCP load balancing traffic randomly, the traffic coming in via a load balancer goes to any pods. With the controls you can configure affinities, round-robin routing, rate limits, CORS etc. to really shape the traffic going to your pods centrally.</p>
+<p>These diagrams compare the path a request would take with/without an ingress controller exposing your pod:</p>
+<figure><img src="/img/ingress-lb-to-pod.png"
+    alt="Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods"><figcaption>
+      <h4>Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods</h4><p>Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/ingress-lb-to-pod.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
+<figure><img src="/img/ingress-controller-to-pod.png"
+    alt="With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP"><figcaption>
+      <h4>With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP</h4><p>With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP</p>
+    </figcaption>
+</figure>
 
-
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/ingress-controller-to-pod.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;There are some tradeoffs to using an ingress controller:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;This introduces an extra hop for your network requests to reach your pod. If you have high throughput - and low latency is important - this could be a consideration&lt;/li&gt;
-&lt;li&gt;In the same vein, the ingress controller pods also use resources. If you have the ingress controller doing a lot of TLS termination or handling high load the resource usage will increase significantly&lt;/li&gt;
-&lt;li&gt;You can only really use this for (mostly) Layer 7 traffic, TCP or UDP cannot directly be exposed this way&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;-so-what-does-an-ingress-controller-actually-do&#34;&gt;🛠️ So what does an ingress controller actually do?&lt;/h2&gt;
-&lt;p&gt;At a high level you have the following components:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Kubernetes resources:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Service: type &lt;code&gt;LoadBalancer&lt;/code&gt;, meaning your ingress-controller pods are fronted by a cloud load balancer and exposed outside the cluster&lt;/li&gt;
-&lt;li&gt;Deployment: Ingress Controller itself (see components below for a breakdown)&lt;/li&gt;
-&lt;li&gt;(sometimes)Deployment: default backend, this is where the ingress controller routes traffic to when there isn’t a matching host/path rule for the traffic coming in&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Components of the ingress controller:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Reverse proxy: This is what actually routes the traffic coming in to downstream services/pods. If you installed nginx on a service and ran it it’s this basically&lt;/li&gt;
-&lt;li&gt;Config generator: This continuously gets the state of Ingress resources in the Kubernetes cluster (think of it as spamming &lt;code&gt;kubectl get ingress -A&lt;/code&gt; every X-seconds) and uses that to generate config that the reverse proxy (nginx in this case) understands&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The &lt;em&gt;reverse proxy&lt;/em&gt; continually has it’s config updated by the &lt;em&gt;config generator&lt;/em&gt; and then traffic coming into the cluster via the &lt;em&gt;Loadbalancer service&lt;/em&gt; hits the reverse proxy and is routed to the proper backend service/pods.&lt;/p&gt;
-&lt;h2 id=&#34;-what-about-ssl&#34;&gt;🔒 What about SSL?&lt;/h2&gt;
-&lt;p&gt;For HTTPS traffic, we can configure the ingress-controller to terminate the SSL and provide the certs as needed.&lt;/p&gt;
-&lt;p&gt;When creating an ingress resource you can specify a Kubernetes Secret of type &lt;code&gt;tls&lt;/code&gt; and the ingress-controller will use that secret to terminate the SSL of the request at the reverse proxy.&lt;/p&gt;
-&lt;p&gt;This could also be coupled with a tool like &lt;a href=&#34;https://cert-manager.io/docs/&#34;&gt;cert-manager&lt;/a&gt; to dynamically issue and renew certificates for you.&lt;/p&gt;
-&lt;h2 id=&#34;-load-balancerreverse-proxy-controls&#34;&gt;🎛️ Load balancer/Reverse proxy controls&lt;/h2&gt;
-&lt;p&gt;As mentioned before, by having your pods traffic route via a reverse proxy in the cluster you gain more control over the routing and connection. Some useful examples for ingress-nginx are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Authentication&lt;/strong&gt;: Setup &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc2617&#34;&gt;basic or digest access authentication&lt;/a&gt; on routes
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/auth-type: basic&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Session affinity:&lt;/strong&gt; Allows for things like sticky sessions, keeping a user going to the same backend pod or use cookie affinity to apply a &lt;code&gt;SameSite&lt;/code&gt; sticky cookie
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/affinity: sticky&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;SSL passthrough:&lt;/strong&gt; Instead of terminating TLS at the load balancer you can let the backend handle it directly
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/ssl-passthrough: &amp;quot;true&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Redirections:&lt;/strong&gt; Both &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#permanent-redirect&#34;&gt;permanent&lt;/a&gt; and &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#temporal-redirect&#34;&gt;temporary&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/permanent-redirect: https://www.google.com&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Security controls&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#ssl-ciphers&#34;&gt;SSL ciphers&lt;/a&gt; can be configured controlling which SSL ciphers you support
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/ssl-ciphers: &amp;quot;ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#enable-cors&#34;&gt;CORS rules&lt;/a&gt; to configure the cross-original resource sharing rules
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/enable-cors: &amp;quot;true&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;A lot of these controls can be configured either as &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/&#34;&gt;annotations&lt;/a&gt; directly on Ingress resources affecting only those specific routes, or can be provided in the &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/&#34;&gt;Configmap&lt;/a&gt; to be applied at a global level.&lt;/p&gt;
-&lt;h2 id=&#34;-can-i-have-multiple-ingress-controllers&#34;&gt;🤹‍♂️ Can I have multiple ingress-controllers?&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Yes&lt;/strong&gt;. Let’s say you want to be able to accept traffic from the public internet as well as internally from inside your private network.&lt;/p&gt;
-&lt;p&gt;We would:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Deploy two sets of ingress-controllers, &lt;em&gt;ingress-public&lt;/em&gt; and &lt;em&gt;ingress-private&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Configure them to be public and private. This is done usually by the annotations given to the different &lt;code&gt;Service&lt;/code&gt; resources (&lt;code&gt;service.beta.kubernetes.io/aws-load-balancer-scheme: &amp;quot;internet-facing&amp;quot;&lt;/code&gt; for instance)&lt;/li&gt;
-&lt;li&gt;Setup the Ingress classes
-&lt;ul&gt;
-&lt;li&gt;This is a relatively new resource, it used to be managed by an annotation &lt;code&gt;kubernetes.io/ingress.class&lt;/code&gt; which is being deprecated&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;When creating &lt;code&gt;Ingress&lt;/code&gt; resources you can target the &lt;code&gt;IngressClass&lt;/code&gt; to specify which controller should setup routing for your traffic&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;-what-about-hostnames&#34;&gt;📮 What about hostnames?&lt;/h2&gt;
-&lt;p&gt;Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.&lt;/p&gt;
-&lt;p&gt;To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to &lt;code&gt;friendly-address.domain.com&lt;/code&gt; would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.&lt;/p&gt;
-&lt;p&gt;Then any routes off this hostname would be directed to your specified pods, ie.:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
+<p>There are some tradeoffs to using an ingress controller:</p>
+<ul>
+<li>This introduces an extra hop for your network requests to reach your pod. If you have high throughput - and low latency is important - this could be a consideration</li>
+<li>In the same vein, the ingress controller pods also use resources. If you have the ingress controller doing a lot of TLS termination or handling high load the resource usage will increase significantly</li>
+<li>You can only really use this for (mostly) Layer 7 traffic, TCP or UDP cannot directly be exposed this way</li>
+</ul>
+<h2 id="-so-what-does-an-ingress-controller-actually-do">🛠️ So what does an ingress controller actually do?</h2>
+<p>At a high level you have the following components:</p>
+<ul>
+<li><strong>Kubernetes resources:</strong>
+<ul>
+<li>Service: type <code>LoadBalancer</code>, meaning your ingress-controller pods are fronted by a cloud load balancer and exposed outside the cluster</li>
+<li>Deployment: Ingress Controller itself (see components below for a breakdown)</li>
+<li>(sometimes)Deployment: default backend, this is where the ingress controller routes traffic to when there isn’t a matching host/path rule for the traffic coming in</li>
+</ul>
+</li>
+<li><strong>Components of the ingress controller:</strong>
+<ul>
+<li>Reverse proxy: This is what actually routes the traffic coming in to downstream services/pods. If you installed nginx on a service and ran it it’s this basically</li>
+<li>Config generator: This continuously gets the state of Ingress resources in the Kubernetes cluster (think of it as spamming <code>kubectl get ingress -A</code> every X-seconds) and uses that to generate config that the reverse proxy (nginx in this case) understands</li>
+</ul>
+</li>
+</ul>
+<p>The <em>reverse proxy</em> continually has it’s config updated by the <em>config generator</em> and then traffic coming into the cluster via the <em>Loadbalancer service</em> hits the reverse proxy and is routed to the proper backend service/pods.</p>
+<h2 id="-what-about-ssl">🔒 What about SSL?</h2>
+<p>For HTTPS traffic, we can configure the ingress-controller to terminate the SSL and provide the certs as needed.</p>
+<p>When creating an ingress resource you can specify a Kubernetes Secret of type <code>tls</code> and the ingress-controller will use that secret to terminate the SSL of the request at the reverse proxy.</p>
+<p>This could also be coupled with a tool like <a href="https://cert-manager.io/docs/">cert-manager</a> to dynamically issue and renew certificates for you.</p>
+<h2 id="-load-balancerreverse-proxy-controls">🎛️ Load balancer/Reverse proxy controls</h2>
+<p>As mentioned before, by having your pods traffic route via a reverse proxy in the cluster you gain more control over the routing and connection. Some useful examples for ingress-nginx are:</p>
+<ul>
+<li><strong>Authentication</strong>: Setup <a href="https://datatracker.ietf.org/doc/html/rfc2617">basic or digest access authentication</a> on routes
+<ul>
+<li><code>nginx.ingress.kubernetes.io/auth-type: basic</code></li>
+</ul>
+</li>
+<li><strong>Session affinity:</strong> Allows for things like sticky sessions, keeping a user going to the same backend pod or use cookie affinity to apply a <code>SameSite</code> sticky cookie
+<ul>
+<li><code>nginx.ingress.kubernetes.io/affinity: sticky</code></li>
+</ul>
+</li>
+<li><strong>SSL passthrough:</strong> Instead of terminating TLS at the load balancer you can let the backend handle it directly
+<ul>
+<li><code>nginx.ingress.kubernetes.io/ssl-passthrough: &quot;true&quot;</code></li>
+</ul>
+</li>
+<li><strong>Redirections:</strong> Both <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#permanent-redirect">permanent</a> and <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#temporal-redirect">temporary</a>
+<ul>
+<li><code>nginx.ingress.kubernetes.io/permanent-redirect: https://www.google.com</code></li>
+</ul>
+</li>
+<li><strong>Security controls</strong>
+<ul>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#ssl-ciphers">SSL ciphers</a> can be configured controlling which SSL ciphers you support
+<ul>
+<li><code>nginx.ingress.kubernetes.io/ssl-ciphers: &quot;ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP&quot;</code></li>
+</ul>
+</li>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#enable-cors">CORS rules</a> to configure the cross-original resource sharing rules
+<ul>
+<li><code>nginx.ingress.kubernetes.io/enable-cors: &quot;true&quot;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>A lot of these controls can be configured either as <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/">annotations</a> directly on Ingress resources affecting only those specific routes, or can be provided in the <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/">Configmap</a> to be applied at a global level.</p>
+<h2 id="-can-i-have-multiple-ingress-controllers">🤹‍♂️ Can I have multiple ingress-controllers?</h2>
+<p><strong>Yes</strong>. Let’s say you want to be able to accept traffic from the public internet as well as internally from inside your private network.</p>
+<p>We would:</p>
+<ul>
+<li>Deploy two sets of ingress-controllers, <em>ingress-public</em> and <em>ingress-private</em></li>
+<li>Configure them to be public and private. This is done usually by the annotations given to the different <code>Service</code> resources (<code>service.beta.kubernetes.io/aws-load-balancer-scheme: &quot;internet-facing&quot;</code> for instance)</li>
+<li>Setup the Ingress classes
+<ul>
+<li>This is a relatively new resource, it used to be managed by an annotation <code>kubernetes.io/ingress.class</code> which is being deprecated</li>
+</ul>
+</li>
+<li>When creating <code>Ingress</code> resources you can target the <code>IngressClass</code> to specify which controller should setup routing for your traffic</li>
+</ul>
+<h2 id="-what-about-hostnames">📮 What about hostnames?</h2>
+<p>Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.</p>
+<p>To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to <code>friendly-address.domain.com</code> would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.</p>
+<p>Then any routes off this hostname would be directed to your specified pods, ie.:</p>
+<pre tabindex="0"><code>`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
 `friendly-address.domain.com/app-b` → `svc/app-b` in the cluster and so on
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But what if you wanted to have multiple different hostnames, maybe 1 per application.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;`app-a.friendly-address.domain.com/` → `svc/app-a`
+</code></pre><p>But what if you wanted to have multiple different hostnames, maybe 1 per application.</p>
+<pre tabindex="0"><code>`app-a.friendly-address.domain.com/` → `svc/app-a`
 `app-b.friendly-address.domain.com/` → `svc/app-b`
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.&lt;/p&gt;
-&lt;p&gt;That’s where a tool like &lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns&#34;&gt;external-dns&lt;/a&gt; comes in.&lt;/p&gt;
-&lt;h3 id=&#34;external-dns&#34;&gt;external-dns&lt;/h3&gt;
-&lt;p&gt;external-dns allows you to automatically configure your DNS services based on your Kubernetes Ingress resources (and services!).&lt;/p&gt;
-&lt;p&gt;As an example, if you have deployed external-dns and wanted to setup a new &lt;code&gt;app-c.friendly-address.domain.com&lt;/code&gt; to point to your service all you would need to do is create an &lt;code&gt;Ingress&lt;/code&gt; resource with the &lt;code&gt;Host&lt;/code&gt; field set to &lt;code&gt;app-c.friendly-address.domain.com&lt;/code&gt; and external-dns would provision you an A record pointing to your load balancer.&lt;/p&gt;
-&lt;h2 id=&#34;-bringing-it-all-together&#34;&gt;🍵 Bringing it all together&lt;/h2&gt;
-&lt;p&gt;To give an example of all of this in use, lets build resources for the following requirements:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;We have 3 applications: &lt;code&gt;alpha&lt;/code&gt; &lt;code&gt;beta&lt;/code&gt; and &lt;code&gt;gamma&lt;/code&gt; running on our cluster&lt;/li&gt;
-&lt;li&gt;We want &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt; exposed via the same Hostname but with separate routes:
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;public.example.com/alpha&lt;/code&gt; and &lt;code&gt;public.example.com/beta&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;We want &lt;code&gt;gamma&lt;/code&gt; to have it’s own hostname as it’s a separate, unrelated application
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;gamma.public.example.com&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;We have the TLS key and cert for &lt;code&gt;public.example.com&lt;/code&gt; and want the ingress-controller to terminate TLS for this host&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;gamma&lt;/code&gt; handles it’s own TLS so we shouldn’t terminate it at the reverse proxy,&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We already have:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;A Kubernetes cluster running in AWS&lt;/li&gt;
-&lt;li&gt;Deployed external-dns onto our cluster configured for AWS Route 53, [&lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md&#34;&gt;link&lt;/a&gt;]&lt;/li&gt;
-&lt;li&gt;Deployed ingress-nginx onto our cluster configured for AWS, [&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/deploy/&#34;&gt;link&lt;/a&gt;]. Ingress class is set to &lt;code&gt;default&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Feel free to try these steps above for yourself the implementation and breakdown of what we’re doing come below though so spoiler alert.&lt;/p&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Create the TLS secret for our alpha/beta endpoint&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;kubectl create secret tls public \
+</code></pre><p>These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.</p>
+<p>That’s where a tool like <a href="https://github.com/kubernetes-sigs/external-dns">external-dns</a> comes in.</p>
+<h3 id="external-dns">external-dns</h3>
+<p>external-dns allows you to automatically configure your DNS services based on your Kubernetes Ingress resources (and services!).</p>
+<p>As an example, if you have deployed external-dns and wanted to setup a new <code>app-c.friendly-address.domain.com</code> to point to your service all you would need to do is create an <code>Ingress</code> resource with the <code>Host</code> field set to <code>app-c.friendly-address.domain.com</code> and external-dns would provision you an A record pointing to your load balancer.</p>
+<h2 id="-bringing-it-all-together">🍵 Bringing it all together</h2>
+<p>To give an example of all of this in use, lets build resources for the following requirements:</p>
+<ul>
+<li>We have 3 applications: <code>alpha</code> <code>beta</code> and <code>gamma</code> running on our cluster</li>
+<li>We want <code>alpha</code> and <code>beta</code> exposed via the same Hostname but with separate routes:
+<ul>
+<li><code>public.example.com/alpha</code> and <code>public.example.com/beta</code></li>
+</ul>
+</li>
+<li>We want <code>gamma</code> to have it’s own hostname as it’s a separate, unrelated application
+<ul>
+<li><code>gamma.public.example.com</code></li>
+</ul>
+</li>
+<li>We have the TLS key and cert for <code>public.example.com</code> and want the ingress-controller to terminate TLS for this host</li>
+<li><code>gamma</code> handles it’s own TLS so we shouldn’t terminate it at the reverse proxy,</li>
+</ul>
+<p>We already have:</p>
+<ul>
+<li>A Kubernetes cluster running in AWS</li>
+<li>Deployed external-dns onto our cluster configured for AWS Route 53, [<a href="https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md">link</a>]</li>
+<li>Deployed ingress-nginx onto our cluster configured for AWS, [<a href="https://kubernetes.github.io/ingress-nginx/deploy/">link</a>]. Ingress class is set to <code>default</code></li>
+</ul>
+<p>Feel free to try these steps above for yourself the implementation and breakdown of what we’re doing come below though so spoiler alert.</p>
+<hr>
+<ol>
+<li>
+<p>Create the TLS secret for our alpha/beta endpoint</p>
+<pre tabindex="0"><code>kubectl create secret tls public \
   --cert=tls.cert \
   --key=tls.key
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;YAML for the Ingress of &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha-beta&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;ingressClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;tls&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;hosts&lt;/span&gt;:
-      - &lt;span style=&#34;color:#ae81ff&#34;&gt;public.example.com&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;secretName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;public&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;public.example.com&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;http&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/alpha&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
-            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha&lt;/span&gt;
-            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
-              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/beta&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
-            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;beta&lt;/span&gt;
-            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
-              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;YAML for the Ingress of &lt;code&gt;gamma&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;nginx.ingress.kubernetes.io/ssl-passthrough&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;ingressClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma.public.example.com&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;http&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
-            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
-            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
-              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;blockquote&gt;
-&lt;p&gt;☝ SSL Passthrough also needs to be enabled on the ingress-nginx deployment with the flag &lt;code&gt;--enable-ssl-passthrough&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;What happens with these resources?&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;ingress-nginx:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Constantly checks for new/updated &lt;code&gt;Ingress&lt;/code&gt; resources&lt;/li&gt;
-&lt;li&gt;Detects &lt;code&gt;alpha-beta&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;Adds nginx config to route to the services
-&lt;ul&gt;
-&lt;li&gt;Can be checked with: &lt;code&gt;kubectl exec -it &amp;lt;ingress-controller-pod-name&amp;gt; -- cat /etc/nginx/nginx.conf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;This config includes the secret mentioned to be able to terminate TLS&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Updates the &lt;code&gt;Ingress&lt;/code&gt; resource &lt;code&gt;Address&lt;/code&gt; field with the DNS of the Cloud load balancer the controller knows is pointing at it&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;curl https://public.example.com/alpha -v&lt;/code&gt; shows it routing correctly and the cert as expected&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;curl https://public.example.com/wrong -v&lt;/code&gt; shows the default backend&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Detects &lt;code&gt;gamma&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;Adds nginx config to route to the services
-&lt;ul&gt;
-&lt;li&gt;Again, can be checked with: &lt;code&gt;kubectl exec -it &amp;lt;ingress-controller-pod-name&amp;gt; -- cat /etc/nginx/nginx.conf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;This config will show the ssl_passthrough is set to not handle any TLS&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Updates the &lt;code&gt;Ingress&lt;/code&gt; resource &lt;code&gt;Address&lt;/code&gt; field with the DNS of the Cloud load balancer that the controller knows is pointing at it.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;curl https://gamma.public.example.com -v&lt;/code&gt; shows traffic routing correctly and with our in-application TLS handling&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;external-dns:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Constantly checking for new/updated &lt;code&gt;Ingress&lt;/code&gt; resources&lt;/li&gt;
-&lt;li&gt;Sees the two new resources but with empty &lt;code&gt;Address&lt;/code&gt; fields - needs these to be set before it can point the specified host to the address the service sits behind.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Address&lt;/code&gt; field is now updated for &lt;code&gt;alpha-beta&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;Checks if the hostname has already been created
-&lt;ul&gt;
-&lt;li&gt;external-dns defaults to using &lt;code&gt;txt&lt;/code&gt; records in the chosen DNS service to persist information about the domains it manages&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Creates an &lt;code&gt;A&lt;/code&gt; record pointing &lt;code&gt;public.example.com&lt;/code&gt; to the value of &lt;code&gt;Address&lt;/code&gt; in the ingress&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Address&lt;/code&gt; field is now updated for &lt;code&gt;gamma&lt;/code&gt;
-&lt;ul&gt;
-&lt;li&gt;This does the same as &lt;code&gt;alpha-beta&lt;/code&gt; but for &lt;code&gt;gamma.public.example.com&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;-other-controllers-are-available&#34;&gt;🦦 Other controllers are available&lt;/h2&gt;
-&lt;p&gt;Other ingress controllers are available too, notable/interesting ones include:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme&#34;&gt;AWS Load balancer controller&lt;/a&gt; can manage ALBs out of cluster for ingress resources and NLBs for service resources&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doc.traefik.io/traefik/providers/kubernetes-ingress/&#34;&gt;Traefix ingress controller&lt;/a&gt; an ingress controller using the Kubernetes native edge router&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.getambassador.io/docs/edge-stack/latest/topics/running/ingress-controller/&#34;&gt;Ambassador&lt;/a&gt; uses Envoy to act as an ingress controller and API gateway&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The benefit of having all of your configuration directly in Kubernetes as an &lt;code&gt;Ingress&lt;/code&gt; resource comes from every compliant ingress-controllers reading and interacting with Ingress in the same way. The only change between them would be the implementation specific things you control via annotations, the general routes and hosts work regardless of your choice.&lt;/p&gt;</content>
+</code></pre></li>
+<li>
+<p>YAML for the Ingress of <code>alpha</code> and <code>beta</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha-beta</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">public</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/alpha</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/beta</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">beta</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div></li>
+<li>
+<p>YAML for the Ingress of <code>gamma</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">nginx.ingress.kubernetes.io/ssl-passthrough</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">gamma.public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div></li>
+</ol>
+<blockquote>
+<p>☝ SSL Passthrough also needs to be enabled on the ingress-nginx deployment with the flag <code>--enable-ssl-passthrough</code></p>
+</blockquote>
+<p><strong>What happens with these resources?</strong></p>
+<ul>
+<li><strong>ingress-nginx:</strong>
+<ul>
+<li>Constantly checks for new/updated <code>Ingress</code> resources</li>
+<li>Detects <code>alpha-beta</code>:
+<ul>
+<li>Adds nginx config to route to the services
+<ul>
+<li>Can be checked with: <code>kubectl exec -it &lt;ingress-controller-pod-name&gt; -- cat /etc/nginx/nginx.conf</code></li>
+<li>This config includes the secret mentioned to be able to terminate TLS</li>
+</ul>
+</li>
+<li>Updates the <code>Ingress</code> resource <code>Address</code> field with the DNS of the Cloud load balancer the controller knows is pointing at it</li>
+<li><code>curl https://public.example.com/alpha -v</code> shows it routing correctly and the cert as expected</li>
+<li><code>curl https://public.example.com/wrong -v</code> shows the default backend</li>
+</ul>
+</li>
+<li>Detects <code>gamma</code>:
+<ul>
+<li>Adds nginx config to route to the services
+<ul>
+<li>Again, can be checked with: <code>kubectl exec -it &lt;ingress-controller-pod-name&gt; -- cat /etc/nginx/nginx.conf</code></li>
+<li>This config will show the ssl_passthrough is set to not handle any TLS</li>
+</ul>
+</li>
+<li>Updates the <code>Ingress</code> resource <code>Address</code> field with the DNS of the Cloud load balancer that the controller knows is pointing at it.</li>
+<li><code>curl https://gamma.public.example.com -v</code> shows traffic routing correctly and with our in-application TLS handling</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>external-dns:</strong>
+<ul>
+<li>Constantly checking for new/updated <code>Ingress</code> resources</li>
+<li>Sees the two new resources but with empty <code>Address</code> fields - needs these to be set before it can point the specified host to the address the service sits behind.</li>
+<li><code>Address</code> field is now updated for <code>alpha-beta</code>:
+<ul>
+<li>Checks if the hostname has already been created
+<ul>
+<li>external-dns defaults to using <code>txt</code> records in the chosen DNS service to persist information about the domains it manages</li>
+</ul>
+</li>
+<li>Creates an <code>A</code> record pointing <code>public.example.com</code> to the value of <code>Address</code> in the ingress</li>
+</ul>
+</li>
+<li><code>Address</code> field is now updated for <code>gamma</code>
+<ul>
+<li>This does the same as <code>alpha-beta</code> but for <code>gamma.public.example.com</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="-other-controllers-are-available">🦦 Other controllers are available</h2>
+<p>Other ingress controllers are available too, notable/interesting ones include:</p>
+<ul>
+<li><a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme">AWS Load balancer controller</a> can manage ALBs out of cluster for ingress resources and NLBs for service resources</li>
+<li><a href="https://doc.traefik.io/traefik/providers/kubernetes-ingress/">Traefix ingress controller</a> an ingress controller using the Kubernetes native edge router</li>
+<li><a href="https://www.getambassador.io/docs/edge-stack/latest/topics/running/ingress-controller/">Ambassador</a> uses Envoy to act as an ingress controller and API gateway</li>
+</ul>
+<p>The benefit of having all of your configuration directly in Kubernetes as an <code>Ingress</code> resource comes from every compliant ingress-controllers reading and interacting with Ingress in the same way. The only change between them would be the implementation specific things you control via annotations, the general routes and hosts work regardless of your choice.</p>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Kubernetes Networking #2: Services</title>
-      <link>/post/kubernetes-networking-services/</link>
+      <link>http://localhost:1313/post/kubernetes-networking-services/</link>
       <pubDate>Thu, 21 Apr 2022 10:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-services/</guid>
-      <description>&lt;p&gt;Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?&lt;/p&gt;</description>
-      <content>&lt;p&gt;Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?&lt;/p&gt;
-&lt;p&gt;In Kubernetes pods are ephemeral (or &lt;a href=&#34;https://thenewstack.io/how-to-treat-your-kubernetes-clusters-like-cattle-not-pets/&#34;&gt;cattle&lt;/a&gt;), you should expect them to be killed, scaled and replaced whenever. So how do you talk to a set of pods which might have changed the next second? A service.&lt;/p&gt;
-&lt;p&gt;Services sit in front of your application and mean you only have to call the service address and magic Kubernetes components will get that request to the right Pod(s).
-How does a service know which pods it can talk to?&lt;/p&gt;
-&lt;h2 id=&#34;selectors&#34;&gt;Selectors&lt;/h2&gt;
-&lt;p&gt;Services map to pods via label selectors. You have a pod with label &lt;code&gt;app=etizer&lt;/code&gt; and then create a service with &lt;code&gt;.spec.selector&lt;/code&gt; for the same and that service will forward traffic to any Ready pods matching that label.&lt;/p&gt;
-&lt;p&gt;Behind the scenes, a service resource also creates an &lt;code&gt;Endpoints&lt;/code&gt; resource which maintains a list of Pod IPs based on your service selector. It’s worth noting here, the readyiness checks you implement for your Pods are what controls whether the IP goes into this &lt;code&gt;Endpoints&lt;/code&gt; resource and allow traffic.&lt;/p&gt;
-&lt;p&gt;The exception here is selector-less services, these don’t have a label selector so won’t also have an &lt;code&gt;Endpoint&lt;/code&gt; resource. To use these you also need to create an endpoint resource of the same name as your service, you can add any IPs and ports you want to this resource. This is a great way to map a service to something not in your cluster so your pods can talk to it as if it was a service.&lt;/p&gt;
-&lt;p&gt;But what are the different types of services and how do they work?&lt;/p&gt;
-&lt;h2 id=&#34;service-types&#34;&gt;Service Types&lt;/h2&gt;
-&lt;h3 id=&#34;clusterip&#34;&gt;ClusterIP&lt;/h3&gt;
-&lt;p&gt;When you create a &lt;code&gt;ClusterIP&lt;/code&gt; type service you’ll will get:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;A virtual IP for the service
-&lt;ul&gt;
-&lt;li&gt;This is within the &lt;code&gt;--service-cluster-ip-range&lt;/code&gt; your &lt;code&gt;api-server&lt;/code&gt; has been configured with&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-proxy&lt;/code&gt; is responsible for this virtual IP routing to one of your Pod IPs&lt;/li&gt;
-&lt;li&gt;This virtual IP will forward requests to one of your pod IPs based on the &lt;code&gt;Endpoints&lt;/code&gt; resource associated with your service.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;A local cluster DNS address, eg. &lt;code&gt;&amp;lt;service-name&amp;gt;.&amp;lt;namespace&amp;gt;.svc.cluster.local&lt;/code&gt;
-&lt;ul&gt;
-&lt;li&gt;This is resolved by your &lt;code&gt;kube-dns&lt;/code&gt; (CoreDNS) to your virtual service IP&lt;/li&gt;
-&lt;li&gt;This is why your service name must be &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc1035&#34;&gt;RFC 1035 compliant&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The normal way of utilising this would be giving your application the service DNS address so it can talk to another application running on the cluster. This DNS address resolves to the virtual IP and then the configuration &lt;code&gt;kube-proxy&lt;/code&gt; controls handles that IP resolving to actual pod IP addresses. From there your CNI will route your request using the pod IP.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;ClusterIP&lt;/code&gt; service type is ✨&lt;em&gt;special&lt;/em&gt;✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types &lt;code&gt;NodePort&lt;/code&gt; and &lt;code&gt;LoadBalancer&lt;/code&gt; (by extension of LoadBalancer using &lt;code&gt;NodePort&lt;/code&gt;) as part of their implementations.&lt;/p&gt;
+      
+      <guid>http://localhost:1313/post/kubernetes-networking-services/</guid>
+      <description><![CDATA[<p>Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?</p>
+<p>In Kubernetes pods are ephemeral (or <a href="https://thenewstack.io/how-to-treat-your-kubernetes-clusters-like-cattle-not-pets/">cattle</a>), you should expect them to be killed, scaled and replaced whenever. So how do you talk to a set of pods which might have changed the next second? A service.</p>
+<p>Services sit in front of your application and mean you only have to call the service address and magic Kubernetes components will get that request to the right Pod(s).
+How does a service know which pods it can talk to?</p>
+<h2 id="selectors">Selectors</h2>
+<p>Services map to pods via label selectors. You have a pod with label <code>app=etizer</code> and then create a service with <code>.spec.selector</code> for the same and that service will forward traffic to any Ready pods matching that label.</p>
+<p>Behind the scenes, a service resource also creates an <code>Endpoints</code> resource which maintains a list of Pod IPs based on your service selector. It’s worth noting here, the readyiness checks you implement for your Pods are what controls whether the IP goes into this <code>Endpoints</code> resource and allow traffic.</p>
+<p>The exception here is selector-less services, these don’t have a label selector so won’t also have an <code>Endpoint</code> resource. To use these you also need to create an endpoint resource of the same name as your service, you can add any IPs and ports you want to this resource. This is a great way to map a service to something not in your cluster so your pods can talk to it as if it was a service.</p>
+<p>But what are the different types of services and how do they work?</p>
+<h2 id="service-types">Service Types</h2>
+<h3 id="clusterip">ClusterIP</h3>
+<p>When you create a <code>ClusterIP</code> type service you’ll will get:</p>
+<ul>
+<li>A virtual IP for the service
+<ul>
+<li>This is within the <code>--service-cluster-ip-range</code> your <code>api-server</code> has been configured with</li>
+<li><code>kube-proxy</code> is responsible for this virtual IP routing to one of your Pod IPs</li>
+<li>This virtual IP will forward requests to one of your pod IPs based on the <code>Endpoints</code> resource associated with your service.</li>
+</ul>
+</li>
+<li>A local cluster DNS address, eg. <code>&lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local</code>
+<ul>
+<li>This is resolved by your <code>kube-dns</code> (CoreDNS) to your virtual service IP</li>
+<li>This is why your service name must be <a href="https://datatracker.ietf.org/doc/html/rfc1035">RFC 1035 compliant</a></li>
+</ul>
+</li>
+</ul>
+<p>The normal way of utilising this would be giving your application the service DNS address so it can talk to another application running on the cluster. This DNS address resolves to the virtual IP and then the configuration <code>kube-proxy</code> controls handles that IP resolving to actual pod IP addresses. From there your CNI will route your request using the pod IP.</p>
+<p>The <code>ClusterIP</code> service type is ✨<em>special</em>✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types <code>NodePort</code> and <code>LoadBalancer</code> (by extension of LoadBalancer using <code>NodePort</code>) as part of their implementations.</p>
+<figure><img src="/img/k8s-services-2-types.png"
+    alt="Just like a Matryoshka doll"><figcaption>
+      <h4>Just like a Matryoshka doll</h4><p>Just like a Matryoshka doll</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/k8s-services-2-types.png&#34;   /&gt;
+<p><code>&lt;service-ip&gt;:&lt;service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="nodeport">NodePort</h3>
+<p>A <code>NodePort</code> type service opens up a port on <strong>every node</strong> in your cluster, this port then proxies requests to your service’s virtual IP address.</p>
+<p>The port range defaults to <code>30000-32767</code>, interestingly enough just below the Linux kernel default <a href="https://www.kernel.org/doc/html/latest//networking/ip-sysctl.html#ip-variables">ephemeral port range</a>. It can also be configured with the flag <code>--service-node-port-range</code> if you need these ports for some use case.</p>
+<p>At a high level a <code>NodePort</code> is a single rule configured by <code>kube-proxy</code> onto every node, to forward requests to an underlying <code>ClusterIP</code> service.</p>
+<p><code>&lt;node-ip&gt;:&lt;node-port&gt; → &lt;service-ip&gt;:&lt;service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="loadbalancer">LoadBalancer</h3>
+<p>A <code>LoadBalancer</code> type service only really works in a cloud environment. When created, asyncronously, the <a href="https://kubernetes.io/docs/concepts/architecture/cloud-controller/">cloud-controller-manager</a> will provision you a load balancer which directs traffic to your pods.</p>
+<p>The implementation of the different cloud load balancers varys wildly. It used to be different clouds were implemented <a href="https://github.com/kubernetes/kubernetes/tree/release-1.11/pkg/cloudprovider/providers/aws">in-tree</a>, committing directly to kubernetes but now it must be done via out-of-tree implementations, eg. <a href="https://github.com/kubernetes/cloud-provider-aws">cloud-provider-aws</a>.</p>
+<p>Cloud implementations aside, once you have a <em>cloud</em> load balancer it works by pointing to a <code>NodePort</code> service running. This means that you have a load balancer with every Kubernetes worker node as a listener, forwarding traffic to any nodes on a particular port. From there it follows the standard <code>NodePort</code> → <code>ClusterIP</code> route.</p>
+<p>If you didn’t want to write a whole <a href="https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/">cloud control manager</a> to expose your application on your own servers, a <code>NodePort</code> service with that port pointed to from your existing load balancer would do the trick.</p>
+<p><code>&lt;load-balancer-ip&gt;:&lt;lb-port&gt; -&gt; &lt;node-ip&gt;:&lt;node-port&gt; → &lt;service-ip&gt;:service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="externalname">ExternalName</h3>
+<p><code>ExternalName</code> services are the odd one out. Instead of using good ol’ <code>ClusterIP</code> and getting a virtual IP, they create a <code>CNAME</code> record to map your service DNS to another DNS address.</p>
+<p>As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a <code>ExternalName</code> service:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: database
+</span></span><span style="display:flex;"><span>  namespace: prod
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  type: ExternalName
+</span></span><span style="display:flex;"><span>  externalName: prod.database.example.com
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: database
+</span></span><span style="display:flex;"><span>  namespace: dev
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  type: ExternalName
+</span></span><span style="display:flex;"><span>  externalName: dev.database.example.com
+</span></span></code></pre></div><p>Now all the service-owners have to do is point their code to <code>database.svc.cluster.local</code> and they will talk to the right database every time.</p>
+<p><code>database.svc.cluster.local</code> = <code>CNAME test.database.example.com</code></p>
+<p>It’s worth noting since the pod requesting the service will get the <code>CNAME</code> record back, the pod also has to be configured to resolve whatever domain the <code>CNAME</code> returns. If it’s a private record, you might want to <a href="https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/">configure revolvers in CoreDNS</a>.</p>
+<h2 id="how-virtual-ips-work">How Virtual IPs work</h2>
+<p><em>Most</em> services (sorry, <code>ExternalName</code>) use a virtual IP to forward requests to the proper pods. It’s the responsibility of <code>kube-proxy</code> to provide this virtual IP and make sure the traffic is actually forwarded. <code>kube-proxy</code> runs on every node so the steps below happen per worker node.</p>
+<p>How this works depends on the mode of <code>kube-proxy</code> is given with <code>-proxy-mode</code> flag:</p>
+<blockquote>
+<p>ℹ️ <strong>For all of these <code>kube-proxy</code> will monitor the control plane for new/updated/removed <code>Service</code> and <code>Endpoint</code> resources and run the following steps</strong></p>
+</blockquote>
+<ul>
+<li><strong>userspace</strong> (legacy)
+<ul>
+<li>For each <code>Service</code> it opens a random proxy port on the node</li>
+<li>This proxy port is then told to iptables to capture traffic to this particular virtual IP and port to redirect to the Pod IPs in the <code>Endpoint</code> resource</li>
+<li>The backend pod is chosen based on the <code>SessionAffinity</code> of the service</li>
+<li><strong>The traffic here is actually proxied via <code>kube-proxy</code> itself</strong></li>
+</ul>
+</li>
+<li><strong>iptables</strong>
+<ul>
+<li>For each <code>Service</code> it creates iptables rules which redirect traffic to the virtual IP and service port</li>
+<li>These redirect rules point to sets of pod IPs based on what is in the endpoint resource</li>
+<li>The backend pod is chosen at random by default</li>
+<li><strong>The traffic is all handled within the Linux <a href="https://www.netfilter.org/">netfilter</a> so all within the kernelspace, <code>kube-proxy</code> doesn’t handle the traffic it just sets up rules to process it</strong></li>
+</ul>
+</li>
+<li><strong>IPVS</strong>
+<ul>
+<li>Whilst iptables was designed to be a firewall and <code>kube-proxy</code> just uses it to redirect network traffic, IPVS was made for load balancing</li>
+<li>At a high level this works similar to iptables, cluster IP and port → set of pod IPs</li>
+<li>IPVS is important when working at scale, if you have &gt;1000 services (or 10,000 pods) in your cluster IPVS is the performant choice</li>
+</ul>
+</li>
+<li><strong>kernelspace</strong> (windows)</li>
+</ul>
+<h2 id="bringing-it-all-together">Bringing it all together</h2>
+<p>Let’s create an example <code>LoadBalancer</code> service and see what components come together to get traffic from a client to your pods. We’ll show how traffic from outside, via the load balancer, gets to your pods and how another pod in the cluster can also use this service without going via the load balancer.</p>
+<p>In this example let’s say we’re running on a Kubernetes cluster in AWS with the AWS cloud controller manager properly configured, we have pods running with label <code>app=alpha</code> which listens on port <code>8080</code> for traffic and <code>kube-proxy</code> is in the default <code>iptables</code> mode.</p>
+<ul>
+<li>
+<p>Service YAML</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This doesn&#39;t affect routing but it&#39;s best practice to label components together</span>
+</span></span><span style="display:flex;"><span>  labels:
+</span></span><span style="display:flex;"><span>    app: alpha
+</span></span><span style="display:flex;"><span>  name: example
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  ports:
+</span></span><span style="display:flex;"><span>  - name: main
+</span></span><span style="display:flex;"><span>    port: <span style="color:#ae81ff">8081</span>
+</span></span><span style="display:flex;"><span>    protocol: TCP
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Target port is the port your pod has open</span>
+</span></span><span style="display:flex;"><span>    targetPort: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This is what tells the service which pods to route to</span>
+</span></span><span style="display:flex;"><span>  selector:
+</span></span><span style="display:flex;"><span>    app: alpha
+</span></span><span style="display:flex;"><span>  type: LoadBalancer
+</span></span></code></pre></div></li>
+</ul>
+<p>Lets create the service and have a look:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ kubectl apply -f service.yaml
+</span></span><span style="display:flex;"><span>service/example created
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$ kubectl get service example
+</span></span><span style="display:flex;"><span>NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>          AGE
+</span></span><span style="display:flex;"><span>example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
+</span></span></code></pre></div><p>I now have:</p>
+<ul>
+<li>An Endpoints resource corresponding to ready pods matching my label selector
+<ul>
+<li><code>kubectl get endpoints example</code></li>
+</ul>
+</li>
+<li>A cluster IP setup for my service <code>10.43.205.153</code></li>
+<li>A DNS address for the service configured
+<ul>
+<li>(from inside a Pod)</li>
+<li><code>dig example.default.svc.cluster.local</code></li>
+</ul>
+</li>
+<li>A external (to the cluster) IP which maps to my load balancer <code>192.168.0.147</code></li>
+<li>A NodePort setup <code>32255</code> so all my workers now have this port open
+<ul>
+<li><code>netstat -tulnp | grep 32255</code></li>
+</ul>
+</li>
+<li>iptables rules setup
+<ul>
+<li><code>sudo iptables -L | grep example</code></li>
+<li><code>sudo iptables -L | grep 10.43.205.153</code></li>
+</ul>
+</li>
+</ul>
+<p>Lets see how this request goes through to our pod from outside the cluster and a pod within.</p>
+<h3 id="from-outside-the-cluster">From outside the cluster</h3>
+
+  <figure class="left" >
+    <a href="/img/k8s-services-2-lb-external.png" >
+    <img src="/img/k8s-services-2-lb-external.png"   />
     
-      &lt;figcaption class=&#34;center&#34; &gt;Just like a Matryoshka doll&lt;/figcaption&gt;
+    </a>
+  </figure>
+
+
+<ol>
+<li>The client makes a request to the load balancer to try and talk to the application, for how this is configured see my post on ingress into a cluster</li>
+<li>The load balancer selects one of the configured listeners, this is usually either random or round robin but depends on your load balancer and configuration</li>
+<li>The node has port 32255 open, requests here are configured in iptables to forward the request to the virtual IP of the service. These rules were configured by <code>kube-proxy</code></li>
+<li>iptables then resolves the virtual/service IP into a Pod IP address, one is chosen by random and the request heads there. Now the traffic is inside the cluster the CNI controls the network movements between nodes (see <a href="https://dgood.win/post/kubernetes-networking-overview/">here</a> for more info on what the CNI sets up)</li>
+<li>Once the request has reached the node with the pod on it, the CNI and iptables will forward it to the Pod as expected</li>
+</ol>
+<h3 id="from-a-pod-within-the-cluster">From a pod within the cluster</h3>
+
+  <figure class="left" >
+    <a href="/img/k8s-services-2-lb-internal.png" >
+    <img src="/img/k8s-services-2-lb-internal.png"   />
     
-  &lt;/figure&gt;
+    </a>
+  </figure>
 
 
-&lt;p&gt;&lt;code&gt;&amp;lt;service-ip&amp;gt;:&amp;lt;service-port&amp;gt; → &amp;lt;pod-ip&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;nodeport&#34;&gt;NodePort&lt;/h3&gt;
-&lt;p&gt;A &lt;code&gt;NodePort&lt;/code&gt; type service opens up a port on &lt;strong&gt;every node&lt;/strong&gt; in your cluster, this port then proxies requests to your service’s virtual IP address.&lt;/p&gt;
-&lt;p&gt;The port range defaults to &lt;code&gt;30000-32767&lt;/code&gt;, interestingly enough just below the Linux kernel default &lt;a href=&#34;https://www.kernel.org/doc/html/latest//networking/ip-sysctl.html#ip-variables&#34;&gt;ephemeral port range&lt;/a&gt;. It can also be configured with the flag &lt;code&gt;--service-node-port-range&lt;/code&gt; if you need these ports for some use case.&lt;/p&gt;
-&lt;p&gt;At a high level a &lt;code&gt;NodePort&lt;/code&gt; is a single rule configured by &lt;code&gt;kube-proxy&lt;/code&gt; onto every node, to forward requests to an underlying &lt;code&gt;ClusterIP&lt;/code&gt; service.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;&amp;lt;node-ip&amp;gt;:&amp;lt;node-port&amp;gt; → &amp;lt;service-ip&amp;gt;:&amp;lt;service-port&amp;gt; → &amp;lt;pod-ip&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;loadbalancer&#34;&gt;LoadBalancer&lt;/h3&gt;
-&lt;p&gt;A &lt;code&gt;LoadBalancer&lt;/code&gt; type service only really works in a cloud environment. When created, asyncronously, the &lt;a href=&#34;https://kubernetes.io/docs/concepts/architecture/cloud-controller/&#34;&gt;cloud-controller-manager&lt;/a&gt; will provision you a load balancer which directs traffic to your pods.&lt;/p&gt;
-&lt;p&gt;The implementation of the different cloud load balancers varys wildly. It used to be different clouds were implemented &lt;a href=&#34;https://github.com/kubernetes/kubernetes/tree/release-1.11/pkg/cloudprovider/providers/aws&#34;&gt;in-tree&lt;/a&gt;, committing directly to kubernetes but now it must be done via out-of-tree implementations, eg. &lt;a href=&#34;https://github.com/kubernetes/cloud-provider-aws&#34;&gt;cloud-provider-aws&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Cloud implementations aside, once you have a &lt;em&gt;cloud&lt;/em&gt; load balancer it works by pointing to a &lt;code&gt;NodePort&lt;/code&gt; service running. This means that you have a load balancer with every Kubernetes worker node as a listener, forwarding traffic to any nodes on a particular port. From there it follows the standard &lt;code&gt;NodePort&lt;/code&gt; → &lt;code&gt;ClusterIP&lt;/code&gt; route.&lt;/p&gt;
-&lt;p&gt;If you didn’t want to write a whole &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/&#34;&gt;cloud control manager&lt;/a&gt; to expose your application on your own servers, a &lt;code&gt;NodePort&lt;/code&gt; service with that port pointed to from your existing load balancer would do the trick.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;&amp;lt;load-balancer-ip&amp;gt;:&amp;lt;lb-port&amp;gt; -&amp;gt; &amp;lt;node-ip&amp;gt;:&amp;lt;node-port&amp;gt; → &amp;lt;service-ip&amp;gt;:service-port&amp;gt; → &amp;lt;pod-ip&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;externalname&#34;&gt;ExternalName&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;ExternalName&lt;/code&gt; services are the odd one out. Instead of using good ol’ &lt;code&gt;ClusterIP&lt;/code&gt; and getting a virtual IP, they create a &lt;code&gt;CNAME&lt;/code&gt; record to map your service DNS to another DNS address.&lt;/p&gt;
-&lt;p&gt;As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a &lt;code&gt;ExternalName&lt;/code&gt; service:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: database
-  namespace: prod
-spec:
-  type: ExternalName
-  externalName: prod.database.example.com
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: database
-  namespace: dev
-spec:
-  type: ExternalName
-  externalName: dev.database.example.com
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now all the service-owners have to do is point their code to &lt;code&gt;database.svc.cluster.local&lt;/code&gt; and they will talk to the right database every time.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;database.svc.cluster.local&lt;/code&gt; = &lt;code&gt;CNAME test.database.example.com&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;It’s worth noting since the pod requesting the service will get the &lt;code&gt;CNAME&lt;/code&gt; record back, the pod also has to be configured to resolve whatever domain the &lt;code&gt;CNAME&lt;/code&gt; returns. If it’s a private record, you might want to &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/&#34;&gt;configure revolvers in CoreDNS&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;how-virtual-ips-work&#34;&gt;How Virtual IPs work&lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;Most&lt;/em&gt; services (sorry, &lt;code&gt;ExternalName&lt;/code&gt;) use a virtual IP to forward requests to the proper pods. It’s the responsibility of &lt;code&gt;kube-proxy&lt;/code&gt; to provide this virtual IP and make sure the traffic is actually forwarded. &lt;code&gt;kube-proxy&lt;/code&gt; runs on every node so the steps below happen per worker node.&lt;/p&gt;
-&lt;p&gt;How this works depends on the mode of &lt;code&gt;kube-proxy&lt;/code&gt; is given with &lt;code&gt;-proxy-mode&lt;/code&gt; flag:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;ℹ️ &lt;strong&gt;For all of these &lt;code&gt;kube-proxy&lt;/code&gt; will monitor the control plane for new/updated/removed &lt;code&gt;Service&lt;/code&gt; and &lt;code&gt;Endpoint&lt;/code&gt; resources and run the following steps&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;userspace&lt;/strong&gt; (legacy)
-&lt;ul&gt;
-&lt;li&gt;For each &lt;code&gt;Service&lt;/code&gt; it opens a random proxy port on the node&lt;/li&gt;
-&lt;li&gt;This proxy port is then told to iptables to capture traffic to this particular virtual IP and port to redirect to the Pod IPs in the &lt;code&gt;Endpoint&lt;/code&gt; resource&lt;/li&gt;
-&lt;li&gt;The backend pod is chosen based on the &lt;code&gt;SessionAffinity&lt;/code&gt; of the service&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;The traffic here is actually proxied via &lt;code&gt;kube-proxy&lt;/code&gt; itself&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;iptables&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;For each &lt;code&gt;Service&lt;/code&gt; it creates iptables rules which redirect traffic to the virtual IP and service port&lt;/li&gt;
-&lt;li&gt;These redirect rules point to sets of pod IPs based on what is in the endpoint resource&lt;/li&gt;
-&lt;li&gt;The backend pod is chosen at random by default&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;The traffic is all handled within the Linux &lt;a href=&#34;https://www.netfilter.org/&#34;&gt;netfilter&lt;/a&gt; so all within the kernelspace, &lt;code&gt;kube-proxy&lt;/code&gt; doesn’t handle the traffic it just sets up rules to process it&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;IPVS&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Whilst iptables was designed to be a firewall and &lt;code&gt;kube-proxy&lt;/code&gt; just uses it to redirect network traffic, IPVS was made for load balancing&lt;/li&gt;
-&lt;li&gt;At a high level this works similar to iptables, cluster IP and port → set of pod IPs&lt;/li&gt;
-&lt;li&gt;IPVS is important when working at scale, if you have &amp;gt;1000 services (or 10,000 pods) in your cluster IPVS is the performant choice&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;kernelspace&lt;/strong&gt; (windows)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;bringing-it-all-together&#34;&gt;Bringing it all together&lt;/h2&gt;
-&lt;p&gt;Let’s create an example &lt;code&gt;LoadBalancer&lt;/code&gt; service and see what components come together to get traffic from a client to your pods. We’ll show how traffic from outside, via the load balancer, gets to your pods and how another pod in the cluster can also use this service without going via the load balancer.&lt;/p&gt;
-&lt;p&gt;In this example let’s say we’re running on a Kubernetes cluster in AWS with the AWS cloud controller manager properly configured, we have pods running with label &lt;code&gt;app=alpha&lt;/code&gt; which listens on port &lt;code&gt;8080&lt;/code&gt; for traffic and &lt;code&gt;kube-proxy&lt;/code&gt; is in the default &lt;code&gt;iptables&lt;/code&gt; mode.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Service YAML&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
-kind: Service
-metadata:
-&lt;span style=&#34;color:#75715e&#34;&gt;# This doesn&amp;#39;t affect routing but it&amp;#39;s best practice to label components together&lt;/span&gt;
-  labels:
-    app: alpha
-  name: example
-spec:
-  ports:
-  - name: main
-    port: &lt;span style=&#34;color:#ae81ff&#34;&gt;8081&lt;/span&gt;
-    protocol: TCP
-&lt;span style=&#34;color:#75715e&#34;&gt;# Target port is the port your pod has open&lt;/span&gt;
-    targetPort: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;span style=&#34;color:#75715e&#34;&gt;# This is what tells the service which pods to route to&lt;/span&gt;
-  selector:
-    app: alpha
-  type: LoadBalancer
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Lets create the service and have a look:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl apply -f service.yaml
-service/example created
-
-$ kubectl get service example
-NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;S&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;          AGE
-example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I now have:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;An Endpoints resource corresponding to ready pods matching my label selector
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;kubectl get endpoints example&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;A cluster IP setup for my service &lt;code&gt;10.43.205.153&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;A DNS address for the service configured
-&lt;ul&gt;
-&lt;li&gt;(from inside a Pod)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;dig example.default.svc.cluster.local&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;A external (to the cluster) IP which maps to my load balancer &lt;code&gt;192.168.0.147&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;A NodePort setup &lt;code&gt;32255&lt;/code&gt; so all my workers now have this port open
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;netstat -tulnp | grep 32255&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;iptables rules setup
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;sudo iptables -L | grep example&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;sudo iptables -L | grep 10.43.205.153&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Lets see how this request goes through to our pod from outside the cluster and a pod within.&lt;/p&gt;
-&lt;h3 id=&#34;from-outside-the-cluster&#34;&gt;From outside the cluster&lt;/h3&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s-services-2-lb-external.png&#34; &gt;
-    &lt;img src=&#34;/img/k8s-services-2-lb-external.png&#34;   /&gt;
-    
-    &lt;/a&gt;
-  &lt;/figure&gt;
-
-
-&lt;ol&gt;
-&lt;li&gt;The client makes a request to the load balancer to try and talk to the application, for how this is configured see my post on ingress into a cluster&lt;/li&gt;
-&lt;li&gt;The load balancer selects one of the configured listeners, this is usually either random or round robin but depends on your load balancer and configuration&lt;/li&gt;
-&lt;li&gt;The node has port 32255 open, requests here are configured in iptables to forward the request to the virtual IP of the service. These rules were configured by &lt;code&gt;kube-proxy&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;iptables then resolves the virtual/service IP into a Pod IP address, one is chosen by random and the request heads there. Now the traffic is inside the cluster the CNI controls the network movements between nodes (see &lt;a href=&#34;https://dgood.win/post/kubernetes-networking-overview/&#34;&gt;here&lt;/a&gt; for more info on what the CNI sets up)&lt;/li&gt;
-&lt;li&gt;Once the request has reached the node with the pod on it, the CNI and iptables will forward it to the Pod as expected&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&#34;from-a-pod-within-the-cluster&#34;&gt;From a pod within the cluster&lt;/h3&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s-services-2-lb-internal.png&#34; &gt;
-    &lt;img src=&#34;/img/k8s-services-2-lb-internal.png&#34;   /&gt;
-    
-    &lt;/a&gt;
-  &lt;/figure&gt;
-
-
-&lt;ol&gt;
-&lt;li&gt;The requesting pod will have been configured with the service DNS address &lt;code&gt;example.default.svc.cluster.local&lt;/code&gt;. As it makes this request from within the cluster CoreDNS running will be the DNS resolver. This request will be resolved to the Service (virtual) IP address: &lt;code&gt;10.43.205.153&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Making a request to this address will hit the rules in iptables, configured by &lt;code&gt;kube-proxy&lt;/code&gt;, this resolves the service IP into a Pod IP by randomly selecting a pod&lt;/li&gt;
-&lt;li&gt;The rest of the request continues as in the external example.&lt;/li&gt;
-&lt;/ol&gt;</content>
+<ol>
+<li>The requesting pod will have been configured with the service DNS address <code>example.default.svc.cluster.local</code>. As it makes this request from within the cluster CoreDNS running will be the DNS resolver. This request will be resolved to the Service (virtual) IP address: <code>10.43.205.153</code></li>
+<li>Making a request to this address will hit the rules in iptables, configured by <code>kube-proxy</code>, this resolves the service IP into a Pod IP by randomly selecting a pod</li>
+<li>The rest of the request continues as in the external example.</li>
+</ol>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>The case for time-tracking</title>
-      <link>/post/case-for-timetracking/</link>
+      <link>http://localhost:1313/post/case-for-timetracking/</link>
       <pubDate>Sat, 05 Feb 2022 15:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/case-for-timetracking/</guid>
-      <description>&lt;p&gt;Time tracking has a bad reputation, it invokes images of managers watching over your shoulder or pay being docked as you punched in minutes before your shift ended. Due to these, and many more, if you suggest to someone to start tracking their time they’re likely to look at you like you’ve gone mad.&lt;/p&gt;</description>
-      <content>&lt;p&gt;Time tracking has a bad reputation, it invokes images of managers watching over your shoulder or pay being docked as you punched in minutes before your shift ended. Due to these, and many more, if you suggest to someone to start tracking their time they’re likely to look at you like you’ve gone mad.&lt;/p&gt;
-&lt;p&gt;I think time tracking, for your own benefit, can be a great way to be introspective about how you work and allow you a greater understanding of managing distractions, context switching and when you’re feeling productive.&lt;/p&gt;
-&lt;h2 id=&#34;what-is-time-tracking&#34;&gt;What is time tracking&lt;/h2&gt;
-&lt;p&gt;The basic gist is, you start a timer when you are working on something. Whilst you could track time per ticket or some other fine grained metric, I would strongly recommend tracking categories of activities.&lt;/p&gt;
-&lt;p&gt;Ones I track are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Development&lt;/strong&gt; - directly coding, usually “when I’m in my IDE”&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Live support&lt;/strong&gt; - picking up alerts that have fired or investigating issues/incidents&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Messaging&lt;/strong&gt; - slack messaging people&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Meetings&lt;/strong&gt; - time spent in any meetings
-&lt;ul&gt;
-&lt;li&gt;I found it in the past useful to &lt;em&gt;tag&lt;/em&gt; these “ceremonies”, “1-1s”, “other”&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Break&lt;/strong&gt; - Going to grab a coffee or lunch
-&lt;ul&gt;
-&lt;li&gt;This one could be tracked by just not running a timer, but I find ending the Break timer when I return is a useful trigger to start working&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Collaboration&lt;/strong&gt; - Working with someone else to either plan, pair or debug&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;These activities can also be expanded with tags if you want to know more detail, things like whether the activity is for client a or b can be useful if that fits your environment.&lt;/p&gt;
-&lt;p&gt;I’ve also found adding activities when you want to focus on a particular area, say “Documentation” or “Reading tech books” can help you focus energy towards a goal.&lt;/p&gt;
-&lt;p&gt;A key thing with the tracking is not being too detailed, it’s not useful to know ticket-12 took twice as long as ticket-14 in the scheme of things (even if Toggl do like to push jira integration). You’re not billing people for this time, it’s just about gaining understanding.&lt;/p&gt;
-&lt;h2 id=&#34;how-to-time-track&#34;&gt;How to time track&lt;/h2&gt;
-&lt;p&gt;This might seem like an obvious area “set timer to start when you work on something” but there’s some nuance and tips I can share.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;If at any point you stop working on your current task for distractions, stop said timer (and set a new one if applicable)
-&lt;ul&gt;
-&lt;li&gt;A common thing might be you need to respond to someones message, ideally you try to batch these where possible and the people messaging you &lt;a href=&#34;https://www.nohello.com/&#34;&gt;don’t just say hi&lt;/a&gt;, so maybe after 30minutes, stop the timer, start the messaging timer and respond to people&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Before you begin any activity, start the timer
-&lt;ul&gt;
-&lt;li&gt;I find this is a useful way of getting in the mindset for that task too, it forces you to mentally think “what am I working on right now” instead of just falling into work&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;You can always update past timers if you forget too, don’t try to be too accurate, to the nearest 5 minutes should show you the gist of it.&lt;/li&gt;
-&lt;li&gt;“Doesn’t this add to the context switching load?” &lt;strong&gt;Yes&lt;/strong&gt; I believe it does, but that isn’t a problem. It should be harder for you to switch what task you’re working on to avoid (where possible) context switching and having to recognize you’re doing it, stop and start a timer, adds to the overhead, it’s way too easy to down tools on work to respond to slack.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;what-time-tracking-is-not&#34;&gt;What time tracking is not&lt;/h2&gt;
-&lt;p&gt;It’s important to call out what personal time tracking is not, and avoid some of the pitfalls.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Time tracking should be for your own benefit, and you should be the only one who sees the data. You’re not doing this to prove to your manager at year-end reviews you keep working even when you sneeze or to compare to your team. On the other side, this shouldn’t be something a manager imposes on you and wants to see progress reports.&lt;/li&gt;
-&lt;li&gt;Related to above, it’s important to be honest when time tracking. Everyone has bad days for productivity and just leaving “development” timer on won’t help you understand anything. This timer is just meant to be data on how you work, no opinions or judgement.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;benefits-of-time-tracking&#34;&gt;Benefits of time tracking&lt;/h2&gt;
-&lt;p&gt;I’ve personally found tracking my time, even for short 1 month stints, a great way to introspect on your working habits.&lt;/p&gt;
-&lt;p&gt;A good example is at the end of the day, when you might be feeling like it was (or wasn’t) a productive day. Being able to look back and go “oh, those 4 meetings 30minutes apart basically translated to 4hrs of meetings for my productivity”. I’ve commonly found days when I’m feeling unproductive, I can look at my time tracked for the day and understand why.&lt;/p&gt;
-&lt;p&gt;Another key aspect is seeing the effect interrupts have on you, everyone knows the bane of context switching at this point, but being able to see the switch in activity and then the lull between starting anew is clear.&lt;/p&gt;
-&lt;p&gt;I’ve also found having to think about &lt;em&gt;starting&lt;/em&gt; a task, having a timer to start when I go into development mode helps mentally adjust to the task at hand.&lt;/p&gt;
-&lt;h2 id=&#34;tools-and-use-and-how-to-set-them-up&#34;&gt;Tools and use and how to set them up&lt;/h2&gt;
-&lt;p&gt;For actually tracking the time, I use: &lt;a href=&#34;https://toggl.com/track/&#34;&gt;toggl track&lt;/a&gt;. Honestly, I don’t particularly like it but I haven’t found an alternative that does everything I need and don&amp;rsquo;t need to install.&lt;/p&gt;
-&lt;p&gt;I’ve previous used &lt;a href=&#34;https://timeryapp.com/&#34;&gt;Timery&lt;/a&gt;, which makes it easier to change timer and highly recommend it to never interact with toggl. I would highly recommend this when you can install applications on your own machine and for iOS if you have it.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;I have a pinned tab open in my browser with toggl, it goes grey when there isn’t one active which I find useful
-&lt;ul&gt;
-&lt;li&gt;Timery will sit in the top bar of my Mac which makes using it easier&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;I then setup a widget on my phone home screen. This helps me spot any timers I’ve left running.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Within toggl, I have the activities I listed above as “Projects”. I don’t use any tags currently but I’ve found it useful in the past when working across teams or clients.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;A good rule is a project should be something important to you but broad enough you don’t need to think or decide which one to use when starting a timer. It should be obvious what the work you’re doing is.&lt;/li&gt;
-&lt;li&gt;As an example for tags, I wanted to see which client’s live issues were taking the most time in my day.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;to-round-up&#34;&gt;To round up&lt;/h2&gt;
-&lt;p&gt;Time tracking can be a useful tool to gain insight into your working habits and productivity. I’d recommend only doing it when you’re gaining something from it; in the past I’ve used it for 1-3month stints when feeling unproductive or joining a new company. If you’re doing it and finding the data not useful.&lt;/p&gt;</content>
+      
+      <guid>http://localhost:1313/post/case-for-timetracking/</guid>
+      <description><![CDATA[<p>Time tracking has a bad reputation, it invokes images of managers watching over your shoulder or pay being docked as you punched in minutes before your shift ended. Due to these, and many more, if you suggest to someone to start tracking their time they’re likely to look at you like you’ve gone mad.</p>
+<p>I think time tracking, for your own benefit, can be a great way to be introspective about how you work and allow you a greater understanding of managing distractions, context switching and when you’re feeling productive.</p>
+<h2 id="what-is-time-tracking">What is time tracking</h2>
+<p>The basic gist is, you start a timer when you are working on something. Whilst you could track time per ticket or some other fine grained metric, I would strongly recommend tracking categories of activities.</p>
+<p>Ones I track are:</p>
+<ul>
+<li><strong>Development</strong> - directly coding, usually “when I’m in my IDE”</li>
+<li><strong>Live support</strong> - picking up alerts that have fired or investigating issues/incidents</li>
+<li><strong>Messaging</strong> - slack messaging people</li>
+<li><strong>Meetings</strong> - time spent in any meetings
+<ul>
+<li>I found it in the past useful to <em>tag</em> these “ceremonies”, “1-1s”, “other”</li>
+</ul>
+</li>
+<li><strong>Break</strong> - Going to grab a coffee or lunch
+<ul>
+<li>This one could be tracked by just not running a timer, but I find ending the Break timer when I return is a useful trigger to start working</li>
+</ul>
+</li>
+<li><strong>Collaboration</strong> - Working with someone else to either plan, pair or debug</li>
+</ul>
+<p>These activities can also be expanded with tags if you want to know more detail, things like whether the activity is for client a or b can be useful if that fits your environment.</p>
+<p>I’ve also found adding activities when you want to focus on a particular area, say “Documentation” or “Reading tech books” can help you focus energy towards a goal.</p>
+<p>A key thing with the tracking is not being too detailed, it’s not useful to know ticket-12 took twice as long as ticket-14 in the scheme of things (even if Toggl do like to push jira integration). You’re not billing people for this time, it’s just about gaining understanding.</p>
+<h2 id="how-to-time-track">How to time track</h2>
+<p>This might seem like an obvious area “set timer to start when you work on something” but there’s some nuance and tips I can share.</p>
+<ul>
+<li>If at any point you stop working on your current task for distractions, stop said timer (and set a new one if applicable)
+<ul>
+<li>A common thing might be you need to respond to someones message, ideally you try to batch these where possible and the people messaging you <a href="https://www.nohello.com/">don’t just say hi</a>, so maybe after 30minutes, stop the timer, start the messaging timer and respond to people</li>
+</ul>
+</li>
+<li>Before you begin any activity, start the timer
+<ul>
+<li>I find this is a useful way of getting in the mindset for that task too, it forces you to mentally think “what am I working on right now” instead of just falling into work</li>
+</ul>
+</li>
+<li>You can always update past timers if you forget too, don’t try to be too accurate, to the nearest 5 minutes should show you the gist of it.</li>
+<li>“Doesn’t this add to the context switching load?” <strong>Yes</strong> I believe it does, but that isn’t a problem. It should be harder for you to switch what task you’re working on to avoid (where possible) context switching and having to recognize you’re doing it, stop and start a timer, adds to the overhead, it’s way too easy to down tools on work to respond to slack.</li>
+</ul>
+<h2 id="what-time-tracking-is-not">What time tracking is not</h2>
+<p>It’s important to call out what personal time tracking is not, and avoid some of the pitfalls.</p>
+<ul>
+<li>Time tracking should be for your own benefit, and you should be the only one who sees the data. You’re not doing this to prove to your manager at year-end reviews you keep working even when you sneeze or to compare to your team. On the other side, this shouldn’t be something a manager imposes on you and wants to see progress reports.</li>
+<li>Related to above, it’s important to be honest when time tracking. Everyone has bad days for productivity and just leaving “development” timer on won’t help you understand anything. This timer is just meant to be data on how you work, no opinions or judgement.</li>
+</ul>
+<h2 id="benefits-of-time-tracking">Benefits of time tracking</h2>
+<p>I’ve personally found tracking my time, even for short 1 month stints, a great way to introspect on your working habits.</p>
+<p>A good example is at the end of the day, when you might be feeling like it was (or wasn’t) a productive day. Being able to look back and go “oh, those 4 meetings 30minutes apart basically translated to 4hrs of meetings for my productivity”. I’ve commonly found days when I’m feeling unproductive, I can look at my time tracked for the day and understand why.</p>
+<p>Another key aspect is seeing the effect interrupts have on you, everyone knows the bane of context switching at this point, but being able to see the switch in activity and then the lull between starting anew is clear.</p>
+<p>I’ve also found having to think about <em>starting</em> a task, having a timer to start when I go into development mode helps mentally adjust to the task at hand.</p>
+<h2 id="tools-and-use-and-how-to-set-them-up">Tools and use and how to set them up</h2>
+<p>For actually tracking the time, I use: <a href="https://toggl.com/track/">toggl track</a>. Honestly, I don’t particularly like it but I haven’t found an alternative that does everything I need and don&rsquo;t need to install.</p>
+<p>I’ve previous used <a href="https://timeryapp.com/">Timery</a>, which makes it easier to change timer and highly recommend it to never interact with toggl. I would highly recommend this when you can install applications on your own machine and for iOS if you have it.</p>
+<ul>
+<li>I have a pinned tab open in my browser with toggl, it goes grey when there isn’t one active which I find useful
+<ul>
+<li>Timery will sit in the top bar of my Mac which makes using it easier</li>
+</ul>
+</li>
+<li>I then setup a widget on my phone home screen. This helps me spot any timers I’ve left running.</li>
+</ul>
+<p>Within toggl, I have the activities I listed above as “Projects”. I don’t use any tags currently but I’ve found it useful in the past when working across teams or clients.</p>
+<ul>
+<li>A good rule is a project should be something important to you but broad enough you don’t need to think or decide which one to use when starting a timer. It should be obvious what the work you’re doing is.</li>
+<li>As an example for tags, I wanted to see which client’s live issues were taking the most time in my day.</li>
+</ul>
+<h2 id="to-round-up">To round up</h2>
+<p>Time tracking can be a useful tool to gain insight into your working habits and productivity. I’d recommend only doing it when you’re gaining something from it; in the past I’ve used it for 1-3month stints when feeling unproductive or joining a new company. If you’re doing it and finding the data not useful.</p>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Kubernetes Networking #1</title>
-      <link>/post/kubernetes-networking-overview/</link>
+      <link>http://localhost:1313/post/kubernetes-networking-overview/</link>
       <pubDate>Mon, 10 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-overview/</guid>
-      <description>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;</description>
-      <content>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;
-&lt;h2 id=&#34;components&#34;&gt;Components&lt;/h2&gt;
-&lt;p&gt;The components we’re going to look at today are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;kube-dns/coredns&lt;/code&gt; resolves domain names for services (and pods) into an IP address
-&lt;ul&gt;
-&lt;li&gt;ℹ️ &lt;code&gt;kube-dns&lt;/code&gt; was replaced by &lt;code&gt;coredns&lt;/code&gt; but the in cluster service is still called &lt;code&gt;kube-dns&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;This is the resolver for any DNS requests inside your pods, if you wanted to resolve internal service domains or to a private DNS resolver, you could configure this to forward those requests.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-proxy&lt;/code&gt; resolves network requests for the IP address of a service to the IP addresses of pods which match that service. This has different modes:
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Iptables&#34;&gt;iptables&lt;/a&gt; (default) - To see your iptables rules: &lt;code&gt;iptables -L&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/&#34;&gt;ipvs&lt;/a&gt; - To see your ipvs rules &lt;code&gt;ipvsadm -Ln&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Your chosen &lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/networking/#calico&#34;&gt;CNI&lt;/a&gt;, there’s a range of these, all which work differently. Generally a CNI will configure any networking around a Pod IP, routing to and from pods to:
-&lt;ul&gt;
-&lt;li&gt;Ensure pod network requests are routed properly to other pods&lt;/li&gt;
-&lt;li&gt;Ensure pod network requests can reach outside the cluster&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;An easy way of thinking about it can be, resolving between a service and healthy pods is &lt;code&gt;kube-dns&lt;/code&gt; and &lt;code&gt;kube-proxy&lt;/code&gt; but then that request will need to go through routing setup by the &lt;code&gt;CNI&lt;/code&gt;. For cloud environments, your &lt;code&gt;CNI&lt;/code&gt; will usually handle (or provide ways to setup) things like cross-subnet traffic as well.&lt;/p&gt;
-&lt;p&gt;To follow the resolution between components, say we wanted to go to a service called &lt;code&gt;myapp&lt;/code&gt; which sits in namespace &lt;code&gt;namespace001&lt;/code&gt; which had 2 healthy pods matching the service selector. The resolution would be:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;CoreDNS:&lt;/strong&gt; (service FQDN)&lt;code&gt;myapp.namespace001.svc.cluster.local&lt;/code&gt; → &lt;code&gt;172.16.10.10&lt;/code&gt; (service cluster IP)&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;iptables:&lt;/strong&gt; &lt;code&gt;172.16.10.10&lt;/code&gt; → &lt;code&gt;10.10.10.10&lt;/code&gt; (a pod IP, selected at random from healthy pods)&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;CNI:&lt;/strong&gt; Will route traffic for &lt;code&gt;10.10.10.10&lt;/code&gt; from the requester node, to the target node&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;example-journey-of-a-request&#34;&gt;Example journey of a request&lt;/h2&gt;
-&lt;p&gt;As an example, let’s explore in an example Kubernetes cluster how a pod will send a network request to another pod.
-For this example:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The pod will try to talk to a pod on another node then itself&lt;/li&gt;
-&lt;li&gt;The 2 nodes will be in seperate subnets
-&lt;ul&gt;
-&lt;li&gt;Routing between subnets is presumed to be setup and fine and we’ll abstract that to a &lt;code&gt;router&lt;/code&gt; in the diagram&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;The &lt;code&gt;CNI&lt;/code&gt; will be Calico, but we won’t be looking too much into its internals&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;pod-0&lt;/strong&gt; will send a request to &lt;strong&gt;pod-3&lt;/strong&gt; through a service&lt;/li&gt;
-&lt;li&gt;We’ll assume Kubernetes and Calico are setup with defaults:
-&lt;ul&gt;
-&lt;li&gt;iptables mode for &lt;code&gt;kube-proxy&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;vxlan encapsulation for cross subnet traffic&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
+      
+      <guid>http://localhost:1313/post/kubernetes-networking-overview/</guid>
+      <description><![CDATA[<p>Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.</p>
+<h2 id="components">Components</h2>
+<p>The components we’re going to look at today are:</p>
+<ul>
+<li><code>kube-dns/coredns</code> resolves domain names for services (and pods) into an IP address
+<ul>
+<li>ℹ️ <code>kube-dns</code> was replaced by <code>coredns</code> but the in cluster service is still called <code>kube-dns</code></li>
+<li>This is the resolver for any DNS requests inside your pods, if you wanted to resolve internal service domains or to a private DNS resolver, you could configure this to forward those requests.</li>
+</ul>
+</li>
+<li><code>kube-proxy</code> resolves network requests for the IP address of a service to the IP addresses of pods which match that service. This has different modes:
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Iptables">iptables</a> (default) - To see your iptables rules: <code>iptables -L</code></li>
+<li><a href="https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/">ipvs</a> - To see your ipvs rules <code>ipvsadm -Ln</code></li>
+</ul>
+</li>
+<li>Your chosen <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/#calico">CNI</a>, there’s a range of these, all which work differently. Generally a CNI will configure any networking around a Pod IP, routing to and from pods to:
+<ul>
+<li>Ensure pod network requests are routed properly to other pods</li>
+<li>Ensure pod network requests can reach outside the cluster</li>
+</ul>
+</li>
+</ul>
+<p>An easy way of thinking about it can be, resolving between a service and healthy pods is <code>kube-dns</code> and <code>kube-proxy</code> but then that request will need to go through routing setup by the <code>CNI</code>. For cloud environments, your <code>CNI</code> will usually handle (or provide ways to setup) things like cross-subnet traffic as well.</p>
+<p>To follow the resolution between components, say we wanted to go to a service called <code>myapp</code> which sits in namespace <code>namespace001</code> which had 2 healthy pods matching the service selector. The resolution would be:</p>
+<ol>
+<li><strong>CoreDNS:</strong> (service FQDN)<code>myapp.namespace001.svc.cluster.local</code> → <code>172.16.10.10</code> (service cluster IP)</li>
+<li><strong>iptables:</strong> <code>172.16.10.10</code> → <code>10.10.10.10</code> (a pod IP, selected at random from healthy pods)</li>
+<li><strong>CNI:</strong> Will route traffic for <code>10.10.10.10</code> from the requester node, to the target node</li>
+</ol>
+<h2 id="example-journey-of-a-request">Example journey of a request</h2>
+<p>As an example, let’s explore in an example Kubernetes cluster how a pod will send a network request to another pod.
+For this example:</p>
+<ul>
+<li>The pod will try to talk to a pod on another node then itself</li>
+<li>The 2 nodes will be in seperate subnets
+<ul>
+<li>Routing between subnets is presumed to be setup and fine and we’ll abstract that to a <code>router</code> in the diagram</li>
+</ul>
+</li>
+<li>The <code>CNI</code> will be Calico, but we won’t be looking too much into its internals</li>
+<li><strong>pod-0</strong> will send a request to <strong>pod-3</strong> through a service</li>
+<li>We’ll assume Kubernetes and Calico are setup with defaults:
+<ul>
+<li>iptables mode for <code>kube-proxy</code></li>
+<li>vxlan encapsulation for cross subnet traffic</li>
+</ul>
+</li>
+</ul>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s_network_request_example.png&#34; &gt;
-    &lt;img src=&#34;/img/k8s_network_request_example.png&#34;   /&gt;
+  <figure class="left" >
+    <a href="/img/k8s_network_request_example.png" >
+    <img src="/img/k8s_network_request_example.png"   />
     
-    &lt;/a&gt;
-  &lt;/figure&gt;
+    </a>
+  </figure>
 
 
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;1&lt;/strong&gt; &lt;strong&gt;pod-0&lt;/strong&gt; requests the service’s Cluster IP from &lt;code&gt;kube-dns&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;kube-dns&lt;/code&gt; has dynamic config which updates mapping the service name to a Service IP address lets say &lt;code&gt;172.16.10.10&lt;/code&gt;
-&lt;ul&gt;
-&lt;li&gt;`kubectl exec command for coredns&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;*technically this whole request to &lt;code&gt;kube-dns&lt;/code&gt; goes via the same iptables→routing tables path since &lt;code&gt;kube-dns&lt;/code&gt; runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask &lt;code&gt;kube-dns&lt;/code&gt; to define &lt;code&gt;kube-dns&lt;/code&gt;. But trying to show aswell would be madness.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;2&lt;/strong&gt; With the cluster IP (&lt;code&gt;172.16.10.10&lt;/code&gt;) the request hits iptables&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;iptables selects from a random one of the pod IP addresses for this particular service IP
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;iptables -L&lt;/code&gt; or &lt;code&gt;iptables-save&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;3&lt;/strong&gt; The Pod IP is now resolved in the nodes routing tables &lt;code&gt;sudo route -n&lt;/code&gt; or &lt;code&gt;ip route list&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.&lt;/li&gt;
-&lt;li&gt;Based on the Pod IP, it’ll be resolved through multiple sets of rules:
-&lt;ul&gt;
-&lt;li&gt;This node will have a range of Pod IPs which resolve to the local node itself&lt;/li&gt;
-&lt;li&gt;This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain&lt;/li&gt;
-&lt;li&gt;This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.&lt;/li&gt;
-&lt;li&gt;There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;4&lt;/strong&gt; Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl node status&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;By encapsulating the request’s original networking information is wrapped up as data and new network info is added&lt;/li&gt;
-&lt;li&gt;Calico will send this as a vxlan or ipinip packet to the required node in another subnet&lt;/li&gt;
-&lt;li&gt;The encapsulated packet (shown as an orange line) will:
-&lt;ul&gt;
-&lt;li&gt;Go back through the route table on the node itself&lt;/li&gt;
-&lt;li&gt;To the local subnet router, which will resolve which subnet it needs to go into&lt;/li&gt;
-&lt;li&gt;Hit the destination subnet routing table which can direct it to the node&lt;/li&gt;
-&lt;li&gt;To the other node itself&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;5&lt;/strong&gt; Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;6&lt;/strong&gt; The routing table on this node will now:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Send the encapsulated packet to the local Calico to be unencapsulated&lt;/li&gt;
-&lt;li&gt;The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
-&lt;ul&gt;
-&lt;li&gt;This could also cause the packet to have to be routed again since the destination has moved&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;The request is directed to the pod running locally&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;there-are-a-lot-of-things-missed-off-here&#34;&gt;There are a lot of things missed off here:&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.adminsehow.com/2011/09/iptables-packet-traverse-map/&#34;&gt;Technically iptables is interacted with before, after (and sometimes during) a routing decision&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How the pod sits within it’s own &lt;a href=&#34;https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/&#34;&gt;network namespace&lt;/a&gt; with a virtual ethernet interface for traffic coming to the pod&lt;/li&gt;
-&lt;li&gt;How Calico uses &lt;a href=&#34;https://projectcalico.docs.tigera.io/reference/felix/&#34;&gt;Felix&lt;/a&gt; to program it’s routes and ACLs and &lt;a href=&#34;https://bird.network.cz/&#34;&gt;BIRD&lt;/a&gt; for distributing the routes to BGP peers on the network&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/networking/&#34;&gt;Alternate CNIs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How the whole kube-proxy aspects could be stipped out for an eBPF approach (Calico’s &lt;a href=&#34;https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf&#34;&gt;eBPF dataplane&lt;/a&gt; or Cilium and it’s &lt;a href=&#34;https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free/&#34;&gt;kube proxy replacement&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;related-docs&#34;&gt;Related docs:&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://projectcalico.docs.tigera.io/reference/architecture/overview&#34;&gt;Calico Component Architecture&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/&#34;&gt;kube-proxy reference&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/&#34;&gt;Kubernetes DNS docs&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
+<ul>
+<li>
+<p><strong>1</strong> <strong>pod-0</strong> requests the service’s Cluster IP from <code>kube-dns</code></p>
+<ul>
+<li><code>kube-dns</code> has dynamic config which updates mapping the service name to a Service IP address lets say <code>172.16.10.10</code>
+<ul>
+<li>`kubectl exec command for coredns</li>
+</ul>
+</li>
+<li>*technically this whole request to <code>kube-dns</code> goes via the same iptables→routing tables path since <code>kube-dns</code> runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask <code>kube-dns</code> to define <code>kube-dns</code>. But trying to show aswell would be madness.</li>
+</ul>
+</li>
+<li>
+<p><strong>2</strong> With the cluster IP (<code>172.16.10.10</code>) the request hits iptables</p>
+<ul>
+<li>iptables selects from a random one of the pod IP addresses for this particular service IP
+<ul>
+<li><code>iptables -L</code> or <code>iptables-save</code></li>
+</ul>
+</li>
+<li>These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.</li>
+</ul>
+</li>
+<li>
+<p><strong>3</strong> The Pod IP is now resolved in the nodes routing tables <code>sudo route -n</code> or <code>ip route list</code></p>
+<ul>
+<li>These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.</li>
+<li>Based on the Pod IP, it’ll be resolved through multiple sets of rules:
+<ul>
+<li>This node will have a range of Pod IPs which resolve to the local node itself</li>
+<li>This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain</li>
+<li>This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.</li>
+<li>There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network</li>
+</ul>
+</li>
+<li>This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.</li>
+</ul>
+</li>
+<li>
+<p><strong>4</strong> Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl node status</code></p>
+<ul>
+<li>By encapsulating the request’s original networking information is wrapped up as data and new network info is added</li>
+<li>Calico will send this as a vxlan or ipinip packet to the required node in another subnet</li>
+<li>The encapsulated packet (shown as an orange line) will:
+<ul>
+<li>Go back through the route table on the node itself</li>
+<li>To the local subnet router, which will resolve which subnet it needs to go into</li>
+<li>Hit the destination subnet routing table which can direct it to the node</li>
+<li>To the other node itself</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>5</strong> Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.</p>
+<ul>
+<li>This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.</li>
+</ul>
+</li>
+<li>
+<p><strong>6</strong> The routing table on this node will now:</p>
+<ul>
+<li>Send the encapsulated packet to the local Calico to be unencapsulated</li>
+<li>The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
+<ul>
+<li>This could also cause the packet to have to be routed again since the destination has moved</li>
+</ul>
+</li>
+<li>The request is directed to the pod running locally</li>
+</ul>
+</li>
+</ul>
+<h3 id="there-are-a-lot-of-things-missed-off-here">There are a lot of things missed off here:</h3>
+<ul>
+<li><a href="http://www.adminsehow.com/2011/09/iptables-packet-traverse-map/">Technically iptables is interacted with before, after (and sometimes during) a routing decision</a></li>
+<li>How the pod sits within it’s own <a href="https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/">network namespace</a> with a virtual ethernet interface for traffic coming to the pod</li>
+<li>How Calico uses <a href="https://projectcalico.docs.tigera.io/reference/felix/">Felix</a> to program it’s routes and ACLs and <a href="https://bird.network.cz/">BIRD</a> for distributing the routes to BGP peers on the network</li>
+<li><a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">Alternate CNIs</a></li>
+<li>How the whole kube-proxy aspects could be stipped out for an eBPF approach (Calico’s <a href="https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf">eBPF dataplane</a> or Cilium and it’s <a href="https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free/">kube proxy replacement</a>)</li>
+</ul>
+<h2 id="related-docs">Related docs:</h2>
+<ul>
+<li><a href="https://projectcalico.docs.tigera.io/reference/architecture/overview">Calico Component Architecture</a></li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/">kube-proxy reference</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/">Kubernetes DNS docs</a></li>
+</ul>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Blog² - Blog about blogs</title>
-      <link>/post/blog-squared/</link>
+      <link>http://localhost:1313/post/blog-squared/</link>
       <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/blog-squared/</guid>
-      <description>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;</description>
-      <content>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://jvns.ca/&#34;&gt;https://jvns.ca/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://jlelse.blog/&#34;&gt;https://jlelse.blog/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://drewdevault.com/&#34;&gt;https://drewdevault.com/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zwischenzugs.com/&#34;&gt;https://zwischenzugs.com/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kevq.uk/&#34;&gt;https://kevq.uk/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://blog.gnoack.org/post/&#34;&gt;https://blog.gnoack.org/post/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://blog.jessfraz.com/&#34;&gt;https://blog.jessfraz.com/&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
+      
+      <guid>http://localhost:1313/post/blog-squared/</guid>
+      <description><![CDATA[<p>Here&rsquo;s a list I (hopefully) update around tech blogs I enjoy</p>
+<ul>
+<li><a href="https://jvns.ca/">https://jvns.ca/</a></li>
+<li><a href="https://jlelse.blog/">https://jlelse.blog/</a></li>
+<li><a href="https://drewdevault.com/">https://drewdevault.com/</a></li>
+<li><a href="https://zwischenzugs.com/">https://zwischenzugs.com/</a></li>
+<li><a href="https://kevq.uk/">https://kevq.uk/</a></li>
+<li><a href="https://blog.gnoack.org/post/">https://blog.gnoack.org/post/</a></li>
+<li><a href="https://blog.jessfraz.com/">https://blog.jessfraz.com/</a></li>
+</ul>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Kubernetes Debugging</title>
-      <link>/post/kubernetes-debugging/</link>
+      <link>http://localhost:1313/post/kubernetes-debugging/</link>
       <pubDate>Mon, 20 Apr 2020 14:57:09 +0100</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-debugging/</guid>
-      <description>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;</description>
-      <content>&lt;p&gt;This is a workflow to debug common Kubernetes problems when deploying applications.&lt;/p&gt;
-&lt;p&gt;Click on the image to see it in further detail&lt;/p&gt;
+      
+      <guid>http://localhost:1313/post/kubernetes-debugging/</guid>
+      <description><![CDATA[<p>This is a workflow to debug common Kubernetes problems when deploying applications.</p>
+<p>Click on the image to see it in further detail</p>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s_debugging_v1.svg&#34; &gt;
-    &lt;img src=&#34;/img/k8s_debugging_v1.svg&#34;   /&gt;
+  <figure class="left" >
+    <a href="/img/k8s_debugging_v1.svg" >
+    <img src="/img/k8s_debugging_v1.svg"   />
     
-    &lt;/a&gt;
-  &lt;/figure&gt;</content>
+    </a>
+  </figure>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Shellscript Notes</title>
-      <link>/post/shellscript-day2/</link>
+      <link>http://localhost:1313/post/shellscript-day2/</link>
       <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/shellscript-day2/</guid>
-      <description>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;</description>
-      <content>&lt;p&gt;Useful shellscript snippets&lt;/p&gt;
-&lt;h2 id=&#34;commonly-used&#34;&gt;Commonly used&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Check if variable contains mystring&lt;/span&gt;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;if&lt;/span&gt; &lt;span style=&#34;color:#f92672&#34;&gt;[[&lt;/span&gt; $var &lt;span style=&#34;color:#f92672&#34;&gt;==&lt;/span&gt; *mystring*  &lt;span style=&#34;color:#f92672&#34;&gt;]]&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;then&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# The double closed brackets are essential for wildcard match&lt;/span&gt;
-    echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;it does&amp;#34;&lt;/span&gt;;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;fi&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Split on &amp;#34;:&amp;#34; and get 1st&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;docker-image:0.1&amp;#34;&lt;/span&gt; | cut -d &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;:&amp;#34;&lt;/span&gt; -f1 &lt;span style=&#34;color:#75715e&#34;&gt;# returns docker-image&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Find and replace all via pipe&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Hello I&amp;#39;m Dom&amp;#34;&lt;/span&gt; | sed &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;s/Dom/&amp;lt;void&amp;gt;/g&amp;#39;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# &amp;#34;/&amp;#34; could be any char&lt;/span&gt;
-
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Redirect stdout and stderr to the void&lt;/span&gt;
-./run_script.sh &amp;gt;/dev/null 2&amp;gt;&amp;amp;&lt;span style=&#34;color:#ae81ff&#34;&gt;1&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;basics&#34;&gt;Basics&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Read top lines of file&lt;/span&gt;
-head -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Read bottom lines of file&lt;/span&gt;
-tail -n &lt;span style=&#34;color:#ae81ff&#34;&gt;3&lt;/span&gt; myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Watch all updates to file&lt;/span&gt;
-tail -f myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Read file in window (not cat)&lt;/span&gt;
-less myfile
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Make all directories if not exist&lt;/span&gt;
-mkdir -p exist/not/dir
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Visualise dir structure&lt;/span&gt;
-tree -L &lt;span style=&#34;color:#ae81ff&#34;&gt;2&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Remove env variable&lt;/span&gt;
-unset myvar
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Alias command to short one&lt;/span&gt;
-alias lc&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;ls -laht&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# unalias to remove&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Piping output&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;overwrite&amp;#34;&lt;/span&gt; &amp;gt; file &lt;span style=&#34;color:#75715e&#34;&gt;# Same as 1&amp;gt;&lt;/span&gt;
-echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;append&amp;#34;&lt;/span&gt; &amp;gt;&amp;gt; file
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;system&#34;&gt;System&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# See disk space usage (human readable)&lt;/span&gt;
-df -h
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# See file usage for dirs&lt;/span&gt;
-du &lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;--max-depth&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Show running processes, a: show other user, u: show username, x: show non terminal&lt;/span&gt;
-ps -aux
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Show usage&lt;/span&gt;
-top
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;tricks&#34;&gt;Tricks&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Use command output as if it&amp;#39;s file&lt;/span&gt;
-diff &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file1&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt; &amp;lt;&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;grep string file2&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last 3 command&lt;/span&gt;
-!!
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Repeat last arg of the last command&lt;/span&gt;
-!$
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Take all args from previous and use&lt;/span&gt;
-!:1-$
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;io&#34;&gt;IO&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Secure input&lt;/span&gt;
-read -s -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Password: &amp;#34;&lt;/span&gt; password
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Default value&lt;/span&gt;
-read -p &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;Address [http://127.0.0.1]: &amp;#34;&lt;/span&gt; ADDR
-default&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;http://127.0.0.1&amp;#34;&lt;/span&gt;
-ADDR&lt;span style=&#34;color:#f92672&#34;&gt;=&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;ADDR&lt;span style=&#34;color:#66d9ef&#34;&gt;:-&lt;/span&gt;$default&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;jq&#34;&gt;jq&lt;/h1&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Get value from object within array within object&lt;/span&gt;
-jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.parent.children | .[] | .name&amp;#34;&lt;/span&gt; &lt;span style=&#34;color:#75715e&#34;&gt;# raw:no quotes, e:null exit0, compact&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Get object attr and value and format &amp;#34;Key=$attr,Value=$val&amp;#34;&lt;/span&gt;
-jq -r &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.data | keys[] as $k | &amp;#34;Key=\($k),Value=\(.[$k])&amp;#34;&amp;#39;&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Use output in for loop&lt;/span&gt;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;for&lt;/span&gt; object in &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;JSON&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt; | jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;.entries[] | .whole | @base64&amp;#34;&lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;; &lt;span style=&#34;color:#66d9ef&#34;&gt;do&lt;/span&gt;
-  echo &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;This is the value: &lt;/span&gt;&lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;echo &lt;span style=&#34;color:#e6db74&#34;&gt;${&lt;/span&gt;val&lt;span style=&#34;color:#e6db74&#34;&gt;}&lt;/span&gt; | base64 -d | jq .attribute&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt;&lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;&lt;/span&gt;
-&lt;span style=&#34;color:#66d9ef&#34;&gt;done&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Args&lt;/span&gt;
-curl localhost:8500/v1/catalog/nodes | &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;    jq &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        --arg ip &lt;span style=&#34;color:#66d9ef&#34;&gt;$(&lt;/span&gt;./get_host.sh&lt;span style=&#34;color:#66d9ef&#34;&gt;)&lt;/span&gt; &lt;span style=&#34;color:#ae81ff&#34;&gt;\
-&lt;/span&gt;&lt;span style=&#34;color:#ae81ff&#34;&gt;&lt;/span&gt;        &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;.[] | select(.Address==$ip)&amp;#39;&lt;/span&gt;
-        
-&lt;span style=&#34;color:#75715e&#34;&gt;# Output mulitple entries in list&lt;/span&gt;
-jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;[.importItems[].itemId]&amp;#39;&lt;/span&gt;
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Create object&lt;/span&gt;
-jq -rec &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#39;{} +{ Items:[.importItems[].itemId]}&amp;#39;&lt;/span&gt;
-
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h2 id=&#34;behaviour&#34;&gt;Behaviour&lt;/h2&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;&lt;span style=&#34;color:#75715e&#34;&gt;# Exit script if commands return nonzero&lt;/span&gt;
-set -e
-
-&lt;span style=&#34;color:#75715e&#34;&gt;# Output command as they run (debug)&lt;/span&gt;
-set -x
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;</content>
+      
+      <guid>http://localhost:1313/post/shellscript-day2/</guid>
+      <description><![CDATA[<p>Useful shellscript snippets</p>
+<h2 id="commonly-used">Commonly used</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Check if variable contains mystring</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $var <span style="color:#f92672">==</span> *mystring*  <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> <span style="color:#75715e"># The double closed brackets are essential for wildcard match</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;it does&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Split on &#34;:&#34; and get 1st</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;docker-image:0.1&#34;</span> | cut -d <span style="color:#e6db74">&#34;:&#34;</span> -f1 <span style="color:#75715e"># returns docker-image</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Find and replace all via pipe</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Hello I&#39;m Dom&#34;</span> | sed <span style="color:#e6db74">&#39;s/Dom/&lt;void&gt;/g&#39;</span> <span style="color:#75715e"># &#34;/&#34; could be any char</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Redirect stdout and stderr to the void</span>
+</span></span><span style="display:flex;"><span>./run_script.sh &gt;/dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><h2 id="basics">Basics</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Read top lines of file</span>
+</span></span><span style="display:flex;"><span>head -n <span style="color:#ae81ff">3</span> myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read bottom lines of file</span>
+</span></span><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">3</span> myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Watch all updates to file</span>
+</span></span><span style="display:flex;"><span>tail -f myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read file in window (not cat)</span>
+</span></span><span style="display:flex;"><span>less myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Make all directories if not exist</span>
+</span></span><span style="display:flex;"><span>mkdir -p exist/not/dir
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Visualise dir structure</span>
+</span></span><span style="display:flex;"><span>tree -L <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Remove env variable</span>
+</span></span><span style="display:flex;"><span>unset myvar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Alias command to short one</span>
+</span></span><span style="display:flex;"><span>alias lc<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ls -laht&#34;</span> <span style="color:#75715e"># unalias to remove</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Piping output</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;overwrite&#34;</span> &gt; file <span style="color:#75715e"># Same as 1&gt;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;append&#34;</span> &gt;&gt; file
+</span></span></code></pre></div><h2 id="system">System</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># See disk space usage (human readable)</span>
+</span></span><span style="display:flex;"><span>df -h
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See file usage for dirs</span>
+</span></span><span style="display:flex;"><span>du <span style="color:#f92672">(</span>--max-depth<span style="color:#f92672">=</span>2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Show running processes, a: show other user, u: show username, x: show non terminal</span>
+</span></span><span style="display:flex;"><span>ps -aux
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Show usage</span>
+</span></span><span style="display:flex;"><span>top
+</span></span></code></pre></div><h2 id="tricks">Tricks</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Use command output as if it&#39;s file</span>
+</span></span><span style="display:flex;"><span>diff &lt;<span style="color:#f92672">(</span>grep string file1<span style="color:#f92672">)</span> &lt;<span style="color:#f92672">(</span>grep string file2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Repeat last 3 command</span>
+</span></span><span style="display:flex;"><span>!!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Repeat last arg of the last command</span>
+</span></span><span style="display:flex;"><span>!$
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Take all args from previous and use</span>
+</span></span><span style="display:flex;"><span>!:1-$
+</span></span></code></pre></div><h1 id="io">IO</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Secure input</span>
+</span></span><span style="display:flex;"><span>read -s -p <span style="color:#e6db74">&#34;Password: &#34;</span> password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Default value</span>
+</span></span><span style="display:flex;"><span>read -p <span style="color:#e6db74">&#34;Address [http://127.0.0.1]: &#34;</span> ADDR
+</span></span><span style="display:flex;"><span>default<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://127.0.0.1&#34;</span>
+</span></span><span style="display:flex;"><span>ADDR<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ADDR<span style="color:#66d9ef">:-</span>$default<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><h1 id="jq">jq</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Get value from object within array within object</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#34;.parent.children | .[] | .name&#34;</span> <span style="color:#75715e"># raw:no quotes, e:null exit0, compact</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Get object attr and value and format &#34;Key=$attr,Value=$val&#34;</span>
+</span></span><span style="display:flex;"><span>jq -r <span style="color:#e6db74">&#39;.data | keys[] as $k | &#34;Key=\($k),Value=\(.[$k])&#34;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Use output in for loop</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> object in <span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>JSON<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | jq -rec <span style="color:#e6db74">&#34;.entries[] | .whole | @base64&#34;</span><span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;This is the value: </span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">${</span>val<span style="color:#e6db74">}</span> | base64 -d | jq .attribute<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Args</span>
+</span></span><span style="display:flex;"><span>curl localhost:8500/v1/catalog/nodes | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    jq <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        --arg ip <span style="color:#66d9ef">$(</span>./get_host.sh<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#39;.[] | select(.Address==$ip)&#39;</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Output mulitple entries in list</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#39;[.importItems[].itemId]&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create object</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#39;{} +{ Items:[.importItems[].itemId]}&#39;</span>
+</span></span></code></pre></div><h2 id="behaviour">Behaviour</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Exit script if commands return nonzero</span>
+</span></span><span style="display:flex;"><span>set -e
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Output command as they run (debug)</span>
+</span></span><span style="display:flex;"><span>set -x
+</span></span></code></pre></div>]]></description>
+      
     </item>
+    
+    
+    
+    <item>
+      <title>Kubernetes LDAP Integration via Dex</title>
+      <link>http://localhost:1313/post/kubernetes-ldap-integration/</link>
+      <pubDate>Sat, 21 Dec 2019 12:06:09 +0000</pubDate>
+      
+      <guid>http://localhost:1313/post/kubernetes-ldap-integration/</guid>
+      <description><![CDATA[<p>Authenticating into a Kubernetes cluster can be done via: X509 Certs, Static tokens or passwords, service account tokens or with OpenID Connect (OIDC) tokens, see <a href="https://kubernetes.io/docs/reference/access-authn-authz/authentication/#authentication-strategies">here</a>.</p>
+<p>In order to authenticate with providers like AD, LDAPs or external providers you can use the OpenID authentication method build into the <code>kube-apiserver</code> to talk to an OIDC provider, like <a href="https://github.com/dexidp/dex">dex</a>.</p>
+<h2 id="notes">Notes</h2>
+<p>This guide was done with:</p>
+<ul>
+<li>Dex <code>v2.21.0</code></li>
+<li>Kubernetes <code>1.17.0</code> via kind (via kubeadm)</li>
+<li>Local testing with <a href="https://github.com/kubernetes-sigs/kind">kind</a> <code>v0.6.1</code></li>
+<li>Gangway <code>v3.2.0</code></li>
+</ul>
+<h1 id="steps">Steps</h1>
+<h2 id="1-kubernetes">1. Kubernetes</h2>
+<h3 id="11-kubeadm">1.1 Kubeadm</h3>
+<p>The <a href="https://godoc.org/k8s.io/kubernetes/cmd/kubeadm/app/apis/kubeadm/v1beta1">kubeadm config</a> provides a way to configure a cluster with <code>kubeadm init</code> and can be used for local testing via <em>kind</em>.</p>
+<p>To enable oidc auth the flags are:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">kubeadm.k8s.io/v1beta2</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">ClusterConfiguration</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">config</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">apiServer</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">extraArgs</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># The url where the auth providr responds</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-issuer-url</span>: <span style="color:#ae81ff">https://auth.example.com/dex</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Client id as defined in dex config</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-client-id</span>: <span style="color:#ae81ff">kubernetes</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Field from OIDC payload used for username</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-username-claim</span>: <span style="color:#ae81ff">email</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># CA cert for issuer url TLS</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-ca-file</span>: <span style="color:#ae81ff">/oidc/ca.crt</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Property for groups entries in OIDC payload</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-groups-claim</span>: <span style="color:#ae81ff">groups</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Prefix for Kubernetes RBAC group resources</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-groups-prefix</span>: <span style="color:#e6db74">&#34;oidc:&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#75715e"># Prefix for Kubernetes RBAC user resources</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">oidc-username-prefix</span>: <span style="color:#e6db74">&#34;oidc:&#34;</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">extraVolumes</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">name</span>: <span style="color:#e6db74">&#34;ca&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">hostPath</span>: <span style="color:#e6db74">&#34;/cacrts/ca.crt&#34;</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">mountPath</span>: <span style="color:#e6db74">&#34;/oidc/ca.crt&#34;</span>
+</span></span></code></pre></div><p>Some things to note:</p>
+<ul>
+<li>The <code>oidc-issuer-url</code> should return when going to /.well-known/openid-configuration with an OIDC discovery payload</li>
+<li>The <code>oidc-ca-file</code> is optional if the cert for the endpoint is already in the cluster certs information but TLS from the apiserver to OIDC is not optional</li>
+<li>The <code>oidc-{groups,username}-prefix</code> prevents clashing between LDAP user/group names and ones in the Kubernetes cluster already. It does mean when you reference an LDAP group called &ldquo;admins&rdquo; it&rsquo;ll be &ldquo;oidc:admin&rdquo; in Kubernetes RBAC resources</li>
+</ul>
+<h2 id="2-dex">2. Dex</h2>
+]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Secure Auth Access</title>
+      <link>http://localhost:1313/post/secure-auth-access/</link>
+      <pubDate>Wed, 04 Sep 2019 13:10:55 +0100</pubDate>
+      
+      <guid>http://localhost:1313/post/secure-auth-access/</guid>
+      <description><![CDATA[<p>I recently got a new personal laptop and decided it was time to lock down and secure how I use it.</p>
+<h1 id="secure-gpg-key">Secure GPG key</h1>
+<h1 id="subkey-for-ssh-and-git">Subkey for SSH and git</h1>
+]]></description>
+      
+    </item>
+    
+    
     
     <item>
       <title>Podcasts reccomendations - 07/2019</title>
-      <link>/post/podcasts-2019-q2/</link>
+      <link>http://localhost:1313/post/podcasts-2019-q2/</link>
       <pubDate>Mon, 22 Jul 2019 11:28:19 +0100</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/podcasts-2019-q2/</guid>
-      <description>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;</description>
-      <content>&lt;p&gt;These are my currently podcast reccomendations for Q2 2019&lt;/p&gt;
-&lt;h2 id=&#34;the-teachers-pet&#34;&gt;The Teacher&amp;rsquo;s Pet&lt;/h2&gt;
-&lt;p&gt;A great true crime podcast exploring a 36 year old cold case around a woman who went missing and who&amp;rsquo;s husband brought his 17 year old, school girl, girlfriend into the house within 2 days.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Ep. 1: Bayview&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;the-weeds&#34;&gt;The Weeds&lt;/h2&gt;
-&lt;p&gt;Podcast from Vox where they do a deep dive into a topic for ~1hr. If you pick an episode with an good topic usually very informative and interesting listen.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-1&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Americas two housing crises&lt;/li&gt;
-&lt;li&gt;Into the weeds with Elizabeth Warren&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;gangster-capitalism&#34;&gt;Gangster Capitalism&lt;/h2&gt;
-&lt;p&gt;Series 1 of the podcast covers the admissions scandal with some truly horrific stories of entitled parents. The podcast really going into the inner works of the scams being done and the unprecedented scale of the system in place.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-2&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;S1 [1] The Side Door&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;the-shrink-next-door&#34;&gt;The Shrink Next Door&lt;/h2&gt;
-&lt;p&gt;A deeply interesting and weird story around a therapist who abused his position with his patients. Focuses mainly on this one individual who got taken advantage of to a ridiculous level, leading to him being ostracised from his family and friends.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-3&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Welcome To The Neighborhood | 1&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;dissect&#34;&gt;Dissect&lt;/h2&gt;
-&lt;p&gt;Season 4 of Dissect covers Tyler the Creators album, Flower Boy. An amazing and indepth look into this brilliant album with some bonus episodes covering some of his over work including his new album, Igor.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-4&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;S4E1 - Tyler the Creator: Flower Boy&lt;/li&gt;
-&lt;li&gt;Dissecting Igor with Anthony Fantano&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;</content>
+      
+      <guid>http://localhost:1313/post/podcasts-2019-q2/</guid>
+      <description><![CDATA[<p>These are my currently podcast reccomendations for Q2 2019</p>
+<h2 id="the-teachers-pet">The Teacher&rsquo;s Pet</h2>
+<p>A great true crime podcast exploring a 36 year old cold case around a woman who went missing and who&rsquo;s husband brought his 17 year old, school girl, girlfriend into the house within 2 days.</p>
+<h3 id="episodes-to-get-started">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Ep. 1: Bayview</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="the-weeds">The Weeds</h2>
+<p>Podcast from Vox where they do a deep dive into a topic for ~1hr. If you pick an episode with an good topic usually very informative and interesting listen.</p>
+<h3 id="episodes-to-get-started-1">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Americas two housing crises</li>
+<li>Into the weeds with Elizabeth Warren</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="gangster-capitalism">Gangster Capitalism</h2>
+<p>Series 1 of the podcast covers the admissions scandal with some truly horrific stories of entitled parents. The podcast really going into the inner works of the scams being done and the unprecedented scale of the system in place.</p>
+<h3 id="episodes-to-get-started-2">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>S1 [1] The Side Door</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="the-shrink-next-door">The Shrink Next Door</h2>
+<p>A deeply interesting and weird story around a therapist who abused his position with his patients. Focuses mainly on this one individual who got taken advantage of to a ridiculous level, leading to him being ostracised from his family and friends.</p>
+<h3 id="episodes-to-get-started-3">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Welcome To The Neighborhood | 1</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="dissect">Dissect</h2>
+<p>Season 4 of Dissect covers Tyler the Creators album, Flower Boy. An amazing and indepth look into this brilliant album with some bonus episodes covering some of his over work including his new album, Igor.</p>
+<h3 id="episodes-to-get-started-4">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>S4E1 - Tyler the Creator: Flower Boy</li>
+<li>Dissecting Igor with Anthony Fantano</li>
+</ul>
+</blockquote>
+<hr>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Podcast reccomendations - 02/2019</title>
-      <link>/post/podcasts-2019-q1/</link>
+      <link>http://localhost:1313/post/podcasts-2019-q1/</link>
       <pubDate>Tue, 12 Feb 2019 14:31:03 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/podcasts-2019-q1/</guid>
-      <description>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;</description>
-      <content>&lt;p&gt;These are my currently podcast reccomendations for Q1 2019&lt;/p&gt;
-&lt;h2 id=&#34;the-butterfly-effect&#34;&gt;The Butterfly Effect&lt;/h2&gt;
-&lt;p&gt;Jon Ronson&amp;rsquo;s Audible exclusive (now available everywhere) where he explores the affect PornHub had on the porn industy. Very insighful and interesting, each episodes covering a broad area such as the impact on kids in school. Only 7 (+1 bonus) episodes but still covers a lot.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Ep. 1: A Nondescript Building in Montreal&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;the-last-days-of-august&#34;&gt;The Last Days of August&lt;/h2&gt;
-&lt;p&gt;Following on from The Butterfly Effect, released this year on Audible (public release in April), Jon explores the death of a famous porn star and the mystery surrounding her death and her husband.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-1&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Ep. 1&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;bear-brook&#34;&gt;Bear Brook&lt;/h2&gt;
-&lt;p&gt;True Crime stories focussed around two barrels of bodies found in the woods. The podcast covers how crime investigations methodologies were changed forever by the techniques used.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-2&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Ep. 1: Hide and Seek&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;this-american-life&#34;&gt;This American Life&lt;/h2&gt;
-&lt;p&gt;A classic podcast but some recent episodes are worth a mention, first covers&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-3&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;#661: But that&amp;rsquo;s what happened&lt;/li&gt;
-&lt;li&gt;#657: The Runaways&lt;/li&gt;
-&lt;li&gt;#486: Valentines Day (Act 2 in particular)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;cortex&#34;&gt;Cortex&lt;/h2&gt;
-&lt;p&gt;Two youtube/podcast company owners discuss productivity, goal planning, efficiency and technology&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-4&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;78: State of the Apps 2019&lt;/li&gt;
-&lt;li&gt;72: Adulting Complete&lt;/li&gt;
-&lt;li&gt;79: 2019 Yearly Themes&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;</content>
+      
+      <guid>http://localhost:1313/post/podcasts-2019-q1/</guid>
+      <description><![CDATA[<p>These are my currently podcast reccomendations for Q1 2019</p>
+<h2 id="the-butterfly-effect">The Butterfly Effect</h2>
+<p>Jon Ronson&rsquo;s Audible exclusive (now available everywhere) where he explores the affect PornHub had on the porn industy. Very insighful and interesting, each episodes covering a broad area such as the impact on kids in school. Only 7 (+1 bonus) episodes but still covers a lot.</p>
+<h3 id="episodes-to-get-started">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Ep. 1: A Nondescript Building in Montreal</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="the-last-days-of-august">The Last Days of August</h2>
+<p>Following on from The Butterfly Effect, released this year on Audible (public release in April), Jon explores the death of a famous porn star and the mystery surrounding her death and her husband.</p>
+<h3 id="episodes-to-get-started-1">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Ep. 1</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="bear-brook">Bear Brook</h2>
+<p>True Crime stories focussed around two barrels of bodies found in the woods. The podcast covers how crime investigations methodologies were changed forever by the techniques used.</p>
+<h3 id="episodes-to-get-started-2">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Ep. 1: Hide and Seek</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="this-american-life">This American Life</h2>
+<p>A classic podcast but some recent episodes are worth a mention, first covers</p>
+<h3 id="episodes-to-get-started-3">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>#661: But that&rsquo;s what happened</li>
+<li>#657: The Runaways</li>
+<li>#486: Valentines Day (Act 2 in particular)</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="cortex">Cortex</h2>
+<p>Two youtube/podcast company owners discuss productivity, goal planning, efficiency and technology</p>
+<h3 id="episodes-to-get-started-4">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>78: State of the Apps 2019</li>
+<li>72: Adulting Complete</li>
+<li>79: 2019 Yearly Themes</li>
+</ul>
+</blockquote>
+<hr>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Setting up a Hugo Blog</title>
-      <link>/post/setup/</link>
+      <link>http://localhost:1313/post/setup/</link>
       <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/setup/</guid>
-      <description>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;</description>
-      <content>&lt;p&gt;&lt;a href=&#34;https://gohugo.io/&#34;&gt;Hugo&lt;/a&gt; is a Go based, static site generator. It has some &lt;a href=&#34;https://www.youtube.com/watch?v=CdiDYZ51a2o&#34;&gt;impressive&lt;/a&gt; benchmarking figures, a &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;huge catalog&lt;/a&gt; of impressive themes and means I don&amp;rsquo;t have to write HTML.&lt;/p&gt;
-&lt;p&gt;I&amp;rsquo;m setting this up with the follow configuratons&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;Ubuntu 16.04 LTS
-Hugo 0.32
-Go 1.9.4
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;h1 id=&#34;installing-hugo&#34;&gt;Installing Hugo&lt;/h1&gt;
-&lt;p&gt;Ubuntu/Debian:&lt;br&gt;
-&lt;code&gt;sudo apt-get install hugo&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Check it&amp;rsquo;s installed correctly:&lt;br&gt;
-&lt;code&gt;hugo version&lt;/code&gt;&lt;/p&gt;
-&lt;h1 id=&#34;creating-your-site&#34;&gt;Creating your site&lt;/h1&gt;
-&lt;h2 id=&#34;basic-setup&#34;&gt;Basic setup&lt;/h2&gt;
-&lt;p&gt;To generate your base site:&lt;br&gt;
-&lt;code&gt;hugo new site my-blog&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;&lt;em&gt;This will create a folder, my-blog, in your current directory&lt;/em&gt;&lt;/p&gt;
-&lt;p&gt;&lt;strong&gt;The folder structure will be:&lt;/strong&gt;&lt;/p&gt;
-&lt;pre&gt;&lt;code class=&#34;language-file&#34; data-lang=&#34;file&#34;&gt;+--archetypes/     Templates for content files  
+      
+      <guid>http://localhost:1313/post/setup/</guid>
+      <description><![CDATA[<p><a href="https://gohugo.io/">Hugo</a> is a Go based, static site generator. It has some <a href="https://www.youtube.com/watch?v=CdiDYZ51a2o">impressive</a> benchmarking figures, a <a href="https://themes.gohugo.io/">huge catalog</a> of impressive themes and means I don&rsquo;t have to write HTML.</p>
+<p>I&rsquo;m setting this up with the follow configuratons</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Ubuntu 16.04 LTS
+</span></span><span style="display:flex;"><span>Hugo 0.32
+</span></span><span style="display:flex;"><span>Go 1.9.4
+</span></span></code></pre></div><h1 id="installing-hugo">Installing Hugo</h1>
+<p>Ubuntu/Debian:<br>
+<code>sudo apt-get install hugo</code></p>
+<p>Check it&rsquo;s installed correctly:<br>
+<code>hugo version</code></p>
+<h1 id="creating-your-site">Creating your site</h1>
+<h2 id="basic-setup">Basic setup</h2>
+<p>To generate your base site:<br>
+<code>hugo new site my-blog</code></p>
+<p><em>This will create a folder, my-blog, in your current directory</em></p>
+<p><strong>The folder structure will be:</strong></p>
+<pre tabindex="0"><code class="language-file" data-lang="file">+--archetypes/     Templates for content files  
 +--content/        Where content for your site goes  
 +--data/           Config files for generating your site  
 +--layouts/        Html templates for content views  
 +--static/         All static content for site goes here  
 config.toml        General site properties like: theme, title  
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;Setup your site as a git repo:&lt;br&gt;
-&lt;code&gt;git init&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;using-a-theme&#34;&gt;Using a theme&lt;/h2&gt;
-&lt;p&gt;Pick a theme you want to use from &lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;here&lt;/a&gt;&lt;/p&gt;
-&lt;p&gt;As themes are stored as git repos, the best way to use one is a submodule&lt;br&gt;
-&lt;code&gt;git submodule add {THEME-REPO} themes/{THEME-NAME}&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Once the submodule has been added, add this line to your &lt;em&gt;config.toml&lt;/em&gt;:&lt;br&gt;
-&lt;code&gt;theme = &amp;quot;{THEME-NAME}&amp;quot;&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;To see what your theme looks like, run the Hugo server:&lt;br&gt;
-&lt;code&gt;hugo server&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Your empty site should be availbale at:&lt;br&gt;
-&lt;code&gt;localhost:1313&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;adding-content&#34;&gt;Adding content&lt;/h2&gt;
-&lt;p&gt;To create a new post for your site:&lt;br&gt;
-&lt;code&gt;hugo new post/hello-world.md&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;By default (because of the archetypes/default.md) your post file will look like this:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-text&#34; data-lang=&#34;text&#34;&gt;title: &amp;#34;Hello World&amp;#34;  
-date: 2018-04-06T11:03:53+01:00  
-draft: true  
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;To see your page, you need to run the server with drafts enabled:&lt;br&gt;
-&lt;code&gt;hugo server -D&lt;/code&gt;&lt;/p&gt;
-&lt;h2 id=&#34;overriding-themes&#34;&gt;Overriding themes&lt;/h2&gt;
-&lt;p&gt;You might want to change how a theme renders something. To do this, it&amp;rsquo;s easy. Just copy the files you want to change from:&lt;br&gt;
-&lt;code&gt;themes/{THEME-NAME}/layouts/&lt;/code&gt; to: &lt;code&gt;layouts/&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;Then the files in the root layouts folder will override your theme ones&lt;/p&gt;</content>
+</code></pre><p>Setup your site as a git repo:<br>
+<code>git init</code></p>
+<h2 id="using-a-theme">Using a theme</h2>
+<p>Pick a theme you want to use from <a href="https://themes.gohugo.io/">here</a></p>
+<p>As themes are stored as git repos, the best way to use one is a submodule<br>
+<code>git submodule add {THEME-REPO} themes/{THEME-NAME}</code></p>
+<p>Once the submodule has been added, add this line to your <em>config.toml</em>:<br>
+<code>theme = &quot;{THEME-NAME}&quot;</code></p>
+<p>To see what your theme looks like, run the Hugo server:<br>
+<code>hugo server</code></p>
+<p>Your empty site should be availbale at:<br>
+<code>localhost:1313</code></p>
+<h2 id="adding-content">Adding content</h2>
+<p>To create a new post for your site:<br>
+<code>hugo new post/hello-world.md</code></p>
+<p>By default (because of the archetypes/default.md) your post file will look like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>title: &#34;Hello World&#34;  
+</span></span><span style="display:flex;"><span>date: 2018-04-06T11:03:53+01:00  
+</span></span><span style="display:flex;"><span>draft: true  
+</span></span></code></pre></div><p>To see your page, you need to run the server with drafts enabled:<br>
+<code>hugo server -D</code></p>
+<h2 id="overriding-themes">Overriding themes</h2>
+<p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:<br>
+<code>themes/{THEME-NAME}/layouts/</code> to: <code>layouts/</code></p>
+<p>Then the files in the root layouts folder will override your theme ones</p>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Podcast reccomendations - 04/2018</title>
-      <link>/post/podcasts/</link>
+      <link>http://localhost:1313/post/podcasts/</link>
       <pubDate>Wed, 04 Apr 2018 22:03:36 +0100</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/podcasts/</guid>
-      <description>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;</description>
-      <content>&lt;p&gt;These are my currently podcast reccomendations as of April 2018&lt;/p&gt;
-&lt;h2 id=&#34;reply-all&#34;&gt;Reply All&lt;/h2&gt;
-&lt;p&gt;Every week, you&amp;rsquo;re presented with an intersting tale relating to the internet. From online bounty hunters to crowdsourcing medical advice, this podcast&amp;rsquo;s range of stories are always interesting and worth a listen.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Long Distance : #102 / #103&lt;/li&gt;
-&lt;li&gt;The Secret Life of Alex Goldman : #96&lt;/li&gt;
-&lt;li&gt;Boy in Photo : #79&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;this-american-life&#34;&gt;This American Life&lt;/h2&gt;
-&lt;p&gt;This American Life is one of the most popular podcasts of all time. With over twenty years worth of archives, the amount of amazing episodes are endless.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-1&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Human Error in Voltile Situations : #634&lt;/li&gt;
-&lt;li&gt;20 Acts in 60 Minutes : #241&lt;/li&gt;
-&lt;li&gt;Five Women : #640&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;my-favourite-murder&#34;&gt;My Favourite Murder&lt;/h2&gt;
-&lt;p&gt;Every week, the hosts tell some of their favourite, most interesting true crime, murder stories.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-2&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;My Firstest Murder : #1&lt;/li&gt;
-&lt;li&gt;Decompressions : #102&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;sawbones&#34;&gt;Sawbones&lt;/h2&gt;
-&lt;p&gt;A look into the history of how illnesses and medcial problems were &lt;em&gt;solved&lt;/em&gt; throughout time. Makes you wonder if we&amp;rsquo;re as wrong now as our ancestors were.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-3&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;The Women Who Gave Birth to Rabbits&lt;/li&gt;
-&lt;li&gt;Opioid Addiction&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;no-such-thing-as-a-fish&#34;&gt;No Such Thing As A Fish&lt;/h2&gt;
-&lt;p&gt;The researches behind the facts for QI talk about their favourites facts of the week.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-4&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Really any, they&amp;rsquo;re all great&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;page-94-the-private-eye-podcast&#34;&gt;Page 94: The Private Eye Podcast&lt;/h2&gt;
-&lt;p&gt;A more detailed look into some stories within Private Eye.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-5&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Hospital and Hacks&lt;/li&gt;
-&lt;li&gt;Credit and Christmas&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;disect&#34;&gt;Disect&lt;/h2&gt;
-&lt;p&gt;Long form music analysis, each season focussing on an album.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-6&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;S2E1 - Kanye West: The Elephant in the Room&lt;/li&gt;
-&lt;li&gt;S1E9 - Alright by Kendrick Lamar&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;hello-internet&#34;&gt;Hello Internet&lt;/h2&gt;
-&lt;p&gt;Two very inteligent, insightful and interesting people discuss topics of note; always thought provoking.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-7&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Being Wrong on The Internet, #1&lt;/li&gt;
-&lt;li&gt;Mr Chompers, #93&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;freakonomics&#34;&gt;Freakonomics&lt;/h2&gt;
-&lt;p&gt;Two economist explore the hidden side of everything, from pizza stores to chuck e cheeses.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-8&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;What Are you Waiting For?&lt;/li&gt;
-&lt;li&gt;How Big is My Penis? (And Other Things We Ask Google)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;my-dad-wrote-a-porno&#34;&gt;My Dad Wrote A Porno&lt;/h2&gt;
-&lt;p&gt;I think the title of this one really says it all.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-9&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;S1E1 - &amp;lsquo;The Job Interview;&amp;rsquo;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;mortified&#34;&gt;Mortified&lt;/h2&gt;
-&lt;p&gt;Adults tell the embarrassing stories of things they did as kids.&lt;/p&gt;
-&lt;h3 id=&#34;episodes-to-get-started-10&#34;&gt;Episodes to get started&lt;/h3&gt;
-&lt;blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;Titanic Ruined My Love Life, #88&lt;/li&gt;
-&lt;li&gt;How to Become a Catfish, #105&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/blockquote&gt;
-&lt;hr&gt;
-&lt;h2 id=&#34;notable-mentions&#34;&gt;Notable mentions&lt;/h2&gt;
-&lt;blockquote&gt;
-&lt;p&gt;S-Town, Serial, Crimetown&lt;/p&gt;
-&lt;/blockquote&gt;</content>
+      
+      <guid>http://localhost:1313/post/podcasts/</guid>
+      <description><![CDATA[<p>These are my currently podcast reccomendations as of April 2018</p>
+<h2 id="reply-all">Reply All</h2>
+<p>Every week, you&rsquo;re presented with an intersting tale relating to the internet. From online bounty hunters to crowdsourcing medical advice, this podcast&rsquo;s range of stories are always interesting and worth a listen.</p>
+<h3 id="episodes-to-get-started">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Long Distance : #102 / #103</li>
+<li>The Secret Life of Alex Goldman : #96</li>
+<li>Boy in Photo : #79</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="this-american-life">This American Life</h2>
+<p>This American Life is one of the most popular podcasts of all time. With over twenty years worth of archives, the amount of amazing episodes are endless.</p>
+<h3 id="episodes-to-get-started-1">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Human Error in Voltile Situations : #634</li>
+<li>20 Acts in 60 Minutes : #241</li>
+<li>Five Women : #640</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="my-favourite-murder">My Favourite Murder</h2>
+<p>Every week, the hosts tell some of their favourite, most interesting true crime, murder stories.</p>
+<h3 id="episodes-to-get-started-2">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>My Firstest Murder : #1</li>
+<li>Decompressions : #102</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="sawbones">Sawbones</h2>
+<p>A look into the history of how illnesses and medcial problems were <em>solved</em> throughout time. Makes you wonder if we&rsquo;re as wrong now as our ancestors were.</p>
+<h3 id="episodes-to-get-started-3">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>The Women Who Gave Birth to Rabbits</li>
+<li>Opioid Addiction</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="no-such-thing-as-a-fish">No Such Thing As A Fish</h2>
+<p>The researches behind the facts for QI talk about their favourites facts of the week.</p>
+<h3 id="episodes-to-get-started-4">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Really any, they&rsquo;re all great</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="page-94-the-private-eye-podcast">Page 94: The Private Eye Podcast</h2>
+<p>A more detailed look into some stories within Private Eye.</p>
+<h3 id="episodes-to-get-started-5">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Hospital and Hacks</li>
+<li>Credit and Christmas</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="disect">Disect</h2>
+<p>Long form music analysis, each season focussing on an album.</p>
+<h3 id="episodes-to-get-started-6">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>S2E1 - Kanye West: The Elephant in the Room</li>
+<li>S1E9 - Alright by Kendrick Lamar</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="hello-internet">Hello Internet</h2>
+<p>Two very inteligent, insightful and interesting people discuss topics of note; always thought provoking.</p>
+<h3 id="episodes-to-get-started-7">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Being Wrong on The Internet, #1</li>
+<li>Mr Chompers, #93</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="freakonomics">Freakonomics</h2>
+<p>Two economist explore the hidden side of everything, from pizza stores to chuck e cheeses.</p>
+<h3 id="episodes-to-get-started-8">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>What Are you Waiting For?</li>
+<li>How Big is My Penis? (And Other Things We Ask Google)</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="my-dad-wrote-a-porno">My Dad Wrote A Porno</h2>
+<p>I think the title of this one really says it all.</p>
+<h3 id="episodes-to-get-started-9">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>S1E1 - &lsquo;The Job Interview;&rsquo;</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="mortified">Mortified</h2>
+<p>Adults tell the embarrassing stories of things they did as kids.</p>
+<h3 id="episodes-to-get-started-10">Episodes to get started</h3>
+<blockquote>
+<ul>
+<li>Titanic Ruined My Love Life, #88</li>
+<li>How to Become a Catfish, #105</li>
+</ul>
+</blockquote>
+<hr>
+<h2 id="notable-mentions">Notable mentions</h2>
+<blockquote>
+<p>S-Town, Serial, Crimetown</p>
+</blockquote>]]></description>
+      
     </item>
+    
     
   </channel>
 </rss>

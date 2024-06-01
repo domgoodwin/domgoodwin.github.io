@@ -1,26 +1,27 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
     <title>Monzo on Dom Goodwin</title>
-    <link>/categories/monzo/</link>
+    <link>https://dgood.win/categories/monzo/</link>
     <description>Recent content in Monzo on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Sun, 15 Jan 2023 10:06:09 +0000</lastBuildDate><atom:link href="/categories/monzo/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Sun, 15 Jan 2023 10:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/categories/monzo/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    
+    
     <item>
       <title>Reducing our NAT Gateway cost with private networking between AWS and GCP</title>
-      <link>/post/monzo-gcp-egress/</link>
+      <link>https://dgood.win/posts/monzo-gcp-egress/</link>
       <pubDate>Sun, 15 Jan 2023 10:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/monzo-gcp-egress/</guid>
-      <description>&lt;p&gt;This post is hosted on the Monzo Blog:&lt;/p&gt;</description>
-      <content>&lt;p&gt;This post is hosted on the Monzo Blog:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;&lt;a href=&#34;https://monzo.com/blog/2022/11/25/reducing-nat-gateway-cost-with-private-networking-between-aws-and-gcp&#34;&gt;Reducing our NAT Gateway cost with private networking between AWS and GCP&lt;/a&gt;&lt;/p&gt;
-&lt;/blockquote&gt;</content>
+      
+      <guid>https://dgood.win/posts/monzo-gcp-egress/</guid>
+      <description><![CDATA[<p>This post is hosted on the Monzo Blog:</p>
+<blockquote>
+<p><a href="https://monzo.com/blog/2022/11/25/reducing-nat-gateway-cost-with-private-networking-between-aws-and-gcp">Reducing our NAT Gateway cost with private networking between AWS and GCP</a></p>
+</blockquote>]]></description>
+      
     </item>
+    
     
   </channel>
 </rss>

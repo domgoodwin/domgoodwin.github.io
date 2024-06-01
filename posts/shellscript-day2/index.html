@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html class="" lang="en"><head>
+    
+        <script>
+            if (location.host != new URL("https:\/\/dgood.win\/").host) location.href = "https:\/\/dgood.win\/"
+        </script>
+    
+    <meta name="robots" content="noai, noimageai">
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+
+    <link
+    rel="icon"
+    href='/favicon.png'
+/>
+<link
+    rel="shortcut icon"
+    href='/favicon.ico'
+    type="image/x-icon"
+/>
+<link
+    rel="apple-touch-icon"
+    href='/apple-touch-icon.png'
+/>
+
+    <link
+        rel="icon"
+        href='/logo.svg'
+        type="image/svg+xml"
+    />
+
+<title>
+        
+            Shellscript Notes  &ndash;
+        
+        Dom Goodwin
+    </title>
+
+    
+    <link href="/symbols-nerd-font/symbols-nerd-font.css" rel="stylesheet" integrity="sha512-lydow8GLOLlYNOtHlksNCmGWWCBsbIEtikXpHzfWqx78HLlyQZHOzyLwPpKol4Th6aCwLUXOfODVYgwrd3nwKQ=="/>
+    <link href="/jetbrains-mono/jetbrains-mono.css" rel="stylesheet" integrity="sha512-tJxlgL6v1Y7kFf+qB8SloaAMKnOAw6WouknxXtIjkBux9Y/9aX81EUWOJO8c/3l98DmjG8brr4to7zaez606Fg=="/>
+
+    
+    
+    <link type="text/css" rel="stylesheet" href=https://dgood.win/css/styles.c928edc0eba1b83ff1c6bfac475f42cca75f1d3970d6d594d2752af04d870a4b33adc7c5b9db020a5ae5ccc17ff0d127cab7af3d937912f09f5491c26e8596a8.css integrity="sha512-ySjtwOuhuD/xxr&#43;sR19CzKdfHTlw1tWU0nUq8E2HCkszrcfFudsCClrlzMF/8NEnyrevPZN5EvCfVJHCboWWqA==" />
+<meta name="author" content="Dom Goodwin" />
+
+    
+        <meta name="keywords" content='cheatsheet' />
+    
+    
+        <meta name="description" content="t snippets&lt;/p&gt;" />
+    
+
+<meta property="og:site_name"
+    content='Dom Goodwin' />
+
+    <meta property="og:title" content="Shellscript Notes" />
+    <meta property="og:type" content="article" />
+    
+    <meta
+        property="article:author" content="Dom Goodwin" />
+    <meta
+        property="article:published_time"
+        content='2020-02-20T15:25:00Z&#43;0100' />
+    
+        
+            <meta property="article:tag" content="cheatsheet" />
+        
+    
+    <meta property="og:url" content="https://dgood.win/posts/shellscript-day2/" />
+    
+    
+    <meta property="og:image"
+        content="https://dgood.win/icon512.png" />
+    
+        <meta property="og:description" content="&lt;p&gt;Useful shellscript snippets&lt;/p&gt;" />
+    
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:domain"
+      content='dgood.win'
+/>
+<meta property="twitter:url" content="https://dgood.win/posts/shellscript-day2/" />
+
+
+    <meta name="twitter:title" content="Shellscript Notes" />
+    
+    
+    
+    <meta name="twitter:image"
+        content="https://dgood.win/icon512.png" />
+    
+        <meta name="twitter:description" content="&lt;p&gt;Useful shellscript snippets&lt;/p&gt;" />
+    
+
+<link rel="manifest" href="/manifest/index.json" />
+</head>
+
+
+<body>
+        <div id="baseContainer"><header class="">
+<div class="titleAndSearchContainer">
+        <div id="titleContainer">
+            
+                <a class="unstyledLink" href="/">
+                    <img src='/logo.svg' alt='Logo'/>
+                </a>
+            
+            <div class="rightOfLogo">
+                <div class="titleAndHamburger">
+                    <h1>
+                        <a class="unstyledLink" href="/">Dom Goodwin</a>
+                        
+                    </h1>
+                    
+                </div>
+                <div id="wide_nav"><nav>
+    
+    <ul id="main-nav">
+        <li><a href="/">Home</a></li>
+        
+            <li><a href="/posts/">Posts</a></li>
+        
+        
+        
+        
+        
+            <li><a href="https://dgood.win/pages/about/">
+                About
+            </a></li>
+        
+            <li><a href="https://dgood.win/pages/books/">
+                Books
+            </a></li>
+        
+            <li><a href="https://dgood.win/pages/solar/">
+                Solar
+            </a></li>
+        
+        
+        
+            <li><a href="/tags/">Tags</a></li>
+        
+        
+    </ul>
+</nav>
+</div>
+            </div>
+        </div>
+        <div class="search">
+    <input id="searchbar" type="text" placeholder='Search' />
+    <span class="nerdlink" onclick="newSearch();">&#xf002;</span>
+</div>
+<script>
+    function newSearch() {
+        let term = searchbar.value.trim();
+        if (!term) return;
+        location.href = `/search/?q=${term}`;
+    }
+    searchbar.onkeyup = (ev) => {if (ev.keyCode == 13) newSearch()};
+</script>
+
+    </div>
+    <div id="links">
+        <a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="/index.xml">
+    
+    
+        &#xf09e;
+    
+    <span>
+        RSS
+    </span>
+</a>
+
+        
+        <a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://github.com/domgoodwin">
+    
+    
+        &#xf09b;
+    
+    <span>
+        GitHub
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://twitter.com/domgoodwin_">
+    
+    
+        &#xf099;
+    
+    <span>
+        Twitter
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://www.linkedin.com/in/dom-goodwin/">
+    
+    
+        &#xf0e1;
+    
+    <span>
+        LinkedIn
+    </span>
+</a>
+<a
+    
+        rel="me"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://social.lol/@domg">
+    
+    
+        <svg class='pseudofont' xmlns:svg='http://www.w3.org/2000/svg' width='16' height='16' viewbox='0 0 16 16'><path d='M 7.4779094,-1.598624e-6 C 5.5602384,0.0156984 3.7155894,0.2233384 2.6405814,0.7170384 c 0,0 -2.13206093,0.9537 -2.13206093,4.20766 0,0.74512 -0.01448,1.63603 0.0091,2.58084 0.07742,3.1821946 0.58336693,6.3183886 3.52553593,7.0971276 1.356568,0.359063 2.521335,0.434289 3.45936,0.382729 1.701085,-0.09431 2.6560206,-0.607063 2.6560206,-0.607063 l -0.05611,-1.234252 c 0,0 -1.2156316,0.383272 -2.5808476,0.33656 -1.352609,-0.04639 -2.780561,-0.145832 -2.999328,-1.80651 -0.0202,-0.145872 -0.03031,-0.301902 -0.03031,-0.465714 0,-10e-7 1.327834,0.324572 3.010574,0.40167 1.028943,0.0472 1.993827,-0.06028 2.9738766,-0.177218 1.879445,-0.224425 3.515901,-1.382448 3.721577,-2.4405646 0.32407,-1.666815 0.297376,-4.067605 0.297376,-4.067605 0,-3.25396 -2.131943,-4.20766 -2.131943,-4.20766 C 11.288476,0.2233384 9.4426784,0.0156784 7.5250084,-1.598624e-6 Z M 5.3076104,2.5424984 c 0.798781,0 1.403595,0.30701 1.803551,0.92113 l 0.388886,0.65181 0.388884,-0.65181 c 0.399875,-0.61412 1.00469,-0.92113 1.803551,-0.92113 0.6903266,0 1.2465526,0.24267 1.6713186,0.71609 0.411755,0.47342 0.61677,1.11337 0.61677,1.91862 v 3.939988 h -1.560986 v -3.824218 c 0,-0.80613 -0.339166,-1.21531 -1.0176126,-1.21531 -0.750129,0 -1.126049,0.48533 -1.126049,1.44509 v 2.09324 h -1.551753 v -2.09324 c 0,-0.95976 -0.376039,-1.44509 -1.126168,-1.44509 -0.678446,0 -1.017613,0.40918 -1.017613,1.21531 v 3.824218 h -1.560985 v -3.939988 c 0,-0.80525 0.205053,-1.4452 0.616889,-1.91862 0.424685,-0.47342 0.980911,-0.71609 1.671317,-0.71609 z' /></svg>
+    
+    <span>
+        Mastodon
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="/index.xml">
+    
+    
+        &#xf09e;
+    
+    <span>
+        RSS
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="mailto:site@dgood.win">
+    
+    
+        &#xf6ed;
+    
+    <span>
+        Email
+    </span>
+</a>
+
+    </div>
+    
+
+</header>
+<div id="contentContainer">
+                <div id="content">
+                    <main>
+<article class="card single">
+    
+        <h1>Shellscript Notes</h1>
+    
+    
+        <p class="date">
+            <span title='Date'> </span>
+    2020-02-20
+
+</p>
+    
+    
+    
+    
+    <div><p>Useful shellscript snippets</p>
+<h2 id="commonly-used">Commonly used</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Check if variable contains mystring</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">if</span> <span style="color:#f92672">[[</span> $var <span style="color:#f92672">==</span> *mystring*  <span style="color:#f92672">]]</span>; <span style="color:#66d9ef">then</span> <span style="color:#75715e"># The double closed brackets are essential for wildcard match</span>
+</span></span><span style="display:flex;"><span>    echo <span style="color:#e6db74">&#34;it does&#34;</span>;
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">fi</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Split on &#34;:&#34; and get 1st</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;docker-image:0.1&#34;</span> | cut -d <span style="color:#e6db74">&#34;:&#34;</span> -f1 <span style="color:#75715e"># returns docker-image</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Find and replace all via pipe</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;Hello I&#39;m Dom&#34;</span> | sed <span style="color:#e6db74">&#39;s/Dom/&lt;void&gt;/g&#39;</span> <span style="color:#75715e"># &#34;/&#34; could be any char</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Redirect stdout and stderr to the void</span>
+</span></span><span style="display:flex;"><span>./run_script.sh &gt;/dev/null 2&gt;&amp;<span style="color:#ae81ff">1</span>
+</span></span></code></pre></div><h2 id="basics">Basics</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Read top lines of file</span>
+</span></span><span style="display:flex;"><span>head -n <span style="color:#ae81ff">3</span> myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read bottom lines of file</span>
+</span></span><span style="display:flex;"><span>tail -n <span style="color:#ae81ff">3</span> myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Watch all updates to file</span>
+</span></span><span style="display:flex;"><span>tail -f myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Read file in window (not cat)</span>
+</span></span><span style="display:flex;"><span>less myfile
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Make all directories if not exist</span>
+</span></span><span style="display:flex;"><span>mkdir -p exist/not/dir
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Visualise dir structure</span>
+</span></span><span style="display:flex;"><span>tree -L <span style="color:#ae81ff">2</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Remove env variable</span>
+</span></span><span style="display:flex;"><span>unset myvar
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Alias command to short one</span>
+</span></span><span style="display:flex;"><span>alias lc<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;ls -laht&#34;</span> <span style="color:#75715e"># unalias to remove</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Piping output</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;overwrite&#34;</span> &gt; file <span style="color:#75715e"># Same as 1&gt;</span>
+</span></span><span style="display:flex;"><span>echo <span style="color:#e6db74">&#34;append&#34;</span> &gt;&gt; file
+</span></span></code></pre></div><h2 id="system">System</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># See disk space usage (human readable)</span>
+</span></span><span style="display:flex;"><span>df -h
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># See file usage for dirs</span>
+</span></span><span style="display:flex;"><span>du <span style="color:#f92672">(</span>--max-depth<span style="color:#f92672">=</span>2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Show running processes, a: show other user, u: show username, x: show non terminal</span>
+</span></span><span style="display:flex;"><span>ps -aux
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Show usage</span>
+</span></span><span style="display:flex;"><span>top
+</span></span></code></pre></div><h2 id="tricks">Tricks</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Use command output as if it&#39;s file</span>
+</span></span><span style="display:flex;"><span>diff &lt;<span style="color:#f92672">(</span>grep string file1<span style="color:#f92672">)</span> &lt;<span style="color:#f92672">(</span>grep string file2<span style="color:#f92672">)</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Repeat last 3 command</span>
+</span></span><span style="display:flex;"><span>!!
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Repeat last arg of the last command</span>
+</span></span><span style="display:flex;"><span>!$
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Take all args from previous and use</span>
+</span></span><span style="display:flex;"><span>!:1-$
+</span></span></code></pre></div><h1 id="io">IO</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Secure input</span>
+</span></span><span style="display:flex;"><span>read -s -p <span style="color:#e6db74">&#34;Password: &#34;</span> password
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Default value</span>
+</span></span><span style="display:flex;"><span>read -p <span style="color:#e6db74">&#34;Address [http://127.0.0.1]: &#34;</span> ADDR
+</span></span><span style="display:flex;"><span>default<span style="color:#f92672">=</span><span style="color:#e6db74">&#34;http://127.0.0.1&#34;</span>
+</span></span><span style="display:flex;"><span>ADDR<span style="color:#f92672">=</span><span style="color:#e6db74">${</span>ADDR<span style="color:#66d9ef">:-</span>$default<span style="color:#e6db74">}</span>
+</span></span></code></pre></div><h1 id="jq">jq</h1>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Get value from object within array within object</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#34;.parent.children | .[] | .name&#34;</span> <span style="color:#75715e"># raw:no quotes, e:null exit0, compact</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Get object attr and value and format &#34;Key=$attr,Value=$val&#34;</span>
+</span></span><span style="display:flex;"><span>jq -r <span style="color:#e6db74">&#39;.data | keys[] as $k | &#34;Key=\($k),Value=\(.[$k])&#34;&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Use output in for loop</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">for</span> object in <span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">&#34;</span><span style="color:#e6db74">${</span>JSON<span style="color:#e6db74">}</span><span style="color:#e6db74">&#34;</span> | jq -rec <span style="color:#e6db74">&#34;.entries[] | .whole | @base64&#34;</span><span style="color:#66d9ef">)</span>; <span style="color:#66d9ef">do</span>
+</span></span><span style="display:flex;"><span>  echo <span style="color:#e6db74">&#34;This is the value: </span><span style="color:#66d9ef">$(</span>echo <span style="color:#e6db74">${</span>val<span style="color:#e6db74">}</span> | base64 -d | jq .attribute<span style="color:#66d9ef">)</span><span style="color:#e6db74">&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#66d9ef">done</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Args</span>
+</span></span><span style="display:flex;"><span>curl localhost:8500/v1/catalog/nodes | <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    jq <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        --arg ip <span style="color:#66d9ef">$(</span>./get_host.sh<span style="color:#66d9ef">)</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>        <span style="color:#e6db74">&#39;.[] | select(.Address==$ip)&#39;</span>
+</span></span><span style="display:flex;"><span>        
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Output mulitple entries in list</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#39;[.importItems[].itemId]&#39;</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create object</span>
+</span></span><span style="display:flex;"><span>jq -rec <span style="color:#e6db74">&#39;{} +{ Items:[.importItems[].itemId]}&#39;</span>
+</span></span></code></pre></div><h2 id="behaviour">Behaviour</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Exit script if commands return nonzero</span>
+</span></span><span style="display:flex;"><span>set -e
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Output command as they run (debug)</span>
+</span></span><span style="display:flex;"><span>set -x
+</span></span></code></pre></div></div>
+</article>
+
+    <hr />
+    <p class="articleTagsContainer">
+        <span> </span>
+        <strong>Tags:</strong>
+        
+            <a
+                
+                href="/tags/cheatsheet/">#cheatsheet</a>
+        
+    </p>
+
+
+
+
+
+
+                    </main><footer>
+    <hr />
+
+<p><small>
+        2024 &copy; Dom Goodwin
+    </small></p>
+    <p><small>
+        <a href='https://gitlab.com/gabmus/hugo-ficurinia'>Ficurinia theme</a> for <a href='https://gohugo.io'>Hugo</a> by <a href='https://gabmus.org'>Gabriele Musco</a>. Licensed under <a href='https://www.gnu.org/licenses/agpl-3.0.html'>GNU AGPLv3</a>.
+    </small></p>
+</footer>
+</div>
+            </div>
+        </div>
+
+    
+        <script
+            async
+            defer
+            data-website-id="ac540eb3-ea38-412a-bbda-0f734635df39"
+            src="https://cloud.umami.is/script.js"
+        ></script>
+    
+
+
+</body>
+</html>

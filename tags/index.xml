@@ -1,23 +1,108 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
     <title>Tags on Dom Goodwin</title>
-    <link>/tags/</link>
+    <link>https://dgood.win/tags/</link>
     <description>Recent content in Tags on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Mon, 22 Jul 2019 11:28:19 +0100</lastBuildDate><atom:link href="/tags/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/tags/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    
+    
+    <item>
+      <title>Productivity</title>
+      <link>https://dgood.win/tags/productivity/</link>
+      <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/productivity/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Ways-of-Working</title>
+      <link>https://dgood.win/tags/ways-of-working/</link>
+      <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/ways-of-working/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Deep-Dive</title>
+      <link>https://dgood.win/tags/deep-dive/</link>
+      <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/deep-dive/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>https://dgood.win/tags/kubernetes/</link>
+      <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/kubernetes/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Reccomendations</title>
+      <link>https://dgood.win/tags/reccomendations/</link>
+      <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/reccomendations/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Cheatsheet</title>
+      <link>https://dgood.win/tags/cheatsheet/</link>
+      <pubDate>Thu, 20 Feb 2020 15:25:00 +0100</pubDate>
+      
+      <guid>https://dgood.win/tags/cheatsheet/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
     <item>
       <title>Podcasts</title>
-      <link>/tags/podcasts/</link>
+      <link>https://dgood.win/tags/podcasts/</link>
       <pubDate>Mon, 22 Jul 2019 11:28:19 +0100</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/tags/podcasts/</guid>
-      <description></description>
-      <content></content>
+      
+      <guid>https://dgood.win/tags/podcasts/</guid>
+      <description><![CDATA[]]></description>
+      
     </item>
+    
+    
+    
+    <item>
+      <title>101</title>
+      <link>https://dgood.win/tags/101/</link>
+      <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
+      
+      <guid>https://dgood.win/tags/101/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
     
   </channel>
 </rss>

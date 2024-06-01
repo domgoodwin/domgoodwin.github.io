@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
+  <channel>
+    <title>101 on Dom Goodwin</title>
+    <link>https://dgood.win/tags/101/</link>
+    <description>Recent content in 101 on Dom Goodwin</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Fri, 06 Apr 2018 11:03:53 +0100</lastBuildDate><atom:link href="https://dgood.win/tags/101/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    
+    
+    <item>
+      <title>Setting up a Hugo Blog</title>
+      <link>https://dgood.win/posts/setup/</link>
+      <pubDate>Fri, 06 Apr 2018 11:03:53 +0100</pubDate>
+      
+      <guid>https://dgood.win/posts/setup/</guid>
+      <description><![CDATA[<p><a href="https://gohugo.io/">Hugo</a> is a Go based, static site generator. It has some <a href="https://www.youtube.com/watch?v=CdiDYZ51a2o">impressive</a> benchmarking figures, a <a href="https://themes.gohugo.io/">huge catalog</a> of impressive themes and means I don&rsquo;t have to write HTML.</p>
+<p>I&rsquo;m setting this up with the follow configuratons</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>Ubuntu 16.04 LTS
+</span></span><span style="display:flex;"><span>Hugo 0.32
+</span></span><span style="display:flex;"><span>Go 1.9.4
+</span></span></code></pre></div><h1 id="installing-hugo">Installing Hugo</h1>
+<p>Ubuntu/Debian:<br>
+<code>sudo apt-get install hugo</code></p>
+<p>Check it&rsquo;s installed correctly:<br>
+<code>hugo version</code></p>
+<h1 id="creating-your-site">Creating your site</h1>
+<h2 id="basic-setup">Basic setup</h2>
+<p>To generate your base site:<br>
+<code>hugo new site my-blog</code></p>
+<p><em>This will create a folder, my-blog, in your current directory</em></p>
+<p><strong>The folder structure will be:</strong></p>
+<pre tabindex="0"><code class="language-file" data-lang="file">+--archetypes/     Templates for content files  
++--content/        Where content for your site goes  
++--data/           Config files for generating your site  
++--layouts/        Html templates for content views  
++--static/         All static content for site goes here  
+config.toml        General site properties like: theme, title  
+</code></pre><p>Setup your site as a git repo:<br>
+<code>git init</code></p>
+<h2 id="using-a-theme">Using a theme</h2>
+<p>Pick a theme you want to use from <a href="https://themes.gohugo.io/">here</a></p>
+<p>As themes are stored as git repos, the best way to use one is a submodule<br>
+<code>git submodule add {THEME-REPO} themes/{THEME-NAME}</code></p>
+<p>Once the submodule has been added, add this line to your <em>config.toml</em>:<br>
+<code>theme = &quot;{THEME-NAME}&quot;</code></p>
+<p>To see what your theme looks like, run the Hugo server:<br>
+<code>hugo server</code></p>
+<p>Your empty site should be availbale at:<br>
+<code>localhost:1313</code></p>
+<h2 id="adding-content">Adding content</h2>
+<p>To create a new post for your site:<br>
+<code>hugo new post/hello-world.md</code></p>
+<p>By default (because of the archetypes/default.md) your post file will look like this:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>title: &#34;Hello World&#34;  
+</span></span><span style="display:flex;"><span>date: 2018-04-06T11:03:53+01:00  
+</span></span><span style="display:flex;"><span>draft: true  
+</span></span></code></pre></div><p>To see your page, you need to run the server with drafts enabled:<br>
+<code>hugo server -D</code></p>
+<h2 id="overriding-themes">Overriding themes</h2>
+<p>You might want to change how a theme renders something. To do this, it&rsquo;s easy. Just copy the files you want to change from:<br>
+<code>themes/{THEME-NAME}/layouts/</code> to: <code>layouts/</code></p>
+<p>Then the files in the root layouts folder will override your theme ones</p>]]></description>
+      
+    </item>
+    
+    
+  </channel>
+</rss>

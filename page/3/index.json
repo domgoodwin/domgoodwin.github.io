@@ -1,0 +1,36 @@
+
+{
+    
+    
+    
+    
+    
+    
+    
+    
+        
+        
+        
+    
+        
+        
+        
+    
+        
+        
+        
+    
+        
+        
+        
+    
+        
+        
+        
+    
+    "articles": [{"date":"2019-02-12","image":"","imageAlt":"","link":"https://dgood.win/posts/podcasts-2019-q1/","summary":"\u003cp\u003eThese are my currently podcast reccomendations for Q1 2019\u003c/p\u003e","tags":["podcasts"],"title":"Podcast reccomendations - 02/2019"},{"date":"2018-04-06","image":"","imageAlt":"","link":"https://dgood.win/posts/setup/","summary":"\u003cp\u003e\u003ca href=\"https://gohugo.io/\"\u003eHugo\u003c/a\u003e is a Go based, static site generator. It has some \u003ca href=\"https://www.youtube.com/watch?v=CdiDYZ51a2o\"\u003eimpressive\u003c/a\u003e benchmarking figures, a \u003ca href=\"https://themes.gohugo.io/\"\u003ehuge catalog\u003c/a\u003e of impressive themes and means I don\u0026rsquo;t have to write HTML.\u003c/p\u003e","tags":["101"],"title":"Setting up a Hugo Blog"},{"date":"2018-04-04","image":"","imageAlt":"","link":"https://dgood.win/posts/podcasts/","summary":"\u003cp\u003eThese are my currently podcast reccomendations as of April 2018\u003c/p\u003e","tags":["podcasts"],"title":"Podcast reccomendations - 04/2018"},{"date":"0001-01-01","image":"","imageAlt":"","link":"https://dgood.win/manifest/index.json","summary":"","tags":[],"title":"Manifest"},{"date":"0001-01-01","image":"","imageAlt":"","link":"https://dgood.win/search/","summary":"","tags":[],"title":"Search"}],
+    "test": "Don’t just say ‘hello’ to me   Reducing our NAT Gateway cost with private networking between AWS and GCP   Kubernetes Networking #3: Ingress   Kubernetes Networking #2: Services   The case for time-tracking   Kubernetes Networking #1   Blog² - Blog about blogs   Kubernetes Debugging   Shellscript Notes   Podcasts reccomendations - 07/2019   Podcast reccomendations - 02/2019   Setting up a Hugo Blog   Podcast reccomendations - 04/2018   Manifest   Search   ",
+    "page": "3",
+    "next": ""
+}
+

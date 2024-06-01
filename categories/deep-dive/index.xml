@@ -1,653 +1,649 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
-    <title>Deep dive on Dom Goodwin</title>
-    <link>/categories/deep-dive/</link>
-    <description>Recent content in Deep dive on Dom Goodwin</description>
+    <title>Deep Dive on Dom Goodwin</title>
+    <link>http://192.168.0.30:1313/categories/deep-dive/</link>
+    <description>Recent content in Deep Dive on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Fri, 22 Jul 2022 18:06:09 +0000</lastBuildDate><atom:link href="/categories/deep-dive/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Fri, 22 Jul 2022 18:06:09 +0000</lastBuildDate><atom:link href="http://192.168.0.30:1313/categories/deep-dive/index.xml" rel="self" type="application/rss+xml" /><icon>http://192.168.0.30:1313/logo.svg</icon>
+    
+    
     <item>
       <title>Kubernetes Networking #3: Ingress</title>
-      <link>/post/kubernetes-networking-ingress/</link>
+      <link>http://192.168.0.30:1313/posts/kubernetes-networking-ingress/</link>
       <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-ingress/</guid>
-      <description>&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;</description>
-      <content>&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;
-&lt;p&gt;In a &lt;a href=&#34;https://en.wikipedia.org/wiki/Utopia&#34;&gt;world without Kubernetes&lt;/a&gt;, you might have a reverse proxy deployed where you write the configuration file to detail how to expose your applications in the backend. An ingress controller takes that reverse proxy and automatically generates the config based on the &lt;code&gt;Ingress&lt;/code&gt; Kubernetes resources you create. You don’t have to create a new &lt;code&gt;LoadBalancer&lt;/code&gt; service and cloud load balancer for each service you want to expose.&lt;/p&gt;
-&lt;p&gt;In this guide, we’ll use the Kubernetes maintained ingress controller, &lt;a href=&#34;https://github.com/kubernetes/ingress-nginx&#34;&gt;ingress-nginx&lt;/a&gt;, which uses nginx as it’s reverse proxy. It’s important to note, this isn’t the &lt;a href=&#34;https://docs.nginx.com/nginx-ingress-controller/&#34;&gt;nginx-ingress-controller&lt;/a&gt; from NGINX themselves which has hooks into NGINX plus and other paid offerings. The docs for ingress-nginx can be found &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/&#34;&gt;here&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;-why-not-just-loadbalancer&#34;&gt;🤷 Why not just LoadBalancer?&lt;/h2&gt;
-&lt;p&gt;Kubernetes provides a way for a cloud provisioned load balancer (an &lt;a href=&#34;https://aws.amazon.com/elasticloadbalancing/&#34;&gt;AWS elastic load balancer&lt;/a&gt; for instance) to be deployed by the control plane, see my &lt;a href=&#34;https://dgood.win/post/kubernetes-networking-2-services/&#34;&gt;services post&lt;/a&gt; for more info. We can use these to expose a single service (and collection of pods) from a load balancer. But what happens when you have 50 services deployed onto your cluster? Would you have 50 load balancers for them all? That’s ~$810 in standing charges every month not including paying for the traffic that goes through them.&lt;/p&gt;
-&lt;p&gt;This is where an ingress controller comes in. An Ingress controller is a centralized place for traffic to enter your cluster via a single load balancer which then is routed to your backend services automatically. This is all based on &lt;code&gt;Ingress&lt;/code&gt; resources deployed on the cluster, through the reverse proxy.
-It also introduces a place to add some control over your traffic routing. kube-proxy will default (when in &lt;code&gt;iptables&lt;/code&gt; mode) to TCP load balancing traffic randomly, the traffic coming in via a load balancer goes to any pods. With the controls you can configure affinities, round-robin routing, rate limits, CORS etc. to really shape the traffic going to your pods centrally.&lt;/p&gt;
-&lt;p&gt;These diagrams compare the path a request would take with/without an ingress controller exposing your pod:&lt;/p&gt;
+      
+      <guid>http://192.168.0.30:1313/posts/kubernetes-networking-ingress/</guid>
+      <description><![CDATA[<p>Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define <em>how</em> the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.</p>
+<p>In a <a href="https://en.wikipedia.org/wiki/Utopia">world without Kubernetes</a>, you might have a reverse proxy deployed where you write the configuration file to detail how to expose your applications in the backend. An ingress controller takes that reverse proxy and automatically generates the config based on the <code>Ingress</code> Kubernetes resources you create. You don’t have to create a new <code>LoadBalancer</code> service and cloud load balancer for each service you want to expose.</p>
+<p>In this guide, we’ll use the Kubernetes maintained ingress controller, <a href="https://github.com/kubernetes/ingress-nginx">ingress-nginx</a>, which uses nginx as it’s reverse proxy. It’s important to note, this isn’t the <a href="https://docs.nginx.com/nginx-ingress-controller/">nginx-ingress-controller</a> from NGINX themselves which has hooks into NGINX plus and other paid offerings. The docs for ingress-nginx can be found <a href="https://kubernetes.github.io/ingress-nginx/">here</a>.</p>
+<h2 id="-why-not-just-loadbalancer">🤷 Why not just LoadBalancer?</h2>
+<p>Kubernetes provides a way for a cloud provisioned load balancer (an <a href="https://aws.amazon.com/elasticloadbalancing/">AWS elastic load balancer</a> for instance) to be deployed by the control plane, see my <a href="https://dgood.win/post/kubernetes-networking-2-services/">services post</a> for more info. We can use these to expose a single service (and collection of pods) from a load balancer. But what happens when you have 50 services deployed onto your cluster? Would you have 50 load balancers for them all? That’s ~$810 in standing charges every month not including paying for the traffic that goes through them.</p>
+<p>This is where an ingress controller comes in. An Ingress controller is a centralized place for traffic to enter your cluster via a single load balancer which then is routed to your backend services automatically. This is all based on <code>Ingress</code> resources deployed on the cluster, through the reverse proxy.
+It also introduces a place to add some control over your traffic routing. kube-proxy will default (when in <code>iptables</code> mode) to TCP load balancing traffic randomly, the traffic coming in via a load balancer goes to any pods. With the controls you can configure affinities, round-robin routing, rate limits, CORS etc. to really shape the traffic going to your pods centrally.</p>
+<p>These diagrams compare the path a request would take with/without an ingress controller exposing your pod:</p>
+<figure><img src="/img/ingress-lb-to-pod.png"
+    alt="Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods"><figcaption>
+      <h4>Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods</h4><p>Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/ingress-lb-to-pod.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
+<figure><img src="/img/ingress-controller-to-pod.png"
+    alt="With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP"><figcaption>
+      <h4>With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP</h4><p>With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP</p>
+    </figcaption>
+</figure>
 
-
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/ingress-controller-to-pod.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;There are some tradeoffs to using an ingress controller:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;This introduces an extra hop for your network requests to reach your pod. If you have high throughput - and low latency is important - this could be a consideration&lt;/li&gt;
-&lt;li&gt;In the same vein, the ingress controller pods also use resources. If you have the ingress controller doing a lot of TLS termination or handling high load the resource usage will increase significantly&lt;/li&gt;
-&lt;li&gt;You can only really use this for (mostly) Layer 7 traffic, TCP or UDP cannot directly be exposed this way&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;-so-what-does-an-ingress-controller-actually-do&#34;&gt;🛠️ So what does an ingress controller actually do?&lt;/h2&gt;
-&lt;p&gt;At a high level you have the following components:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Kubernetes resources:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Service: type &lt;code&gt;LoadBalancer&lt;/code&gt;, meaning your ingress-controller pods are fronted by a cloud load balancer and exposed outside the cluster&lt;/li&gt;
-&lt;li&gt;Deployment: Ingress Controller itself (see components below for a breakdown)&lt;/li&gt;
-&lt;li&gt;(sometimes)Deployment: default backend, this is where the ingress controller routes traffic to when there isn’t a matching host/path rule for the traffic coming in&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Components of the ingress controller:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Reverse proxy: This is what actually routes the traffic coming in to downstream services/pods. If you installed nginx on a service and ran it it’s this basically&lt;/li&gt;
-&lt;li&gt;Config generator: This continuously gets the state of Ingress resources in the Kubernetes cluster (think of it as spamming &lt;code&gt;kubectl get ingress -A&lt;/code&gt; every X-seconds) and uses that to generate config that the reverse proxy (nginx in this case) understands&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The &lt;em&gt;reverse proxy&lt;/em&gt; continually has it’s config updated by the &lt;em&gt;config generator&lt;/em&gt; and then traffic coming into the cluster via the &lt;em&gt;Loadbalancer service&lt;/em&gt; hits the reverse proxy and is routed to the proper backend service/pods.&lt;/p&gt;
-&lt;h2 id=&#34;-what-about-ssl&#34;&gt;🔒 What about SSL?&lt;/h2&gt;
-&lt;p&gt;For HTTPS traffic, we can configure the ingress-controller to terminate the SSL and provide the certs as needed.&lt;/p&gt;
-&lt;p&gt;When creating an ingress resource you can specify a Kubernetes Secret of type &lt;code&gt;tls&lt;/code&gt; and the ingress-controller will use that secret to terminate the SSL of the request at the reverse proxy.&lt;/p&gt;
-&lt;p&gt;This could also be coupled with a tool like &lt;a href=&#34;https://cert-manager.io/docs/&#34;&gt;cert-manager&lt;/a&gt; to dynamically issue and renew certificates for you.&lt;/p&gt;
-&lt;h2 id=&#34;-load-balancerreverse-proxy-controls&#34;&gt;🎛️ Load balancer/Reverse proxy controls&lt;/h2&gt;
-&lt;p&gt;As mentioned before, by having your pods traffic route via a reverse proxy in the cluster you gain more control over the routing and connection. Some useful examples for ingress-nginx are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;Authentication&lt;/strong&gt;: Setup &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc2617&#34;&gt;basic or digest access authentication&lt;/a&gt; on routes
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/auth-type: basic&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Session affinity:&lt;/strong&gt; Allows for things like sticky sessions, keeping a user going to the same backend pod or use cookie affinity to apply a &lt;code&gt;SameSite&lt;/code&gt; sticky cookie
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/affinity: sticky&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;SSL passthrough:&lt;/strong&gt; Instead of terminating TLS at the load balancer you can let the backend handle it directly
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/ssl-passthrough: &amp;quot;true&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Redirections:&lt;/strong&gt; Both &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#permanent-redirect&#34;&gt;permanent&lt;/a&gt; and &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#temporal-redirect&#34;&gt;temporary&lt;/a&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/permanent-redirect: https://www.google.com&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;Security controls&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#ssl-ciphers&#34;&gt;SSL ciphers&lt;/a&gt; can be configured controlling which SSL ciphers you support
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/ssl-ciphers: &amp;quot;ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#enable-cors&#34;&gt;CORS rules&lt;/a&gt; to configure the cross-original resource sharing rules
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;nginx.ingress.kubernetes.io/enable-cors: &amp;quot;true&amp;quot;&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;A lot of these controls can be configured either as &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/&#34;&gt;annotations&lt;/a&gt; directly on Ingress resources affecting only those specific routes, or can be provided in the &lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/&#34;&gt;Configmap&lt;/a&gt; to be applied at a global level.&lt;/p&gt;
-&lt;h2 id=&#34;-can-i-have-multiple-ingress-controllers&#34;&gt;🤹‍♂️ Can I have multiple ingress-controllers?&lt;/h2&gt;
-&lt;p&gt;&lt;strong&gt;Yes&lt;/strong&gt;. Let’s say you want to be able to accept traffic from the public internet as well as internally from inside your private network.&lt;/p&gt;
-&lt;p&gt;We would:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Deploy two sets of ingress-controllers, &lt;em&gt;ingress-public&lt;/em&gt; and &lt;em&gt;ingress-private&lt;/em&gt;&lt;/li&gt;
-&lt;li&gt;Configure them to be public and private. This is done usually by the annotations given to the different &lt;code&gt;Service&lt;/code&gt; resources (&lt;code&gt;service.beta.kubernetes.io/aws-load-balancer-scheme: &amp;quot;internet-facing&amp;quot;&lt;/code&gt; for instance)&lt;/li&gt;
-&lt;li&gt;Setup the Ingress classes
-&lt;ul&gt;
-&lt;li&gt;This is a relatively new resource, it used to be managed by an annotation &lt;code&gt;kubernetes.io/ingress.class&lt;/code&gt; which is being deprecated&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;When creating &lt;code&gt;Ingress&lt;/code&gt; resources you can target the &lt;code&gt;IngressClass&lt;/code&gt; to specify which controller should setup routing for your traffic&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;-what-about-hostnames&#34;&gt;📮 What about hostnames?&lt;/h2&gt;
-&lt;p&gt;Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.&lt;/p&gt;
-&lt;p&gt;To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to &lt;code&gt;friendly-address.domain.com&lt;/code&gt; would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.&lt;/p&gt;
-&lt;p&gt;Then any routes off this hostname would be directed to your specified pods, ie.:&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
+<p>There are some tradeoffs to using an ingress controller:</p>
+<ul>
+<li>This introduces an extra hop for your network requests to reach your pod. If you have high throughput - and low latency is important - this could be a consideration</li>
+<li>In the same vein, the ingress controller pods also use resources. If you have the ingress controller doing a lot of TLS termination or handling high load the resource usage will increase significantly</li>
+<li>You can only really use this for (mostly) Layer 7 traffic, TCP or UDP cannot directly be exposed this way</li>
+</ul>
+<h2 id="-so-what-does-an-ingress-controller-actually-do">🛠️ So what does an ingress controller actually do?</h2>
+<p>At a high level you have the following components:</p>
+<ul>
+<li><strong>Kubernetes resources:</strong>
+<ul>
+<li>Service: type <code>LoadBalancer</code>, meaning your ingress-controller pods are fronted by a cloud load balancer and exposed outside the cluster</li>
+<li>Deployment: Ingress Controller itself (see components below for a breakdown)</li>
+<li>(sometimes)Deployment: default backend, this is where the ingress controller routes traffic to when there isn’t a matching host/path rule for the traffic coming in</li>
+</ul>
+</li>
+<li><strong>Components of the ingress controller:</strong>
+<ul>
+<li>Reverse proxy: This is what actually routes the traffic coming in to downstream services/pods. If you installed nginx on a service and ran it it’s this basically</li>
+<li>Config generator: This continuously gets the state of Ingress resources in the Kubernetes cluster (think of it as spamming <code>kubectl get ingress -A</code> every X-seconds) and uses that to generate config that the reverse proxy (nginx in this case) understands</li>
+</ul>
+</li>
+</ul>
+<p>The <em>reverse proxy</em> continually has it’s config updated by the <em>config generator</em> and then traffic coming into the cluster via the <em>Loadbalancer service</em> hits the reverse proxy and is routed to the proper backend service/pods.</p>
+<h2 id="-what-about-ssl">🔒 What about SSL?</h2>
+<p>For HTTPS traffic, we can configure the ingress-controller to terminate the SSL and provide the certs as needed.</p>
+<p>When creating an ingress resource you can specify a Kubernetes Secret of type <code>tls</code> and the ingress-controller will use that secret to terminate the SSL of the request at the reverse proxy.</p>
+<p>This could also be coupled with a tool like <a href="https://cert-manager.io/docs/">cert-manager</a> to dynamically issue and renew certificates for you.</p>
+<h2 id="-load-balancerreverse-proxy-controls">🎛️ Load balancer/Reverse proxy controls</h2>
+<p>As mentioned before, by having your pods traffic route via a reverse proxy in the cluster you gain more control over the routing and connection. Some useful examples for ingress-nginx are:</p>
+<ul>
+<li><strong>Authentication</strong>: Setup <a href="https://datatracker.ietf.org/doc/html/rfc2617">basic or digest access authentication</a> on routes
+<ul>
+<li><code>nginx.ingress.kubernetes.io/auth-type: basic</code></li>
+</ul>
+</li>
+<li><strong>Session affinity:</strong> Allows for things like sticky sessions, keeping a user going to the same backend pod or use cookie affinity to apply a <code>SameSite</code> sticky cookie
+<ul>
+<li><code>nginx.ingress.kubernetes.io/affinity: sticky</code></li>
+</ul>
+</li>
+<li><strong>SSL passthrough:</strong> Instead of terminating TLS at the load balancer you can let the backend handle it directly
+<ul>
+<li><code>nginx.ingress.kubernetes.io/ssl-passthrough: &quot;true&quot;</code></li>
+</ul>
+</li>
+<li><strong>Redirections:</strong> Both <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#permanent-redirect">permanent</a> and <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#temporal-redirect">temporary</a>
+<ul>
+<li><code>nginx.ingress.kubernetes.io/permanent-redirect: https://www.google.com</code></li>
+</ul>
+</li>
+<li><strong>Security controls</strong>
+<ul>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#ssl-ciphers">SSL ciphers</a> can be configured controlling which SSL ciphers you support
+<ul>
+<li><code>nginx.ingress.kubernetes.io/ssl-ciphers: &quot;ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP&quot;</code></li>
+</ul>
+</li>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#enable-cors">CORS rules</a> to configure the cross-original resource sharing rules
+<ul>
+<li><code>nginx.ingress.kubernetes.io/enable-cors: &quot;true&quot;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>A lot of these controls can be configured either as <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/">annotations</a> directly on Ingress resources affecting only those specific routes, or can be provided in the <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/">Configmap</a> to be applied at a global level.</p>
+<h2 id="-can-i-have-multiple-ingress-controllers">🤹‍♂️ Can I have multiple ingress-controllers?</h2>
+<p><strong>Yes</strong>. Let’s say you want to be able to accept traffic from the public internet as well as internally from inside your private network.</p>
+<p>We would:</p>
+<ul>
+<li>Deploy two sets of ingress-controllers, <em>ingress-public</em> and <em>ingress-private</em></li>
+<li>Configure them to be public and private. This is done usually by the annotations given to the different <code>Service</code> resources (<code>service.beta.kubernetes.io/aws-load-balancer-scheme: &quot;internet-facing&quot;</code> for instance)</li>
+<li>Setup the Ingress classes
+<ul>
+<li>This is a relatively new resource, it used to be managed by an annotation <code>kubernetes.io/ingress.class</code> which is being deprecated</li>
+</ul>
+</li>
+<li>When creating <code>Ingress</code> resources you can target the <code>IngressClass</code> to specify which controller should setup routing for your traffic</li>
+</ul>
+<h2 id="-what-about-hostnames">📮 What about hostnames?</h2>
+<p>Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.</p>
+<p>To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to <code>friendly-address.domain.com</code> would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.</p>
+<p>Then any routes off this hostname would be directed to your specified pods, ie.:</p>
+<pre tabindex="0"><code>`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
 `friendly-address.domain.com/app-b` → `svc/app-b` in the cluster and so on
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;But what if you wanted to have multiple different hostnames, maybe 1 per application.&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;`app-a.friendly-address.domain.com/` → `svc/app-a`
+</code></pre><p>But what if you wanted to have multiple different hostnames, maybe 1 per application.</p>
+<pre tabindex="0"><code>`app-a.friendly-address.domain.com/` → `svc/app-a`
 `app-b.friendly-address.domain.com/` → `svc/app-b`
-&lt;/code&gt;&lt;/pre&gt;&lt;p&gt;These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.&lt;/p&gt;
-&lt;p&gt;That’s where a tool like &lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns&#34;&gt;external-dns&lt;/a&gt; comes in.&lt;/p&gt;
-&lt;h3 id=&#34;external-dns&#34;&gt;external-dns&lt;/h3&gt;
-&lt;p&gt;external-dns allows you to automatically configure your DNS services based on your Kubernetes Ingress resources (and services!).&lt;/p&gt;
-&lt;p&gt;As an example, if you have deployed external-dns and wanted to setup a new &lt;code&gt;app-c.friendly-address.domain.com&lt;/code&gt; to point to your service all you would need to do is create an &lt;code&gt;Ingress&lt;/code&gt; resource with the &lt;code&gt;Host&lt;/code&gt; field set to &lt;code&gt;app-c.friendly-address.domain.com&lt;/code&gt; and external-dns would provision you an A record pointing to your load balancer.&lt;/p&gt;
-&lt;h2 id=&#34;-bringing-it-all-together&#34;&gt;🍵 Bringing it all together&lt;/h2&gt;
-&lt;p&gt;To give an example of all of this in use, lets build resources for the following requirements:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;We have 3 applications: &lt;code&gt;alpha&lt;/code&gt; &lt;code&gt;beta&lt;/code&gt; and &lt;code&gt;gamma&lt;/code&gt; running on our cluster&lt;/li&gt;
-&lt;li&gt;We want &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt; exposed via the same Hostname but with separate routes:
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;public.example.com/alpha&lt;/code&gt; and &lt;code&gt;public.example.com/beta&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;We want &lt;code&gt;gamma&lt;/code&gt; to have it’s own hostname as it’s a separate, unrelated application
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;gamma.public.example.com&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;We have the TLS key and cert for &lt;code&gt;public.example.com&lt;/code&gt; and want the ingress-controller to terminate TLS for this host&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;gamma&lt;/code&gt; handles it’s own TLS so we shouldn’t terminate it at the reverse proxy,&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;We already have:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;A Kubernetes cluster running in AWS&lt;/li&gt;
-&lt;li&gt;Deployed external-dns onto our cluster configured for AWS Route 53, [&lt;a href=&#34;https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md&#34;&gt;link&lt;/a&gt;]&lt;/li&gt;
-&lt;li&gt;Deployed ingress-nginx onto our cluster configured for AWS, [&lt;a href=&#34;https://kubernetes.github.io/ingress-nginx/deploy/&#34;&gt;link&lt;/a&gt;]. Ingress class is set to &lt;code&gt;default&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Feel free to try these steps above for yourself the implementation and breakdown of what we’re doing come below though so spoiler alert.&lt;/p&gt;
-&lt;hr&gt;
-&lt;ol&gt;
-&lt;li&gt;
-&lt;p&gt;Create the TLS secret for our alpha/beta endpoint&lt;/p&gt;
-&lt;pre&gt;&lt;code&gt;kubectl create secret tls public \
+</code></pre><p>These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.</p>
+<p>That’s where a tool like <a href="https://github.com/kubernetes-sigs/external-dns">external-dns</a> comes in.</p>
+<h3 id="external-dns">external-dns</h3>
+<p>external-dns allows you to automatically configure your DNS services based on your Kubernetes Ingress resources (and services!).</p>
+<p>As an example, if you have deployed external-dns and wanted to setup a new <code>app-c.friendly-address.domain.com</code> to point to your service all you would need to do is create an <code>Ingress</code> resource with the <code>Host</code> field set to <code>app-c.friendly-address.domain.com</code> and external-dns would provision you an A record pointing to your load balancer.</p>
+<h2 id="-bringing-it-all-together">🍵 Bringing it all together</h2>
+<p>To give an example of all of this in use, lets build resources for the following requirements:</p>
+<ul>
+<li>We have 3 applications: <code>alpha</code> <code>beta</code> and <code>gamma</code> running on our cluster</li>
+<li>We want <code>alpha</code> and <code>beta</code> exposed via the same Hostname but with separate routes:
+<ul>
+<li><code>public.example.com/alpha</code> and <code>public.example.com/beta</code></li>
+</ul>
+</li>
+<li>We want <code>gamma</code> to have it’s own hostname as it’s a separate, unrelated application
+<ul>
+<li><code>gamma.public.example.com</code></li>
+</ul>
+</li>
+<li>We have the TLS key and cert for <code>public.example.com</code> and want the ingress-controller to terminate TLS for this host</li>
+<li><code>gamma</code> handles it’s own TLS so we shouldn’t terminate it at the reverse proxy,</li>
+</ul>
+<p>We already have:</p>
+<ul>
+<li>A Kubernetes cluster running in AWS</li>
+<li>Deployed external-dns onto our cluster configured for AWS Route 53, [<a href="https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md">link</a>]</li>
+<li>Deployed ingress-nginx onto our cluster configured for AWS, [<a href="https://kubernetes.github.io/ingress-nginx/deploy/">link</a>]. Ingress class is set to <code>default</code></li>
+</ul>
+<p>Feel free to try these steps above for yourself the implementation and breakdown of what we’re doing come below though so spoiler alert.</p>
+<hr>
+<ol>
+<li>
+<p>Create the TLS secret for our alpha/beta endpoint</p>
+<pre tabindex="0"><code>kubectl create secret tls public \
   --cert=tls.cert \
   --key=tls.key
-&lt;/code&gt;&lt;/pre&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;YAML for the Ingress of &lt;code&gt;alpha&lt;/code&gt; and &lt;code&gt;beta&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha-beta&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;ingressClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;tls&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;hosts&lt;/span&gt;:
-      - &lt;span style=&#34;color:#ae81ff&#34;&gt;public.example.com&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;secretName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;public&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;public.example.com&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;http&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/alpha&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
-            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;alpha&lt;/span&gt;
-            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
-              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/beta&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
-            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;beta&lt;/span&gt;
-            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
-              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;YAML for the Ingress of &lt;code&gt;gamma&lt;/code&gt;&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-yaml&#34; data-lang=&#34;yaml&#34;&gt;&lt;span style=&#34;color:#f92672&#34;&gt;apiVersion&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;networking.k8s.io/v1&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;kind&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Ingress&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;metadata&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;annotations&lt;/span&gt;:
-    &lt;span style=&#34;color:#f92672&#34;&gt;nginx.ingress.kubernetes.io/ssl-passthrough&lt;/span&gt;: &lt;span style=&#34;color:#e6db74&#34;&gt;&amp;#34;true&amp;#34;&lt;/span&gt;
-&lt;span style=&#34;color:#f92672&#34;&gt;spec&lt;/span&gt;:
-  &lt;span style=&#34;color:#f92672&#34;&gt;ingressClassName&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;default&lt;/span&gt;
-  &lt;span style=&#34;color:#f92672&#34;&gt;rules&lt;/span&gt;:
-  - &lt;span style=&#34;color:#f92672&#34;&gt;host&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma.public.example.com&lt;/span&gt;
-    &lt;span style=&#34;color:#f92672&#34;&gt;http&lt;/span&gt;:
-      &lt;span style=&#34;color:#f92672&#34;&gt;paths&lt;/span&gt;:
-      - &lt;span style=&#34;color:#f92672&#34;&gt;path&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;/&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;pathType&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;Prefix&lt;/span&gt;
-        &lt;span style=&#34;color:#f92672&#34;&gt;backend&lt;/span&gt;:
-          &lt;span style=&#34;color:#f92672&#34;&gt;service&lt;/span&gt;:
-            &lt;span style=&#34;color:#f92672&#34;&gt;name&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;gamma&lt;/span&gt;
-            &lt;span style=&#34;color:#f92672&#34;&gt;port&lt;/span&gt;:
-              &lt;span style=&#34;color:#f92672&#34;&gt;number&lt;/span&gt;: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;/ol&gt;
-&lt;blockquote&gt;
-&lt;p&gt;☝ SSL Passthrough also needs to be enabled on the ingress-nginx deployment with the flag &lt;code&gt;--enable-ssl-passthrough&lt;/code&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;&lt;strong&gt;What happens with these resources?&lt;/strong&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;ingress-nginx:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Constantly checks for new/updated &lt;code&gt;Ingress&lt;/code&gt; resources&lt;/li&gt;
-&lt;li&gt;Detects &lt;code&gt;alpha-beta&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;Adds nginx config to route to the services
-&lt;ul&gt;
-&lt;li&gt;Can be checked with: &lt;code&gt;kubectl exec -it &amp;lt;ingress-controller-pod-name&amp;gt; -- cat /etc/nginx/nginx.conf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;This config includes the secret mentioned to be able to terminate TLS&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Updates the &lt;code&gt;Ingress&lt;/code&gt; resource &lt;code&gt;Address&lt;/code&gt; field with the DNS of the Cloud load balancer the controller knows is pointing at it&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;curl https://public.example.com/alpha -v&lt;/code&gt; shows it routing correctly and the cert as expected&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;curl https://public.example.com/wrong -v&lt;/code&gt; shows the default backend&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Detects &lt;code&gt;gamma&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;Adds nginx config to route to the services
-&lt;ul&gt;
-&lt;li&gt;Again, can be checked with: &lt;code&gt;kubectl exec -it &amp;lt;ingress-controller-pod-name&amp;gt; -- cat /etc/nginx/nginx.conf&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;This config will show the ssl_passthrough is set to not handle any TLS&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Updates the &lt;code&gt;Ingress&lt;/code&gt; resource &lt;code&gt;Address&lt;/code&gt; field with the DNS of the Cloud load balancer that the controller knows is pointing at it.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;curl https://gamma.public.example.com -v&lt;/code&gt; shows traffic routing correctly and with our in-application TLS handling&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;external-dns:&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Constantly checking for new/updated &lt;code&gt;Ingress&lt;/code&gt; resources&lt;/li&gt;
-&lt;li&gt;Sees the two new resources but with empty &lt;code&gt;Address&lt;/code&gt; fields - needs these to be set before it can point the specified host to the address the service sits behind.&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Address&lt;/code&gt; field is now updated for &lt;code&gt;alpha-beta&lt;/code&gt;:
-&lt;ul&gt;
-&lt;li&gt;Checks if the hostname has already been created
-&lt;ul&gt;
-&lt;li&gt;external-dns defaults to using &lt;code&gt;txt&lt;/code&gt; records in the chosen DNS service to persist information about the domains it manages&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Creates an &lt;code&gt;A&lt;/code&gt; record pointing &lt;code&gt;public.example.com&lt;/code&gt; to the value of &lt;code&gt;Address&lt;/code&gt; in the ingress&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;Address&lt;/code&gt; field is now updated for &lt;code&gt;gamma&lt;/code&gt;
-&lt;ul&gt;
-&lt;li&gt;This does the same as &lt;code&gt;alpha-beta&lt;/code&gt; but for &lt;code&gt;gamma.public.example.com&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;-other-controllers-are-available&#34;&gt;🦦 Other controllers are available&lt;/h2&gt;
-&lt;p&gt;Other ingress controllers are available too, notable/interesting ones include:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme&#34;&gt;AWS Load balancer controller&lt;/a&gt; can manage ALBs out of cluster for ingress resources and NLBs for service resources&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://doc.traefik.io/traefik/providers/kubernetes-ingress/&#34;&gt;Traefix ingress controller&lt;/a&gt; an ingress controller using the Kubernetes native edge router&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://www.getambassador.io/docs/edge-stack/latest/topics/running/ingress-controller/&#34;&gt;Ambassador&lt;/a&gt; uses Envoy to act as an ingress controller and API gateway&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The benefit of having all of your configuration directly in Kubernetes as an &lt;code&gt;Ingress&lt;/code&gt; resource comes from every compliant ingress-controllers reading and interacting with Ingress in the same way. The only change between them would be the implementation specific things you control via annotations, the general routes and hosts work regardless of your choice.&lt;/p&gt;</content>
+</code></pre></li>
+<li>
+<p>YAML for the Ingress of <code>alpha</code> and <code>beta</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha-beta</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">public</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/alpha</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/beta</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">beta</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div></li>
+<li>
+<p>YAML for the Ingress of <code>gamma</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">nginx.ingress.kubernetes.io/ssl-passthrough</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">gamma.public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div></li>
+</ol>
+<blockquote>
+<p>☝ SSL Passthrough also needs to be enabled on the ingress-nginx deployment with the flag <code>--enable-ssl-passthrough</code></p>
+</blockquote>
+<p><strong>What happens with these resources?</strong></p>
+<ul>
+<li><strong>ingress-nginx:</strong>
+<ul>
+<li>Constantly checks for new/updated <code>Ingress</code> resources</li>
+<li>Detects <code>alpha-beta</code>:
+<ul>
+<li>Adds nginx config to route to the services
+<ul>
+<li>Can be checked with: <code>kubectl exec -it &lt;ingress-controller-pod-name&gt; -- cat /etc/nginx/nginx.conf</code></li>
+<li>This config includes the secret mentioned to be able to terminate TLS</li>
+</ul>
+</li>
+<li>Updates the <code>Ingress</code> resource <code>Address</code> field with the DNS of the Cloud load balancer the controller knows is pointing at it</li>
+<li><code>curl https://public.example.com/alpha -v</code> shows it routing correctly and the cert as expected</li>
+<li><code>curl https://public.example.com/wrong -v</code> shows the default backend</li>
+</ul>
+</li>
+<li>Detects <code>gamma</code>:
+<ul>
+<li>Adds nginx config to route to the services
+<ul>
+<li>Again, can be checked with: <code>kubectl exec -it &lt;ingress-controller-pod-name&gt; -- cat /etc/nginx/nginx.conf</code></li>
+<li>This config will show the ssl_passthrough is set to not handle any TLS</li>
+</ul>
+</li>
+<li>Updates the <code>Ingress</code> resource <code>Address</code> field with the DNS of the Cloud load balancer that the controller knows is pointing at it.</li>
+<li><code>curl https://gamma.public.example.com -v</code> shows traffic routing correctly and with our in-application TLS handling</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>external-dns:</strong>
+<ul>
+<li>Constantly checking for new/updated <code>Ingress</code> resources</li>
+<li>Sees the two new resources but with empty <code>Address</code> fields - needs these to be set before it can point the specified host to the address the service sits behind.</li>
+<li><code>Address</code> field is now updated for <code>alpha-beta</code>:
+<ul>
+<li>Checks if the hostname has already been created
+<ul>
+<li>external-dns defaults to using <code>txt</code> records in the chosen DNS service to persist information about the domains it manages</li>
+</ul>
+</li>
+<li>Creates an <code>A</code> record pointing <code>public.example.com</code> to the value of <code>Address</code> in the ingress</li>
+</ul>
+</li>
+<li><code>Address</code> field is now updated for <code>gamma</code>
+<ul>
+<li>This does the same as <code>alpha-beta</code> but for <code>gamma.public.example.com</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="-other-controllers-are-available">🦦 Other controllers are available</h2>
+<p>Other ingress controllers are available too, notable/interesting ones include:</p>
+<ul>
+<li><a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme">AWS Load balancer controller</a> can manage ALBs out of cluster for ingress resources and NLBs for service resources</li>
+<li><a href="https://doc.traefik.io/traefik/providers/kubernetes-ingress/">Traefix ingress controller</a> an ingress controller using the Kubernetes native edge router</li>
+<li><a href="https://www.getambassador.io/docs/edge-stack/latest/topics/running/ingress-controller/">Ambassador</a> uses Envoy to act as an ingress controller and API gateway</li>
+</ul>
+<p>The benefit of having all of your configuration directly in Kubernetes as an <code>Ingress</code> resource comes from every compliant ingress-controllers reading and interacting with Ingress in the same way. The only change between them would be the implementation specific things you control via annotations, the general routes and hosts work regardless of your choice.</p>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Kubernetes Networking #2: Services</title>
-      <link>/post/kubernetes-networking-services/</link>
+      <link>http://192.168.0.30:1313/posts/kubernetes-networking-services/</link>
       <pubDate>Thu, 21 Apr 2022 10:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-services/</guid>
-      <description>&lt;p&gt;Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?&lt;/p&gt;</description>
-      <content>&lt;p&gt;Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?&lt;/p&gt;
-&lt;p&gt;In Kubernetes pods are ephemeral (or &lt;a href=&#34;https://thenewstack.io/how-to-treat-your-kubernetes-clusters-like-cattle-not-pets/&#34;&gt;cattle&lt;/a&gt;), you should expect them to be killed, scaled and replaced whenever. So how do you talk to a set of pods which might have changed the next second? A service.&lt;/p&gt;
-&lt;p&gt;Services sit in front of your application and mean you only have to call the service address and magic Kubernetes components will get that request to the right Pod(s).
-How does a service know which pods it can talk to?&lt;/p&gt;
-&lt;h2 id=&#34;selectors&#34;&gt;Selectors&lt;/h2&gt;
-&lt;p&gt;Services map to pods via label selectors. You have a pod with label &lt;code&gt;app=etizer&lt;/code&gt; and then create a service with &lt;code&gt;.spec.selector&lt;/code&gt; for the same and that service will forward traffic to any Ready pods matching that label.&lt;/p&gt;
-&lt;p&gt;Behind the scenes, a service resource also creates an &lt;code&gt;Endpoints&lt;/code&gt; resource which maintains a list of Pod IPs based on your service selector. It’s worth noting here, the readyiness checks you implement for your Pods are what controls whether the IP goes into this &lt;code&gt;Endpoints&lt;/code&gt; resource and allow traffic.&lt;/p&gt;
-&lt;p&gt;The exception here is selector-less services, these don’t have a label selector so won’t also have an &lt;code&gt;Endpoint&lt;/code&gt; resource. To use these you also need to create an endpoint resource of the same name as your service, you can add any IPs and ports you want to this resource. This is a great way to map a service to something not in your cluster so your pods can talk to it as if it was a service.&lt;/p&gt;
-&lt;p&gt;But what are the different types of services and how do they work?&lt;/p&gt;
-&lt;h2 id=&#34;service-types&#34;&gt;Service Types&lt;/h2&gt;
-&lt;h3 id=&#34;clusterip&#34;&gt;ClusterIP&lt;/h3&gt;
-&lt;p&gt;When you create a &lt;code&gt;ClusterIP&lt;/code&gt; type service you’ll will get:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;A virtual IP for the service
-&lt;ul&gt;
-&lt;li&gt;This is within the &lt;code&gt;--service-cluster-ip-range&lt;/code&gt; your &lt;code&gt;api-server&lt;/code&gt; has been configured with&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-proxy&lt;/code&gt; is responsible for this virtual IP routing to one of your Pod IPs&lt;/li&gt;
-&lt;li&gt;This virtual IP will forward requests to one of your pod IPs based on the &lt;code&gt;Endpoints&lt;/code&gt; resource associated with your service.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;A local cluster DNS address, eg. &lt;code&gt;&amp;lt;service-name&amp;gt;.&amp;lt;namespace&amp;gt;.svc.cluster.local&lt;/code&gt;
-&lt;ul&gt;
-&lt;li&gt;This is resolved by your &lt;code&gt;kube-dns&lt;/code&gt; (CoreDNS) to your virtual service IP&lt;/li&gt;
-&lt;li&gt;This is why your service name must be &lt;a href=&#34;https://datatracker.ietf.org/doc/html/rfc1035&#34;&gt;RFC 1035 compliant&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;The normal way of utilising this would be giving your application the service DNS address so it can talk to another application running on the cluster. This DNS address resolves to the virtual IP and then the configuration &lt;code&gt;kube-proxy&lt;/code&gt; controls handles that IP resolving to actual pod IP addresses. From there your CNI will route your request using the pod IP.&lt;/p&gt;
-&lt;p&gt;The &lt;code&gt;ClusterIP&lt;/code&gt; service type is ✨&lt;em&gt;special&lt;/em&gt;✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types &lt;code&gt;NodePort&lt;/code&gt; and &lt;code&gt;LoadBalancer&lt;/code&gt; (by extension of LoadBalancer using &lt;code&gt;NodePort&lt;/code&gt;) as part of their implementations.&lt;/p&gt;
+      
+      <guid>http://192.168.0.30:1313/posts/kubernetes-networking-services/</guid>
+      <description><![CDATA[<p>Kubernetes services are an essential resource everyone uses, but what are all the different types and how do they work under the hood?</p>
+<p>In Kubernetes pods are ephemeral (or <a href="https://thenewstack.io/how-to-treat-your-kubernetes-clusters-like-cattle-not-pets/">cattle</a>), you should expect them to be killed, scaled and replaced whenever. So how do you talk to a set of pods which might have changed the next second? A service.</p>
+<p>Services sit in front of your application and mean you only have to call the service address and magic Kubernetes components will get that request to the right Pod(s).
+How does a service know which pods it can talk to?</p>
+<h2 id="selectors">Selectors</h2>
+<p>Services map to pods via label selectors. You have a pod with label <code>app=etizer</code> and then create a service with <code>.spec.selector</code> for the same and that service will forward traffic to any Ready pods matching that label.</p>
+<p>Behind the scenes, a service resource also creates an <code>Endpoints</code> resource which maintains a list of Pod IPs based on your service selector. It’s worth noting here, the readyiness checks you implement for your Pods are what controls whether the IP goes into this <code>Endpoints</code> resource and allow traffic.</p>
+<p>The exception here is selector-less services, these don’t have a label selector so won’t also have an <code>Endpoint</code> resource. To use these you also need to create an endpoint resource of the same name as your service, you can add any IPs and ports you want to this resource. This is a great way to map a service to something not in your cluster so your pods can talk to it as if it was a service.</p>
+<p>But what are the different types of services and how do they work?</p>
+<h2 id="service-types">Service Types</h2>
+<h3 id="clusterip">ClusterIP</h3>
+<p>When you create a <code>ClusterIP</code> type service you’ll will get:</p>
+<ul>
+<li>A virtual IP for the service
+<ul>
+<li>This is within the <code>--service-cluster-ip-range</code> your <code>api-server</code> has been configured with</li>
+<li><code>kube-proxy</code> is responsible for this virtual IP routing to one of your Pod IPs</li>
+<li>This virtual IP will forward requests to one of your pod IPs based on the <code>Endpoints</code> resource associated with your service.</li>
+</ul>
+</li>
+<li>A local cluster DNS address, eg. <code>&lt;service-name&gt;.&lt;namespace&gt;.svc.cluster.local</code>
+<ul>
+<li>This is resolved by your <code>kube-dns</code> (CoreDNS) to your virtual service IP</li>
+<li>This is why your service name must be <a href="https://datatracker.ietf.org/doc/html/rfc1035">RFC 1035 compliant</a></li>
+</ul>
+</li>
+</ul>
+<p>The normal way of utilising this would be giving your application the service DNS address so it can talk to another application running on the cluster. This DNS address resolves to the virtual IP and then the configuration <code>kube-proxy</code> controls handles that IP resolving to actual pod IP addresses. From there your CNI will route your request using the pod IP.</p>
+<p>The <code>ClusterIP</code> service type is ✨<em>special</em>✨, whilst you use it as a way to expose your service internally within the cluster, it’s also used by types <code>NodePort</code> and <code>LoadBalancer</code> (by extension of LoadBalancer using <code>NodePort</code>) as part of their implementations.</p>
+<figure><img src="/img/k8s-services-2-types.png"
+    alt="Just like a Matryoshka doll"><figcaption>
+      <h4>Just like a Matryoshka doll</h4><p>Just like a Matryoshka doll</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/k8s-services-2-types.png&#34;   /&gt;
+<p><code>&lt;service-ip&gt;:&lt;service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="nodeport">NodePort</h3>
+<p>A <code>NodePort</code> type service opens up a port on <strong>every node</strong> in your cluster, this port then proxies requests to your service’s virtual IP address.</p>
+<p>The port range defaults to <code>30000-32767</code>, interestingly enough just below the Linux kernel default <a href="https://www.kernel.org/doc/html/latest//networking/ip-sysctl.html#ip-variables">ephemeral port range</a>. It can also be configured with the flag <code>--service-node-port-range</code> if you need these ports for some use case.</p>
+<p>At a high level a <code>NodePort</code> is a single rule configured by <code>kube-proxy</code> onto every node, to forward requests to an underlying <code>ClusterIP</code> service.</p>
+<p><code>&lt;node-ip&gt;:&lt;node-port&gt; → &lt;service-ip&gt;:&lt;service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="loadbalancer">LoadBalancer</h3>
+<p>A <code>LoadBalancer</code> type service only really works in a cloud environment. When created, asyncronously, the <a href="https://kubernetes.io/docs/concepts/architecture/cloud-controller/">cloud-controller-manager</a> will provision you a load balancer which directs traffic to your pods.</p>
+<p>The implementation of the different cloud load balancers varys wildly. It used to be different clouds were implemented <a href="https://github.com/kubernetes/kubernetes/tree/release-1.11/pkg/cloudprovider/providers/aws">in-tree</a>, committing directly to kubernetes but now it must be done via out-of-tree implementations, eg. <a href="https://github.com/kubernetes/cloud-provider-aws">cloud-provider-aws</a>.</p>
+<p>Cloud implementations aside, once you have a <em>cloud</em> load balancer it works by pointing to a <code>NodePort</code> service running. This means that you have a load balancer with every Kubernetes worker node as a listener, forwarding traffic to any nodes on a particular port. From there it follows the standard <code>NodePort</code> → <code>ClusterIP</code> route.</p>
+<p>If you didn’t want to write a whole <a href="https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/">cloud control manager</a> to expose your application on your own servers, a <code>NodePort</code> service with that port pointed to from your existing load balancer would do the trick.</p>
+<p><code>&lt;load-balancer-ip&gt;:&lt;lb-port&gt; -&gt; &lt;node-ip&gt;:&lt;node-port&gt; → &lt;service-ip&gt;:service-port&gt; → &lt;pod-ip&gt;:&lt;pod-port&gt;</code></p>
+<h3 id="externalname">ExternalName</h3>
+<p><code>ExternalName</code> services are the odd one out. Instead of using good ol’ <code>ClusterIP</code> and getting a virtual IP, they create a <code>CNAME</code> record to map your service DNS to another DNS address.</p>
+<p>As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a <code>ExternalName</code> service:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: database
+</span></span><span style="display:flex;"><span>  namespace: prod
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  type: ExternalName
+</span></span><span style="display:flex;"><span>  externalName: prod.database.example.com
+</span></span><span style="display:flex;"><span>---
+</span></span><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span>  name: database
+</span></span><span style="display:flex;"><span>  namespace: dev
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  type: ExternalName
+</span></span><span style="display:flex;"><span>  externalName: dev.database.example.com
+</span></span></code></pre></div><p>Now all the service-owners have to do is point their code to <code>database.svc.cluster.local</code> and they will talk to the right database every time.</p>
+<p><code>database.svc.cluster.local</code> = <code>CNAME test.database.example.com</code></p>
+<p>It’s worth noting since the pod requesting the service will get the <code>CNAME</code> record back, the pod also has to be configured to resolve whatever domain the <code>CNAME</code> returns. If it’s a private record, you might want to <a href="https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/">configure revolvers in CoreDNS</a>.</p>
+<h2 id="how-virtual-ips-work">How Virtual IPs work</h2>
+<p><em>Most</em> services (sorry, <code>ExternalName</code>) use a virtual IP to forward requests to the proper pods. It’s the responsibility of <code>kube-proxy</code> to provide this virtual IP and make sure the traffic is actually forwarded. <code>kube-proxy</code> runs on every node so the steps below happen per worker node.</p>
+<p>How this works depends on the mode of <code>kube-proxy</code> is given with <code>-proxy-mode</code> flag:</p>
+<blockquote>
+<p>ℹ️ <strong>For all of these <code>kube-proxy</code> will monitor the control plane for new/updated/removed <code>Service</code> and <code>Endpoint</code> resources and run the following steps</strong></p>
+</blockquote>
+<ul>
+<li><strong>userspace</strong> (legacy)
+<ul>
+<li>For each <code>Service</code> it opens a random proxy port on the node</li>
+<li>This proxy port is then told to iptables to capture traffic to this particular virtual IP and port to redirect to the Pod IPs in the <code>Endpoint</code> resource</li>
+<li>The backend pod is chosen based on the <code>SessionAffinity</code> of the service</li>
+<li><strong>The traffic here is actually proxied via <code>kube-proxy</code> itself</strong></li>
+</ul>
+</li>
+<li><strong>iptables</strong>
+<ul>
+<li>For each <code>Service</code> it creates iptables rules which redirect traffic to the virtual IP and service port</li>
+<li>These redirect rules point to sets of pod IPs based on what is in the endpoint resource</li>
+<li>The backend pod is chosen at random by default</li>
+<li><strong>The traffic is all handled within the Linux <a href="https://www.netfilter.org/">netfilter</a> so all within the kernelspace, <code>kube-proxy</code> doesn’t handle the traffic it just sets up rules to process it</strong></li>
+</ul>
+</li>
+<li><strong>IPVS</strong>
+<ul>
+<li>Whilst iptables was designed to be a firewall and <code>kube-proxy</code> just uses it to redirect network traffic, IPVS was made for load balancing</li>
+<li>At a high level this works similar to iptables, cluster IP and port → set of pod IPs</li>
+<li>IPVS is important when working at scale, if you have &gt;1000 services (or 10,000 pods) in your cluster IPVS is the performant choice</li>
+</ul>
+</li>
+<li><strong>kernelspace</strong> (windows)</li>
+</ul>
+<h2 id="bringing-it-all-together">Bringing it all together</h2>
+<p>Let’s create an example <code>LoadBalancer</code> service and see what components come together to get traffic from a client to your pods. We’ll show how traffic from outside, via the load balancer, gets to your pods and how another pod in the cluster can also use this service without going via the load balancer.</p>
+<p>In this example let’s say we’re running on a Kubernetes cluster in AWS with the AWS cloud controller manager properly configured, we have pods running with label <code>app=alpha</code> which listens on port <code>8080</code> for traffic and <code>kube-proxy</code> is in the default <code>iptables</code> mode.</p>
+<ul>
+<li>
+<p>Service YAML</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>apiVersion: v1
+</span></span><span style="display:flex;"><span>kind: Service
+</span></span><span style="display:flex;"><span>metadata:
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This doesn&#39;t affect routing but it&#39;s best practice to label components together</span>
+</span></span><span style="display:flex;"><span>  labels:
+</span></span><span style="display:flex;"><span>    app: alpha
+</span></span><span style="display:flex;"><span>  name: example
+</span></span><span style="display:flex;"><span>spec:
+</span></span><span style="display:flex;"><span>  ports:
+</span></span><span style="display:flex;"><span>  - name: main
+</span></span><span style="display:flex;"><span>    port: <span style="color:#ae81ff">8081</span>
+</span></span><span style="display:flex;"><span>    protocol: TCP
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Target port is the port your pod has open</span>
+</span></span><span style="display:flex;"><span>    targetPort: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># This is what tells the service which pods to route to</span>
+</span></span><span style="display:flex;"><span>  selector:
+</span></span><span style="display:flex;"><span>    app: alpha
+</span></span><span style="display:flex;"><span>  type: LoadBalancer
+</span></span></code></pre></div></li>
+</ul>
+<p>Lets create the service and have a look:</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>$ kubectl apply -f service.yaml
+</span></span><span style="display:flex;"><span>service/example created
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>$ kubectl get service example
+</span></span><span style="display:flex;"><span>NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT<span style="color:#f92672">(</span>S<span style="color:#f92672">)</span>          AGE
+</span></span><span style="display:flex;"><span>example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
+</span></span></code></pre></div><p>I now have:</p>
+<ul>
+<li>An Endpoints resource corresponding to ready pods matching my label selector
+<ul>
+<li><code>kubectl get endpoints example</code></li>
+</ul>
+</li>
+<li>A cluster IP setup for my service <code>10.43.205.153</code></li>
+<li>A DNS address for the service configured
+<ul>
+<li>(from inside a Pod)</li>
+<li><code>dig example.default.svc.cluster.local</code></li>
+</ul>
+</li>
+<li>A external (to the cluster) IP which maps to my load balancer <code>192.168.0.147</code></li>
+<li>A NodePort setup <code>32255</code> so all my workers now have this port open
+<ul>
+<li><code>netstat -tulnp | grep 32255</code></li>
+</ul>
+</li>
+<li>iptables rules setup
+<ul>
+<li><code>sudo iptables -L | grep example</code></li>
+<li><code>sudo iptables -L | grep 10.43.205.153</code></li>
+</ul>
+</li>
+</ul>
+<p>Lets see how this request goes through to our pod from outside the cluster and a pod within.</p>
+<h3 id="from-outside-the-cluster">From outside the cluster</h3>
+
+  <figure class="left" >
+    <a href="/img/k8s-services-2-lb-external.png" >
+    <img src="/img/k8s-services-2-lb-external.png"   />
     
-      &lt;figcaption class=&#34;center&#34; &gt;Just like a Matryoshka doll&lt;/figcaption&gt;
+    </a>
+  </figure>
+
+
+<ol>
+<li>The client makes a request to the load balancer to try and talk to the application, for how this is configured see my post on ingress into a cluster</li>
+<li>The load balancer selects one of the configured listeners, this is usually either random or round robin but depends on your load balancer and configuration</li>
+<li>The node has port 32255 open, requests here are configured in iptables to forward the request to the virtual IP of the service. These rules were configured by <code>kube-proxy</code></li>
+<li>iptables then resolves the virtual/service IP into a Pod IP address, one is chosen by random and the request heads there. Now the traffic is inside the cluster the CNI controls the network movements between nodes (see <a href="https://dgood.win/post/kubernetes-networking-overview/">here</a> for more info on what the CNI sets up)</li>
+<li>Once the request has reached the node with the pod on it, the CNI and iptables will forward it to the Pod as expected</li>
+</ol>
+<h3 id="from-a-pod-within-the-cluster">From a pod within the cluster</h3>
+
+  <figure class="left" >
+    <a href="/img/k8s-services-2-lb-internal.png" >
+    <img src="/img/k8s-services-2-lb-internal.png"   />
     
-  &lt;/figure&gt;
+    </a>
+  </figure>
 
 
-&lt;p&gt;&lt;code&gt;&amp;lt;service-ip&amp;gt;:&amp;lt;service-port&amp;gt; → &amp;lt;pod-ip&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;nodeport&#34;&gt;NodePort&lt;/h3&gt;
-&lt;p&gt;A &lt;code&gt;NodePort&lt;/code&gt; type service opens up a port on &lt;strong&gt;every node&lt;/strong&gt; in your cluster, this port then proxies requests to your service’s virtual IP address.&lt;/p&gt;
-&lt;p&gt;The port range defaults to &lt;code&gt;30000-32767&lt;/code&gt;, interestingly enough just below the Linux kernel default &lt;a href=&#34;https://www.kernel.org/doc/html/latest//networking/ip-sysctl.html#ip-variables&#34;&gt;ephemeral port range&lt;/a&gt;. It can also be configured with the flag &lt;code&gt;--service-node-port-range&lt;/code&gt; if you need these ports for some use case.&lt;/p&gt;
-&lt;p&gt;At a high level a &lt;code&gt;NodePort&lt;/code&gt; is a single rule configured by &lt;code&gt;kube-proxy&lt;/code&gt; onto every node, to forward requests to an underlying &lt;code&gt;ClusterIP&lt;/code&gt; service.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;&amp;lt;node-ip&amp;gt;:&amp;lt;node-port&amp;gt; → &amp;lt;service-ip&amp;gt;:&amp;lt;service-port&amp;gt; → &amp;lt;pod-ip&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;loadbalancer&#34;&gt;LoadBalancer&lt;/h3&gt;
-&lt;p&gt;A &lt;code&gt;LoadBalancer&lt;/code&gt; type service only really works in a cloud environment. When created, asyncronously, the &lt;a href=&#34;https://kubernetes.io/docs/concepts/architecture/cloud-controller/&#34;&gt;cloud-controller-manager&lt;/a&gt; will provision you a load balancer which directs traffic to your pods.&lt;/p&gt;
-&lt;p&gt;The implementation of the different cloud load balancers varys wildly. It used to be different clouds were implemented &lt;a href=&#34;https://github.com/kubernetes/kubernetes/tree/release-1.11/pkg/cloudprovider/providers/aws&#34;&gt;in-tree&lt;/a&gt;, committing directly to kubernetes but now it must be done via out-of-tree implementations, eg. &lt;a href=&#34;https://github.com/kubernetes/cloud-provider-aws&#34;&gt;cloud-provider-aws&lt;/a&gt;.&lt;/p&gt;
-&lt;p&gt;Cloud implementations aside, once you have a &lt;em&gt;cloud&lt;/em&gt; load balancer it works by pointing to a &lt;code&gt;NodePort&lt;/code&gt; service running. This means that you have a load balancer with every Kubernetes worker node as a listener, forwarding traffic to any nodes on a particular port. From there it follows the standard &lt;code&gt;NodePort&lt;/code&gt; → &lt;code&gt;ClusterIP&lt;/code&gt; route.&lt;/p&gt;
-&lt;p&gt;If you didn’t want to write a whole &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/running-cloud-controller/&#34;&gt;cloud control manager&lt;/a&gt; to expose your application on your own servers, a &lt;code&gt;NodePort&lt;/code&gt; service with that port pointed to from your existing load balancer would do the trick.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;&amp;lt;load-balancer-ip&amp;gt;:&amp;lt;lb-port&amp;gt; -&amp;gt; &amp;lt;node-ip&amp;gt;:&amp;lt;node-port&amp;gt; → &amp;lt;service-ip&amp;gt;:service-port&amp;gt; → &amp;lt;pod-ip&amp;gt;:&amp;lt;pod-port&amp;gt;&lt;/code&gt;&lt;/p&gt;
-&lt;h3 id=&#34;externalname&#34;&gt;ExternalName&lt;/h3&gt;
-&lt;p&gt;&lt;code&gt;ExternalName&lt;/code&gt; services are the odd one out. Instead of using good ol’ &lt;code&gt;ClusterIP&lt;/code&gt; and getting a virtual IP, they create a &lt;code&gt;CNAME&lt;/code&gt; record to map your service DNS to another DNS address.&lt;/p&gt;
-&lt;p&gt;As an example use case, lets say you have different environment databases, instead of service-owners changing the DNS depending on where they deploy their pods to you create a &lt;code&gt;ExternalName&lt;/code&gt; service:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
-kind: Service
-metadata:
-  name: database
-  namespace: prod
-spec:
-  type: ExternalName
-  externalName: prod.database.example.com
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: database
-  namespace: dev
-spec:
-  type: ExternalName
-  externalName: dev.database.example.com
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;Now all the service-owners have to do is point their code to &lt;code&gt;database.svc.cluster.local&lt;/code&gt; and they will talk to the right database every time.&lt;/p&gt;
-&lt;p&gt;&lt;code&gt;database.svc.cluster.local&lt;/code&gt; = &lt;code&gt;CNAME test.database.example.com&lt;/code&gt;&lt;/p&gt;
-&lt;p&gt;It’s worth noting since the pod requesting the service will get the &lt;code&gt;CNAME&lt;/code&gt; record back, the pod also has to be configured to resolve whatever domain the &lt;code&gt;CNAME&lt;/code&gt; returns. If it’s a private record, you might want to &lt;a href=&#34;https://kubernetes.io/docs/tasks/administer-cluster/dns-custom-nameservers/&#34;&gt;configure revolvers in CoreDNS&lt;/a&gt;.&lt;/p&gt;
-&lt;h2 id=&#34;how-virtual-ips-work&#34;&gt;How Virtual IPs work&lt;/h2&gt;
-&lt;p&gt;&lt;em&gt;Most&lt;/em&gt; services (sorry, &lt;code&gt;ExternalName&lt;/code&gt;) use a virtual IP to forward requests to the proper pods. It’s the responsibility of &lt;code&gt;kube-proxy&lt;/code&gt; to provide this virtual IP and make sure the traffic is actually forwarded. &lt;code&gt;kube-proxy&lt;/code&gt; runs on every node so the steps below happen per worker node.&lt;/p&gt;
-&lt;p&gt;How this works depends on the mode of &lt;code&gt;kube-proxy&lt;/code&gt; is given with &lt;code&gt;-proxy-mode&lt;/code&gt; flag:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;ℹ️ &lt;strong&gt;For all of these &lt;code&gt;kube-proxy&lt;/code&gt; will monitor the control plane for new/updated/removed &lt;code&gt;Service&lt;/code&gt; and &lt;code&gt;Endpoint&lt;/code&gt; resources and run the following steps&lt;/strong&gt;&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;strong&gt;userspace&lt;/strong&gt; (legacy)
-&lt;ul&gt;
-&lt;li&gt;For each &lt;code&gt;Service&lt;/code&gt; it opens a random proxy port on the node&lt;/li&gt;
-&lt;li&gt;This proxy port is then told to iptables to capture traffic to this particular virtual IP and port to redirect to the Pod IPs in the &lt;code&gt;Endpoint&lt;/code&gt; resource&lt;/li&gt;
-&lt;li&gt;The backend pod is chosen based on the &lt;code&gt;SessionAffinity&lt;/code&gt; of the service&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;The traffic here is actually proxied via &lt;code&gt;kube-proxy&lt;/code&gt; itself&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;iptables&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;For each &lt;code&gt;Service&lt;/code&gt; it creates iptables rules which redirect traffic to the virtual IP and service port&lt;/li&gt;
-&lt;li&gt;These redirect rules point to sets of pod IPs based on what is in the endpoint resource&lt;/li&gt;
-&lt;li&gt;The backend pod is chosen at random by default&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;The traffic is all handled within the Linux &lt;a href=&#34;https://www.netfilter.org/&#34;&gt;netfilter&lt;/a&gt; so all within the kernelspace, &lt;code&gt;kube-proxy&lt;/code&gt; doesn’t handle the traffic it just sets up rules to process it&lt;/strong&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;IPVS&lt;/strong&gt;
-&lt;ul&gt;
-&lt;li&gt;Whilst iptables was designed to be a firewall and &lt;code&gt;kube-proxy&lt;/code&gt; just uses it to redirect network traffic, IPVS was made for load balancing&lt;/li&gt;
-&lt;li&gt;At a high level this works similar to iptables, cluster IP and port → set of pod IPs&lt;/li&gt;
-&lt;li&gt;IPVS is important when working at scale, if you have &amp;gt;1000 services (or 10,000 pods) in your cluster IPVS is the performant choice&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;kernelspace&lt;/strong&gt; (windows)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;bringing-it-all-together&#34;&gt;Bringing it all together&lt;/h2&gt;
-&lt;p&gt;Let’s create an example &lt;code&gt;LoadBalancer&lt;/code&gt; service and see what components come together to get traffic from a client to your pods. We’ll show how traffic from outside, via the load balancer, gets to your pods and how another pod in the cluster can also use this service without going via the load balancer.&lt;/p&gt;
-&lt;p&gt;In this example let’s say we’re running on a Kubernetes cluster in AWS with the AWS cloud controller manager properly configured, we have pods running with label &lt;code&gt;app=alpha&lt;/code&gt; which listens on port &lt;code&gt;8080&lt;/code&gt; for traffic and &lt;code&gt;kube-proxy&lt;/code&gt; is in the default &lt;code&gt;iptables&lt;/code&gt; mode.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;Service YAML&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;apiVersion: v1
-kind: Service
-metadata:
-&lt;span style=&#34;color:#75715e&#34;&gt;# This doesn&amp;#39;t affect routing but it&amp;#39;s best practice to label components together&lt;/span&gt;
-  labels:
-    app: alpha
-  name: example
-spec:
-  ports:
-  - name: main
-    port: &lt;span style=&#34;color:#ae81ff&#34;&gt;8081&lt;/span&gt;
-    protocol: TCP
-&lt;span style=&#34;color:#75715e&#34;&gt;# Target port is the port your pod has open&lt;/span&gt;
-    targetPort: &lt;span style=&#34;color:#ae81ff&#34;&gt;8080&lt;/span&gt;
-&lt;span style=&#34;color:#75715e&#34;&gt;# This is what tells the service which pods to route to&lt;/span&gt;
-  selector:
-    app: alpha
-  type: LoadBalancer
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Lets create the service and have a look:&lt;/p&gt;
-&lt;div class=&#34;highlight&#34;&gt;&lt;pre style=&#34;color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4&#34;&gt;&lt;code class=&#34;language-bash&#34; data-lang=&#34;bash&#34;&gt;$ kubectl apply -f service.yaml
-service/example created
-
-$ kubectl get service example
-NAME      TYPE           CLUSTER-IP      EXTERNAL-IP     PORT&lt;span style=&#34;color:#f92672&#34;&gt;(&lt;/span&gt;S&lt;span style=&#34;color:#f92672&#34;&gt;)&lt;/span&gt;          AGE
-example   LoadBalancer   10.43.205.153   192.168.0.147   8081:32255/TCP   4s
-&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;p&gt;I now have:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;An Endpoints resource corresponding to ready pods matching my label selector
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;kubectl get endpoints example&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;A cluster IP setup for my service &lt;code&gt;10.43.205.153&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;A DNS address for the service configured
-&lt;ul&gt;
-&lt;li&gt;(from inside a Pod)&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;dig example.default.svc.cluster.local&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;A external (to the cluster) IP which maps to my load balancer &lt;code&gt;192.168.0.147&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;A NodePort setup &lt;code&gt;32255&lt;/code&gt; so all my workers now have this port open
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;netstat -tulnp | grep 32255&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;iptables rules setup
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;sudo iptables -L | grep example&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;sudo iptables -L | grep 10.43.205.153&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;Lets see how this request goes through to our pod from outside the cluster and a pod within.&lt;/p&gt;
-&lt;h3 id=&#34;from-outside-the-cluster&#34;&gt;From outside the cluster&lt;/h3&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s-services-2-lb-external.png&#34; &gt;
-    &lt;img src=&#34;/img/k8s-services-2-lb-external.png&#34;   /&gt;
-    
-    &lt;/a&gt;
-  &lt;/figure&gt;
-
-
-&lt;ol&gt;
-&lt;li&gt;The client makes a request to the load balancer to try and talk to the application, for how this is configured see my post on ingress into a cluster&lt;/li&gt;
-&lt;li&gt;The load balancer selects one of the configured listeners, this is usually either random or round robin but depends on your load balancer and configuration&lt;/li&gt;
-&lt;li&gt;The node has port 32255 open, requests here are configured in iptables to forward the request to the virtual IP of the service. These rules were configured by &lt;code&gt;kube-proxy&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;iptables then resolves the virtual/service IP into a Pod IP address, one is chosen by random and the request heads there. Now the traffic is inside the cluster the CNI controls the network movements between nodes (see &lt;a href=&#34;https://dgood.win/post/kubernetes-networking-overview/&#34;&gt;here&lt;/a&gt; for more info on what the CNI sets up)&lt;/li&gt;
-&lt;li&gt;Once the request has reached the node with the pod on it, the CNI and iptables will forward it to the Pod as expected&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h3 id=&#34;from-a-pod-within-the-cluster&#34;&gt;From a pod within the cluster&lt;/h3&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s-services-2-lb-internal.png&#34; &gt;
-    &lt;img src=&#34;/img/k8s-services-2-lb-internal.png&#34;   /&gt;
-    
-    &lt;/a&gt;
-  &lt;/figure&gt;
-
-
-&lt;ol&gt;
-&lt;li&gt;The requesting pod will have been configured with the service DNS address &lt;code&gt;example.default.svc.cluster.local&lt;/code&gt;. As it makes this request from within the cluster CoreDNS running will be the DNS resolver. This request will be resolved to the Service (virtual) IP address: &lt;code&gt;10.43.205.153&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;Making a request to this address will hit the rules in iptables, configured by &lt;code&gt;kube-proxy&lt;/code&gt;, this resolves the service IP into a Pod IP by randomly selecting a pod&lt;/li&gt;
-&lt;li&gt;The rest of the request continues as in the external example.&lt;/li&gt;
-&lt;/ol&gt;</content>
+<ol>
+<li>The requesting pod will have been configured with the service DNS address <code>example.default.svc.cluster.local</code>. As it makes this request from within the cluster CoreDNS running will be the DNS resolver. This request will be resolved to the Service (virtual) IP address: <code>10.43.205.153</code></li>
+<li>Making a request to this address will hit the rules in iptables, configured by <code>kube-proxy</code>, this resolves the service IP into a Pod IP by randomly selecting a pod</li>
+<li>The rest of the request continues as in the external example.</li>
+</ol>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Kubernetes Networking #1</title>
-      <link>/post/kubernetes-networking-overview/</link>
+      <link>http://192.168.0.30:1313/posts/kubernetes-networking-overview/</link>
       <pubDate>Mon, 10 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/kubernetes-networking-overview/</guid>
-      <description>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;</description>
-      <content>&lt;p&gt;Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.&lt;/p&gt;
-&lt;h2 id=&#34;components&#34;&gt;Components&lt;/h2&gt;
-&lt;p&gt;The components we’re going to look at today are:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;kube-dns/coredns&lt;/code&gt; resolves domain names for services (and pods) into an IP address
-&lt;ul&gt;
-&lt;li&gt;ℹ️ &lt;code&gt;kube-dns&lt;/code&gt; was replaced by &lt;code&gt;coredns&lt;/code&gt; but the in cluster service is still called &lt;code&gt;kube-dns&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;This is the resolver for any DNS requests inside your pods, if you wanted to resolve internal service domains or to a private DNS resolver, you could configure this to forward those requests.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;&lt;code&gt;kube-proxy&lt;/code&gt; resolves network requests for the IP address of a service to the IP addresses of pods which match that service. This has different modes:
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://en.wikipedia.org/wiki/Iptables&#34;&gt;iptables&lt;/a&gt; (default) - To see your iptables rules: &lt;code&gt;iptables -L&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/&#34;&gt;ipvs&lt;/a&gt; - To see your ipvs rules &lt;code&gt;ipvsadm -Ln&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;Your chosen &lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/networking/#calico&#34;&gt;CNI&lt;/a&gt;, there’s a range of these, all which work differently. Generally a CNI will configure any networking around a Pod IP, routing to and from pods to:
-&lt;ul&gt;
-&lt;li&gt;Ensure pod network requests are routed properly to other pods&lt;/li&gt;
-&lt;li&gt;Ensure pod network requests can reach outside the cluster&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;p&gt;An easy way of thinking about it can be, resolving between a service and healthy pods is &lt;code&gt;kube-dns&lt;/code&gt; and &lt;code&gt;kube-proxy&lt;/code&gt; but then that request will need to go through routing setup by the &lt;code&gt;CNI&lt;/code&gt;. For cloud environments, your &lt;code&gt;CNI&lt;/code&gt; will usually handle (or provide ways to setup) things like cross-subnet traffic as well.&lt;/p&gt;
-&lt;p&gt;To follow the resolution between components, say we wanted to go to a service called &lt;code&gt;myapp&lt;/code&gt; which sits in namespace &lt;code&gt;namespace001&lt;/code&gt; which had 2 healthy pods matching the service selector. The resolution would be:&lt;/p&gt;
-&lt;ol&gt;
-&lt;li&gt;&lt;strong&gt;CoreDNS:&lt;/strong&gt; (service FQDN)&lt;code&gt;myapp.namespace001.svc.cluster.local&lt;/code&gt; → &lt;code&gt;172.16.10.10&lt;/code&gt; (service cluster IP)&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;iptables:&lt;/strong&gt; &lt;code&gt;172.16.10.10&lt;/code&gt; → &lt;code&gt;10.10.10.10&lt;/code&gt; (a pod IP, selected at random from healthy pods)&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;CNI:&lt;/strong&gt; Will route traffic for &lt;code&gt;10.10.10.10&lt;/code&gt; from the requester node, to the target node&lt;/li&gt;
-&lt;/ol&gt;
-&lt;h2 id=&#34;example-journey-of-a-request&#34;&gt;Example journey of a request&lt;/h2&gt;
-&lt;p&gt;As an example, let’s explore in an example Kubernetes cluster how a pod will send a network request to another pod.
-For this example:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;The pod will try to talk to a pod on another node then itself&lt;/li&gt;
-&lt;li&gt;The 2 nodes will be in seperate subnets
-&lt;ul&gt;
-&lt;li&gt;Routing between subnets is presumed to be setup and fine and we’ll abstract that to a &lt;code&gt;router&lt;/code&gt; in the diagram&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;The &lt;code&gt;CNI&lt;/code&gt; will be Calico, but we won’t be looking too much into its internals&lt;/li&gt;
-&lt;li&gt;&lt;strong&gt;pod-0&lt;/strong&gt; will send a request to &lt;strong&gt;pod-3&lt;/strong&gt; through a service&lt;/li&gt;
-&lt;li&gt;We’ll assume Kubernetes and Calico are setup with defaults:
-&lt;ul&gt;
-&lt;li&gt;iptables mode for &lt;code&gt;kube-proxy&lt;/code&gt;&lt;/li&gt;
-&lt;li&gt;vxlan encapsulation for cross subnet traffic&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
+      
+      <guid>http://192.168.0.30:1313/posts/kubernetes-networking-overview/</guid>
+      <description><![CDATA[<p>Kubernetes networking can be a bit of a rabbit hole to debug and discover what your pods are actually doing. In this post we’ll explore at a high level how a request goes from 1 pod to another and which components control each.</p>
+<h2 id="components">Components</h2>
+<p>The components we’re going to look at today are:</p>
+<ul>
+<li><code>kube-dns/coredns</code> resolves domain names for services (and pods) into an IP address
+<ul>
+<li>ℹ️ <code>kube-dns</code> was replaced by <code>coredns</code> but the in cluster service is still called <code>kube-dns</code></li>
+<li>This is the resolver for any DNS requests inside your pods, if you wanted to resolve internal service domains or to a private DNS resolver, you could configure this to forward those requests.</li>
+</ul>
+</li>
+<li><code>kube-proxy</code> resolves network requests for the IP address of a service to the IP addresses of pods which match that service. This has different modes:
+<ul>
+<li><a href="https://en.wikipedia.org/wiki/Iptables">iptables</a> (default) - To see your iptables rules: <code>iptables -L</code></li>
+<li><a href="https://kubernetes.io/blog/2018/07/09/ipvs-based-in-cluster-load-balancing-deep-dive/">ipvs</a> - To see your ipvs rules <code>ipvsadm -Ln</code></li>
+</ul>
+</li>
+<li>Your chosen <a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/#calico">CNI</a>, there’s a range of these, all which work differently. Generally a CNI will configure any networking around a Pod IP, routing to and from pods to:
+<ul>
+<li>Ensure pod network requests are routed properly to other pods</li>
+<li>Ensure pod network requests can reach outside the cluster</li>
+</ul>
+</li>
+</ul>
+<p>An easy way of thinking about it can be, resolving between a service and healthy pods is <code>kube-dns</code> and <code>kube-proxy</code> but then that request will need to go through routing setup by the <code>CNI</code>. For cloud environments, your <code>CNI</code> will usually handle (or provide ways to setup) things like cross-subnet traffic as well.</p>
+<p>To follow the resolution between components, say we wanted to go to a service called <code>myapp</code> which sits in namespace <code>namespace001</code> which had 2 healthy pods matching the service selector. The resolution would be:</p>
+<ol>
+<li><strong>CoreDNS:</strong> (service FQDN)<code>myapp.namespace001.svc.cluster.local</code> → <code>172.16.10.10</code> (service cluster IP)</li>
+<li><strong>iptables:</strong> <code>172.16.10.10</code> → <code>10.10.10.10</code> (a pod IP, selected at random from healthy pods)</li>
+<li><strong>CNI:</strong> Will route traffic for <code>10.10.10.10</code> from the requester node, to the target node</li>
+</ol>
+<h2 id="example-journey-of-a-request">Example journey of a request</h2>
+<p>As an example, let’s explore in an example Kubernetes cluster how a pod will send a network request to another pod.
+For this example:</p>
+<ul>
+<li>The pod will try to talk to a pod on another node then itself</li>
+<li>The 2 nodes will be in seperate subnets
+<ul>
+<li>Routing between subnets is presumed to be setup and fine and we’ll abstract that to a <code>router</code> in the diagram</li>
+</ul>
+</li>
+<li>The <code>CNI</code> will be Calico, but we won’t be looking too much into its internals</li>
+<li><strong>pod-0</strong> will send a request to <strong>pod-3</strong> through a service</li>
+<li>We’ll assume Kubernetes and Calico are setup with defaults:
+<ul>
+<li>iptables mode for <code>kube-proxy</code></li>
+<li>vxlan encapsulation for cross subnet traffic</li>
+</ul>
+</li>
+</ul>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;a href=&#34;/img/k8s_network_request_example.png&#34; &gt;
-    &lt;img src=&#34;/img/k8s_network_request_example.png&#34;   /&gt;
+  <figure class="left" >
+    <a href="/img/k8s_network_request_example.png" >
+    <img src="/img/k8s_network_request_example.png"   />
     
-    &lt;/a&gt;
-  &lt;/figure&gt;
+    </a>
+  </figure>
 
 
-&lt;ul&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;1&lt;/strong&gt; &lt;strong&gt;pod-0&lt;/strong&gt; requests the service’s Cluster IP from &lt;code&gt;kube-dns&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;kube-dns&lt;/code&gt; has dynamic config which updates mapping the service name to a Service IP address lets say &lt;code&gt;172.16.10.10&lt;/code&gt;
-&lt;ul&gt;
-&lt;li&gt;`kubectl exec command for coredns&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;*technically this whole request to &lt;code&gt;kube-dns&lt;/code&gt; goes via the same iptables→routing tables path since &lt;code&gt;kube-dns&lt;/code&gt; runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask &lt;code&gt;kube-dns&lt;/code&gt; to define &lt;code&gt;kube-dns&lt;/code&gt;. But trying to show aswell would be madness.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;2&lt;/strong&gt; With the cluster IP (&lt;code&gt;172.16.10.10&lt;/code&gt;) the request hits iptables&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;iptables selects from a random one of the pod IP addresses for this particular service IP
-&lt;ul&gt;
-&lt;li&gt;&lt;code&gt;iptables -L&lt;/code&gt; or &lt;code&gt;iptables-save&lt;/code&gt;&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;3&lt;/strong&gt; The Pod IP is now resolved in the nodes routing tables &lt;code&gt;sudo route -n&lt;/code&gt; or &lt;code&gt;ip route list&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.&lt;/li&gt;
-&lt;li&gt;Based on the Pod IP, it’ll be resolved through multiple sets of rules:
-&lt;ul&gt;
-&lt;li&gt;This node will have a range of Pod IPs which resolve to the local node itself&lt;/li&gt;
-&lt;li&gt;This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain&lt;/li&gt;
-&lt;li&gt;This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.&lt;/li&gt;
-&lt;li&gt;There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;4&lt;/strong&gt; Calico will now encapsulate the network request to allow it to pass subnet boundaries &lt;code&gt;calicoctl node status&lt;/code&gt;&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;By encapsulating the request’s original networking information is wrapped up as data and new network info is added&lt;/li&gt;
-&lt;li&gt;Calico will send this as a vxlan or ipinip packet to the required node in another subnet&lt;/li&gt;
-&lt;li&gt;The encapsulated packet (shown as an orange line) will:
-&lt;ul&gt;
-&lt;li&gt;Go back through the route table on the node itself&lt;/li&gt;
-&lt;li&gt;To the local subnet router, which will resolve which subnet it needs to go into&lt;/li&gt;
-&lt;li&gt;Hit the destination subnet routing table which can direct it to the node&lt;/li&gt;
-&lt;li&gt;To the other node itself&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;5&lt;/strong&gt; Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;
-&lt;p&gt;&lt;strong&gt;6&lt;/strong&gt; The routing table on this node will now:&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Send the encapsulated packet to the local Calico to be unencapsulated&lt;/li&gt;
-&lt;li&gt;The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
-&lt;ul&gt;
-&lt;li&gt;This could also cause the packet to have to be routed again since the destination has moved&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;li&gt;The request is directed to the pod running locally&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h3 id=&#34;there-are-a-lot-of-things-missed-off-here&#34;&gt;There are a lot of things missed off here:&lt;/h3&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;http://www.adminsehow.com/2011/09/iptables-packet-traverse-map/&#34;&gt;Technically iptables is interacted with before, after (and sometimes during) a routing decision&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How the pod sits within it’s own &lt;a href=&#34;https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/&#34;&gt;network namespace&lt;/a&gt; with a virtual ethernet interface for traffic coming to the pod&lt;/li&gt;
-&lt;li&gt;How Calico uses &lt;a href=&#34;https://projectcalico.docs.tigera.io/reference/felix/&#34;&gt;Felix&lt;/a&gt; to program it’s routes and ACLs and &lt;a href=&#34;https://bird.network.cz/&#34;&gt;BIRD&lt;/a&gt; for distributing the routes to BGP peers on the network&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/cluster-administration/networking/&#34;&gt;Alternate CNIs&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;How the whole kube-proxy aspects could be stipped out for an eBPF approach (Calico’s &lt;a href=&#34;https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf&#34;&gt;eBPF dataplane&lt;/a&gt; or Cilium and it’s &lt;a href=&#34;https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free/&#34;&gt;kube proxy replacement&lt;/a&gt;)&lt;/li&gt;
-&lt;/ul&gt;
-&lt;h2 id=&#34;related-docs&#34;&gt;Related docs:&lt;/h2&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://projectcalico.docs.tigera.io/reference/architecture/overview&#34;&gt;Calico Component Architecture&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/&#34;&gt;kube-proxy reference&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/&#34;&gt;Kubernetes DNS docs&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
+<ul>
+<li>
+<p><strong>1</strong> <strong>pod-0</strong> requests the service’s Cluster IP from <code>kube-dns</code></p>
+<ul>
+<li><code>kube-dns</code> has dynamic config which updates mapping the service name to a Service IP address lets say <code>172.16.10.10</code>
+<ul>
+<li>`kubectl exec command for coredns</li>
+</ul>
+</li>
+<li>*technically this whole request to <code>kube-dns</code> goes via the same iptables→routing tables path since <code>kube-dns</code> runs in pods on the cluster. The only key difference is the DNS resolver is an IP address so it doesn’t ask <code>kube-dns</code> to define <code>kube-dns</code>. But trying to show aswell would be madness.</li>
+</ul>
+</li>
+<li>
+<p><strong>2</strong> With the cluster IP (<code>172.16.10.10</code>) the request hits iptables</p>
+<ul>
+<li>iptables selects from a random one of the pod IP addresses for this particular service IP
+<ul>
+<li><code>iptables -L</code> or <code>iptables-save</code></li>
+</ul>
+</li>
+<li>These rules are all loaded in here and dynamically updated by `kube-proxy If a pod starts failing Readiness checks for instance, it gets removed from this list.</li>
+</ul>
+</li>
+<li>
+<p><strong>3</strong> The Pod IP is now resolved in the nodes routing tables <code>sudo route -n</code> or <code>ip route list</code></p>
+<ul>
+<li>These routing table rules will be configured based on the network environment the node sits in. Calico, running locally, will also configure rules for pod networking.</li>
+<li>Based on the Pod IP, it’ll be resolved through multiple sets of rules:
+<ul>
+<li>This node will have a range of Pod IPs which resolve to the local node itself</li>
+<li>This node will also have an IP range for nodes inside the same subnet - these could avoid encapsulation for performance gain</li>
+<li>This node also has range(s) for other subnets, if it’s not local to the node or subnet, it then gets routed to the subnet routing table. For these rules, Calico might instead route traffic to itself to be encapsulated before crossing the network boundary.</li>
+<li>There also might be a range for external traffic not local to the network, but if this was a private subnet this is most likely behind a NAT gateway inside the local network</li>
+</ul>
+</li>
+<li>This particular request is destined for another subnet. The routing table has directed the request to the Calico pod running locally on this node to handle routing this.</li>
+</ul>
+</li>
+<li>
+<p><strong>4</strong> Calico will now encapsulate the network request to allow it to pass subnet boundaries <code>calicoctl node status</code></p>
+<ul>
+<li>By encapsulating the request’s original networking information is wrapped up as data and new network info is added</li>
+<li>Calico will send this as a vxlan or ipinip packet to the required node in another subnet</li>
+<li>The encapsulated packet (shown as an orange line) will:
+<ul>
+<li>Go back through the route table on the node itself</li>
+<li>To the local subnet router, which will resolve which subnet it needs to go into</li>
+<li>Hit the destination subnet routing table which can direct it to the node</li>
+<li>To the other node itself</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>
+<p><strong>5</strong> Once the encapsulted packet arrived at the other node, it’ll go through iptables rules to see if it’s allowed traffic.</p>
+<ul>
+<li>This is why you might need to add the encapsulated packets into your firewall rules to be allowed in.</li>
+</ul>
+</li>
+<li>
+<p><strong>6</strong> The routing table on this node will now:</p>
+<ul>
+<li>Send the encapsulated packet to the local Calico to be unencapsulated</li>
+<li>The original (unencapsulated) network request will resolve again in iptables and routing tables rules to determine where it should go
+<ul>
+<li>This could also cause the packet to have to be routed again since the destination has moved</li>
+</ul>
+</li>
+<li>The request is directed to the pod running locally</li>
+</ul>
+</li>
+</ul>
+<h3 id="there-are-a-lot-of-things-missed-off-here">There are a lot of things missed off here:</h3>
+<ul>
+<li><a href="http://www.adminsehow.com/2011/09/iptables-packet-traverse-map/">Technically iptables is interacted with before, after (and sometimes during) a routing decision</a></li>
+<li>How the pod sits within it’s own <a href="https://blog.scottlowe.org/2013/09/04/introducing-linux-network-namespaces/">network namespace</a> with a virtual ethernet interface for traffic coming to the pod</li>
+<li>How Calico uses <a href="https://projectcalico.docs.tigera.io/reference/felix/">Felix</a> to program it’s routes and ACLs and <a href="https://bird.network.cz/">BIRD</a> for distributing the routes to BGP peers on the network</li>
+<li><a href="https://kubernetes.io/docs/concepts/cluster-administration/networking/">Alternate CNIs</a></li>
+<li>How the whole kube-proxy aspects could be stipped out for an eBPF approach (Calico’s <a href="https://projectcalico.docs.tigera.io/maintenance/ebpf/enabling-bpf">eBPF dataplane</a> or Cilium and it’s <a href="https://docs.cilium.io/en/v1.9/gettingstarted/kubeproxy-free/">kube proxy replacement</a>)</li>
+</ul>
+<h2 id="related-docs">Related docs:</h2>
+<ul>
+<li><a href="https://projectcalico.docs.tigera.io/reference/architecture/overview">Calico Component Architecture</a></li>
+<li><a href="https://kubernetes.io/docs/reference/command-line-tools-reference/kube-proxy/">kube-proxy reference</a></li>
+<li><a href="https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/">Kubernetes DNS docs</a></li>
+</ul>]]></description>
+      
     </item>
+    
     
   </channel>
 </rss>

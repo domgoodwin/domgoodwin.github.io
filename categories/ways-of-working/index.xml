@@ -1,102 +1,89 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
-    <title>Ways of working on Dom Goodwin</title>
-    <link>/categories/ways-of-working/</link>
-    <description>Recent content in Ways of working on Dom Goodwin</description>
+    <title>Ways of Working on Dom Goodwin</title>
+    <link>http://192.168.0.30:1313/categories/ways-of-working/</link>
+    <description>Recent content in Ways of Working on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="/categories/ways-of-working/index.xml" rel="self" type="application/rss+xml" />
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="http://192.168.0.30:1313/categories/ways-of-working/index.xml" rel="self" type="application/rss+xml" /><icon>http://192.168.0.30:1313/logo.svg</icon>
+    
+    
     <item>
       <title>Don’t just say ‘hello’ to me</title>
-      <link>/post/dont-say-hello/</link>
+      <link>http://192.168.0.30:1313/posts/dont-say-hello/</link>
       <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/dont-say-hello/</guid>
-      <description>&lt;p&gt;I was recently in a 1-1 with my new EM and was asked what annoys me at work. The one thing that immediately popped to mind was:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;‘I hate it when someone just messages me “Hello” or “Hi, how are you” when they message me for something on Slack’&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;It became immediately apparent that, without proper context, this could be taken the wrong way. So I thought I’d explain my thoughts here.&lt;/p&gt;</description>
-      <content>&lt;p&gt;I was recently in a 1-1 with my new EM and was asked what annoys me at work. The one thing that immediately popped to mind was:&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;‘I hate it when someone just messages me “Hello” or “Hi, how are you” when they message me for something on Slack’&lt;/p&gt;
-&lt;/blockquote&gt;
-&lt;p&gt;It became immediately apparent that, without proper context, this could be taken the wrong way. So I thought I’d explain my thoughts here.&lt;/p&gt;
-&lt;p&gt;It has annoyed me since the advent of instant messaging at work, but as more people now work remotely the problem has only got worse.&lt;/p&gt;
-&lt;p&gt;At a high level, the issue is this: instant messaging is asynchronous, unlike a verbal conversation, each participant can be doing something else at the beginning of the chat and might continue doing so for the duration of the conversation.&lt;/p&gt;
-&lt;p&gt;With a phone call, communication is instantaneous, so the time for pleasantries is tiny compared to the actual discussion of a problem. When it’s via chat there’s delay, even if both parties are watching the chat, waiting to respond as soon as possible, they still take time to type and find the right emojis.&lt;/p&gt;
-&lt;p&gt;Let’s use a sequence diagram to show what I mean:&lt;/p&gt;
+      
+      <guid>http://192.168.0.30:1313/posts/dont-say-hello/</guid>
+      <description><![CDATA[<p>I was recently in a 1-1 with my new EM and was asked what annoys me at work. The one thing that immediately popped to mind was:</p>
+<blockquote>
+<p>‘I hate it when someone just messages me “Hello” or “Hi, how are you” when they message me for something on Slack’</p>
+</blockquote>
+<p>It became immediately apparent that, without proper context, this could be taken the wrong way. So I thought I’d explain my thoughts here.</p>
+<p>It has annoyed me since the advent of instant messaging at work, but as more people now work remotely the problem has only got worse.</p>
+<p>At a high level, the issue is this: instant messaging is asynchronous, unlike a verbal conversation, each participant can be doing something else at the beginning of the chat and might continue doing so for the duration of the conversation.</p>
+<p>With a phone call, communication is instantaneous, so the time for pleasantries is tiny compared to the actual discussion of a problem. When it’s via chat there’s delay, even if both parties are watching the chat, waiting to respond as soon as possible, they still take time to type and find the right emojis.</p>
+<p>Let’s use a sequence diagram to show what I mean:</p>
+<figure><img src="/img/nohello-1.1.png"
+    alt="Bob and Alice talk in serial"><figcaption>
+      <h4>Bob and Alice talk in serial</h4><p>Bob and Alice talk in serial</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-1.1.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice talk in serial&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
+<p>This is a pretty typical conversation, even ignoring Bob’s rudeness of not asking after Alice. Alice needs to ask Bob a question, but starts the conversation as you would in-person or by phone. If we think of humans as single core processors, both are basically ‘blocked’ for the entire duration, unable to do anything else until this conversation is over.</p>
+<p>This gets worse if you factor delays into the responses:</p>
+<figure><img src="/img/nohello-1.2.png"
+    alt="Bob and Alice talk in serial with delays"><figcaption>
+      <h4>Bob and Alice talk in serial with delays</h4><p>Bob and Alice talk in serial with delays</p>
+    </figcaption>
+</figure>
 
+<p>Now obviously this is a worst case scenario, both parties could be doing other things whilst waiting for responses, but that would also introduce more interruptions to their work. Adding a context switch every time someone sends a message would slow down whatever work they were doing, as an example:</p>
+<figure><img src="/img/nohello-1.3.png"
+    alt="Bob and Alice talk in serial with context switch delays"><figcaption>
+      <h4>Bob and Alice talk in serial with context swtich delays</h4><p>Bob and Alice talk in serial with context switch delays</p>
+    </figcaption>
+</figure>
 
-&lt;p&gt;This is a pretty typical conversation, even ignoring Bob’s rudeness of not asking after Alice. Alice needs to ask Bob a question, but starts the conversation as you would in-person or by phone. If we think of humans as single core processors, both are basically ‘blocked’ for the entire duration, unable to do anything else until this conversation is over.&lt;/p&gt;
-&lt;p&gt;This gets worse if you factor delays into the responses:&lt;/p&gt;
+<p>Here, Bob is trying to complete his work whilst also responding to Alice. Each time he responds then returns to his work. However, this means he needs to context switch and remember what he was working on before the interruption.</p>
+<p>Now, how could this be improved:</p>
+<figure><img src="/img/nohello-2.1.png"
+    alt="Bob and Alice exchange a single question"><figcaption>
+      <h4>Bob and Alice exchange a single question</h4><p>Bob and Alice exchange a single question</p>
+    </figcaption>
+</figure>
 
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-1.2.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice talk in serial with delays&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;Now obviously this is a worst case scenario, both parties could be doing other things whilst waiting for responses, but that would also introduce more interruptions to their work. Adding a context switch every time someone sends a message would slow down whatever work they were doing, as an example:&lt;/p&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-1.3.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice talk in serial with context switch delays&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;Here, Bob is trying to complete his work whilst also responding to Alice. Each time he responds then returns to his work. However, this means he needs to context switch and remember what he was working on before the interruption.&lt;/p&gt;
-&lt;p&gt;Now, how could this be improved:&lt;/p&gt;
-
-  &lt;figure class=&#34;left&#34; &gt;
-    &lt;img src=&#34;/img/nohello-2.1.png&#34;   /&gt;
-    
-      &lt;figcaption class=&#34;center&#34; &gt;Bob and Alice exchange a single question&lt;/figcaption&gt;
-    
-  &lt;/figure&gt;
-
-
-&lt;p&gt;Alice has a question, she messages Bob the question but then go back to their work (if possible).&lt;/p&gt;
-&lt;p&gt;Bob receives the question, thinks through an answer and sends it back to Alice who is then unblocked.&lt;/p&gt;
-&lt;p&gt;Alternatively, Bob is working on a tough problem so doesn’t see the message until 30 minutes later, he then responds and Alice who was looking at a different problem can then get her answer.&lt;/p&gt;
-&lt;p&gt;Regardless of how long a response takes, both parties spend the same time on the communication. Compare that to earlier examples, even if Bob context switched with every message, the time consumed with the same outcome (Alice has her answer) is far greater.&lt;/p&gt;
-&lt;blockquote&gt;
-&lt;p&gt;ℹ️ A lot of this boils down to just sending someone &lt;a href=&#34;https://www.nohello.com/&#34;&gt;https://www.nohello.com/&lt;/a&gt; which explains this a lot more succinctly than I could.&lt;/p&gt;
-&lt;/blockquote&gt;</content>
+<p>Alice has a question, she messages Bob the question but then go back to their work (if possible).</p>
+<p>Bob receives the question, thinks through an answer and sends it back to Alice who is then unblocked.</p>
+<p>Alternatively, Bob is working on a tough problem so doesn’t see the message until 30 minutes later, he then responds and Alice who was looking at a different problem can then get her answer.</p>
+<p>Regardless of how long a response takes, both parties spend the same time on the communication. Compare that to earlier examples, even if Bob context switched with every message, the time consumed with the same outcome (Alice has her answer) is far greater.</p>
+<blockquote>
+<p>ℹ️ A lot of this boils down to just sending someone <a href="https://www.nohello.com/">https://www.nohello.com/</a> which explains this a lot more succinctly than I could.</p>
+</blockquote>]]></description>
+      
     </item>
+    
+    
     
     <item>
       <title>Blog² - Blog about blogs</title>
-      <link>/post/blog-squared/</link>
+      <link>http://192.168.0.30:1313/posts/blog-squared/</link>
       <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/post/blog-squared/</guid>
-      <description>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;</description>
-      <content>&lt;p&gt;Here&amp;rsquo;s a list I (hopefully) update around tech blogs I enjoy&lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;&lt;a href=&#34;https://jvns.ca/&#34;&gt;https://jvns.ca/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://jlelse.blog/&#34;&gt;https://jlelse.blog/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://drewdevault.com/&#34;&gt;https://drewdevault.com/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://zwischenzugs.com/&#34;&gt;https://zwischenzugs.com/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://kevq.uk/&#34;&gt;https://kevq.uk/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://blog.gnoack.org/post/&#34;&gt;https://blog.gnoack.org/post/&lt;/a&gt;&lt;/li&gt;
-&lt;li&gt;&lt;a href=&#34;https://blog.jessfraz.com/&#34;&gt;https://blog.jessfraz.com/&lt;/a&gt;&lt;/li&gt;
-&lt;/ul&gt;</content>
+      
+      <guid>http://192.168.0.30:1313/posts/blog-squared/</guid>
+      <description><![CDATA[<p>Here&rsquo;s a list I (hopefully) update around tech blogs I enjoy</p>
+<ul>
+<li><a href="https://jvns.ca/">https://jvns.ca/</a></li>
+<li><a href="https://jlelse.blog/">https://jlelse.blog/</a></li>
+<li><a href="https://drewdevault.com/">https://drewdevault.com/</a></li>
+<li><a href="https://zwischenzugs.com/">https://zwischenzugs.com/</a></li>
+<li><a href="https://kevq.uk/">https://kevq.uk/</a></li>
+<li><a href="https://blog.gnoack.org/post/">https://blog.gnoack.org/post/</a></li>
+<li><a href="https://blog.jessfraz.com/">https://blog.jessfraz.com/</a></li>
+</ul>]]></description>
+      
     </item>
+    
     
   </channel>
 </rss>

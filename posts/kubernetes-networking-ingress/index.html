@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html class="" lang="en"><head>
+    
+        <script>
+            if (location.host != new URL("https:\/\/dgood.win\/").host) location.href = "https:\/\/dgood.win\/"
+        </script>
+    
+    <meta name="robots" content="noai, noimageai">
+    <meta name="viewport" content="width=device-width" />
+    <meta http-equiv="Content-Type" content="text/html;charset=UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=7" />
+
+    <link
+    rel="icon"
+    href='/favicon.png'
+/>
+<link
+    rel="shortcut icon"
+    href='/favicon.ico'
+    type="image/x-icon"
+/>
+<link
+    rel="apple-touch-icon"
+    href='/apple-touch-icon.png'
+/>
+
+    <link
+        rel="icon"
+        href='/logo.svg'
+        type="image/svg+xml"
+    />
+
+<title>
+        
+            Kubernetes Networking #3: Ingress  &ndash;
+        
+        Dom Goodwin
+    </title>
+
+    
+    <link href="/symbols-nerd-font/symbols-nerd-font.css" rel="stylesheet" integrity="sha512-lydow8GLOLlYNOtHlksNCmGWWCBsbIEtikXpHzfWqx78HLlyQZHOzyLwPpKol4Th6aCwLUXOfODVYgwrd3nwKQ=="/>
+    <link href="/jetbrains-mono/jetbrains-mono.css" rel="stylesheet" integrity="sha512-tJxlgL6v1Y7kFf+qB8SloaAMKnOAw6WouknxXtIjkBux9Y/9aX81EUWOJO8c/3l98DmjG8brr4to7zaez606Fg=="/>
+
+    
+    
+    <link type="text/css" rel="stylesheet" href=https://dgood.win/css/styles.c928edc0eba1b83ff1c6bfac475f42cca75f1d3970d6d594d2752af04d870a4b33adc7c5b9db020a5ae5ccc17ff0d127cab7af3d937912f09f5491c26e8596a8.css integrity="sha512-ySjtwOuhuD/xxr&#43;sR19CzKdfHTlw1tWU0nUq8E2HCkszrcfFudsCClrlzMF/8NEnyrevPZN5EvCfVJHCboWWqA==" />
+<meta name="author" content="Dom Goodwin" />
+
+    
+        <meta name="keywords" content='deep-dive, kubernetes' />
+    
+    
+        <meta name="description" content="s provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em&gt; the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.&lt;/p&gt;" />
+    
+
+<meta property="og:site_name"
+    content='Dom Goodwin' />
+
+    <meta property="og:title" content="Kubernetes Networking #3: Ingress" />
+    <meta property="og:type" content="article" />
+    
+    <meta
+        property="article:author" content="Dom Goodwin" />
+    <meta
+        property="article:published_time"
+        content='2022-07-22T18:06:09Z&#43;0000' />
+    
+        
+            <meta property="article:tag" content="deep-dive" />
+        
+            <meta property="article:tag" content="kubernetes" />
+        
+    
+    <meta property="og:url" content="https://dgood.win/posts/kubernetes-networking-ingress/" />
+    
+    
+    <meta property="og:image"
+        content="https://dgood.win/icon512.png" />
+    
+        <meta property="og:description" content="&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em" />
+    
+
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="twitter:domain"
+      content='dgood.win'
+/>
+<meta property="twitter:url" content="https://dgood.win/posts/kubernetes-networking-ingress/" />
+
+
+    <meta name="twitter:title" content="Kubernetes Networking #3: Ingress" />
+    
+    
+    
+    <meta name="twitter:image"
+        content="https://dgood.win/icon512.png" />
+    
+        <meta name="twitter:description" content="&lt;p&gt;Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define &lt;em&gt;how&lt;/em" />
+    
+
+<link rel="manifest" href="/manifest/index.json" />
+</head>
+
+
+<body>
+        <div id="baseContainer"><header class="">
+<div class="titleAndSearchContainer">
+        <div id="titleContainer">
+            
+                <a class="unstyledLink" href="/">
+                    <img src='/logo.svg' alt='Logo'/>
+                </a>
+            
+            <div class="rightOfLogo">
+                <div class="titleAndHamburger">
+                    <h1>
+                        <a class="unstyledLink" href="/">Dom Goodwin</a>
+                        
+                    </h1>
+                    
+                </div>
+                <div id="wide_nav"><nav>
+    
+    <ul id="main-nav">
+        <li><a href="/">Home</a></li>
+        
+            <li><a href="/posts/">Posts</a></li>
+        
+        
+        
+        
+        
+            <li><a href="https://dgood.win/pages/about/">
+                About
+            </a></li>
+        
+            <li><a href="https://dgood.win/pages/books/">
+                Books
+            </a></li>
+        
+            <li><a href="https://dgood.win/pages/solar/">
+                Solar
+            </a></li>
+        
+        
+        
+            <li><a href="/tags/">Tags</a></li>
+        
+        
+    </ul>
+</nav>
+</div>
+            </div>
+        </div>
+        <div class="search">
+    <input id="searchbar" type="text" placeholder='Search' />
+    <span class="nerdlink" onclick="newSearch();">&#xf002;</span>
+</div>
+<script>
+    function newSearch() {
+        let term = searchbar.value.trim();
+        if (!term) return;
+        location.href = `/search/?q=${term}`;
+    }
+    searchbar.onkeyup = (ev) => {if (ev.keyCode == 13) newSearch()};
+</script>
+
+    </div>
+    <div id="links">
+        <a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="/index.xml">
+    
+    
+        &#xf09e;
+    
+    <span>
+        RSS
+    </span>
+</a>
+
+        
+        <a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://github.com/domgoodwin">
+    
+    
+        &#xf09b;
+    
+    <span>
+        GitHub
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://twitter.com/domgoodwin_">
+    
+    
+        &#xf099;
+    
+    <span>
+        Twitter
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://www.linkedin.com/in/dom-goodwin/">
+    
+    
+        &#xf0e1;
+    
+    <span>
+        LinkedIn
+    </span>
+</a>
+<a
+    
+        rel="me"
+    
+    target="_blank"
+    class="nerdlink"
+    href="https://social.lol/@domg">
+    
+    
+        <svg class='pseudofont' xmlns:svg='http://www.w3.org/2000/svg' width='16' height='16' viewbox='0 0 16 16'><path d='M 7.4779094,-1.598624e-6 C 5.5602384,0.0156984 3.7155894,0.2233384 2.6405814,0.7170384 c 0,0 -2.13206093,0.9537 -2.13206093,4.20766 0,0.74512 -0.01448,1.63603 0.0091,2.58084 0.07742,3.1821946 0.58336693,6.3183886 3.52553593,7.0971276 1.356568,0.359063 2.521335,0.434289 3.45936,0.382729 1.701085,-0.09431 2.6560206,-0.607063 2.6560206,-0.607063 l -0.05611,-1.234252 c 0,0 -1.2156316,0.383272 -2.5808476,0.33656 -1.352609,-0.04639 -2.780561,-0.145832 -2.999328,-1.80651 -0.0202,-0.145872 -0.03031,-0.301902 -0.03031,-0.465714 0,-10e-7 1.327834,0.324572 3.010574,0.40167 1.028943,0.0472 1.993827,-0.06028 2.9738766,-0.177218 1.879445,-0.224425 3.515901,-1.382448 3.721577,-2.4405646 0.32407,-1.666815 0.297376,-4.067605 0.297376,-4.067605 0,-3.25396 -2.131943,-4.20766 -2.131943,-4.20766 C 11.288476,0.2233384 9.4426784,0.0156784 7.5250084,-1.598624e-6 Z M 5.3076104,2.5424984 c 0.798781,0 1.403595,0.30701 1.803551,0.92113 l 0.388886,0.65181 0.388884,-0.65181 c 0.399875,-0.61412 1.00469,-0.92113 1.803551,-0.92113 0.6903266,0 1.2465526,0.24267 1.6713186,0.71609 0.411755,0.47342 0.61677,1.11337 0.61677,1.91862 v 3.939988 h -1.560986 v -3.824218 c 0,-0.80613 -0.339166,-1.21531 -1.0176126,-1.21531 -0.750129,0 -1.126049,0.48533 -1.126049,1.44509 v 2.09324 h -1.551753 v -2.09324 c 0,-0.95976 -0.376039,-1.44509 -1.126168,-1.44509 -0.678446,0 -1.017613,0.40918 -1.017613,1.21531 v 3.824218 h -1.560985 v -3.939988 c 0,-0.80525 0.205053,-1.4452 0.616889,-1.91862 0.424685,-0.47342 0.980911,-0.71609 1.671317,-0.71609 z' /></svg>
+    
+    <span>
+        Mastodon
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="/index.xml">
+    
+    
+        &#xf09e;
+    
+    <span>
+        RSS
+    </span>
+</a>
+<a
+    
+        rel="noreferrer"
+    
+    target="_blank"
+    class="nerdlink"
+    href="mailto:site@dgood.win">
+    
+    
+        &#xf6ed;
+    
+    <span>
+        Email
+    </span>
+</a>
+
+    </div>
+    
+
+</header>
+<div id="contentContainer">
+                <div id="content">
+                    <main>
+<article class="card single">
+    
+        <h1>Kubernetes Networking #3: Ingress</h1>
+    
+    
+        <p class="date">
+            <span title='Date'> </span>
+    2022-07-22
+
+</p>
+    
+    
+    
+    
+    <div><p>Kubernetes Ingress provide a way to expose HTTP(S) routes into your pods from a centralized controller and load balancer. It means you can define <em>how</em> the network traffic can get to your pod inside a Kubernetes resource and a controller hosted in the cluster takes care of the implementation.</p>
+<p>In a <a href="https://en.wikipedia.org/wiki/Utopia">world without Kubernetes</a>, you might have a reverse proxy deployed where you write the configuration file to detail how to expose your applications in the backend. An ingress controller takes that reverse proxy and automatically generates the config based on the <code>Ingress</code> Kubernetes resources you create. You don’t have to create a new <code>LoadBalancer</code> service and cloud load balancer for each service you want to expose.</p>
+<p>In this guide, we’ll use the Kubernetes maintained ingress controller, <a href="https://github.com/kubernetes/ingress-nginx">ingress-nginx</a>, which uses nginx as it’s reverse proxy. It’s important to note, this isn’t the <a href="https://docs.nginx.com/nginx-ingress-controller/">nginx-ingress-controller</a> from NGINX themselves which has hooks into NGINX plus and other paid offerings. The docs for ingress-nginx can be found <a href="https://kubernetes.github.io/ingress-nginx/">here</a>.</p>
+<h2 id="-why-not-just-loadbalancer">🤷 Why not just LoadBalancer?</h2>
+<p>Kubernetes provides a way for a cloud provisioned load balancer (an <a href="https://aws.amazon.com/elasticloadbalancing/">AWS elastic load balancer</a> for instance) to be deployed by the control plane, see my <a href="https://dgood.win/post/kubernetes-networking-2-services/">services post</a> for more info. We can use these to expose a single service (and collection of pods) from a load balancer. But what happens when you have 50 services deployed onto your cluster? Would you have 50 load balancers for them all? That’s ~$810 in standing charges every month not including paying for the traffic that goes through them.</p>
+<p>This is where an ingress controller comes in. An Ingress controller is a centralized place for traffic to enter your cluster via a single load balancer which then is routed to your backend services automatically. This is all based on <code>Ingress</code> resources deployed on the cluster, through the reverse proxy.
+It also introduces a place to add some control over your traffic routing. kube-proxy will default (when in <code>iptables</code> mode) to TCP load balancing traffic randomly, the traffic coming in via a load balancer goes to any pods. With the controls you can configure affinities, round-robin routing, rate limits, CORS etc. to really shape the traffic going to your pods centrally.</p>
+<p>These diagrams compare the path a request would take with/without an ingress controller exposing your pod:</p>
+<figure><img src="/img/ingress-lb-to-pod.png"
+    alt="Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods"><figcaption>
+      <h4>Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods</h4><p>Without: Application Service LoadBalancer → NodePort → Randomly to one of your pods</p>
+    </figcaption>
+</figure>
+
+<figure><img src="/img/ingress-controller-to-pod.png"
+    alt="With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP"><figcaption>
+      <h4>With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP</h4><p>With: Ingress-controller service LoadBalancer → NodePort → Randomly to an ingress-controller pod → To one of your application pods via ClusterIP</p>
+    </figcaption>
+</figure>
+
+<p>There are some tradeoffs to using an ingress controller:</p>
+<ul>
+<li>This introduces an extra hop for your network requests to reach your pod. If you have high throughput - and low latency is important - this could be a consideration</li>
+<li>In the same vein, the ingress controller pods also use resources. If you have the ingress controller doing a lot of TLS termination or handling high load the resource usage will increase significantly</li>
+<li>You can only really use this for (mostly) Layer 7 traffic, TCP or UDP cannot directly be exposed this way</li>
+</ul>
+<h2 id="-so-what-does-an-ingress-controller-actually-do">🛠️ So what does an ingress controller actually do?</h2>
+<p>At a high level you have the following components:</p>
+<ul>
+<li><strong>Kubernetes resources:</strong>
+<ul>
+<li>Service: type <code>LoadBalancer</code>, meaning your ingress-controller pods are fronted by a cloud load balancer and exposed outside the cluster</li>
+<li>Deployment: Ingress Controller itself (see components below for a breakdown)</li>
+<li>(sometimes)Deployment: default backend, this is where the ingress controller routes traffic to when there isn’t a matching host/path rule for the traffic coming in</li>
+</ul>
+</li>
+<li><strong>Components of the ingress controller:</strong>
+<ul>
+<li>Reverse proxy: This is what actually routes the traffic coming in to downstream services/pods. If you installed nginx on a service and ran it it’s this basically</li>
+<li>Config generator: This continuously gets the state of Ingress resources in the Kubernetes cluster (think of it as spamming <code>kubectl get ingress -A</code> every X-seconds) and uses that to generate config that the reverse proxy (nginx in this case) understands</li>
+</ul>
+</li>
+</ul>
+<p>The <em>reverse proxy</em> continually has it’s config updated by the <em>config generator</em> and then traffic coming into the cluster via the <em>Loadbalancer service</em> hits the reverse proxy and is routed to the proper backend service/pods.</p>
+<h2 id="-what-about-ssl">🔒 What about SSL?</h2>
+<p>For HTTPS traffic, we can configure the ingress-controller to terminate the SSL and provide the certs as needed.</p>
+<p>When creating an ingress resource you can specify a Kubernetes Secret of type <code>tls</code> and the ingress-controller will use that secret to terminate the SSL of the request at the reverse proxy.</p>
+<p>This could also be coupled with a tool like <a href="https://cert-manager.io/docs/">cert-manager</a> to dynamically issue and renew certificates for you.</p>
+<h2 id="-load-balancerreverse-proxy-controls">🎛️ Load balancer/Reverse proxy controls</h2>
+<p>As mentioned before, by having your pods traffic route via a reverse proxy in the cluster you gain more control over the routing and connection. Some useful examples for ingress-nginx are:</p>
+<ul>
+<li><strong>Authentication</strong>: Setup <a href="https://datatracker.ietf.org/doc/html/rfc2617">basic or digest access authentication</a> on routes
+<ul>
+<li><code>nginx.ingress.kubernetes.io/auth-type: basic</code></li>
+</ul>
+</li>
+<li><strong>Session affinity:</strong> Allows for things like sticky sessions, keeping a user going to the same backend pod or use cookie affinity to apply a <code>SameSite</code> sticky cookie
+<ul>
+<li><code>nginx.ingress.kubernetes.io/affinity: sticky</code></li>
+</ul>
+</li>
+<li><strong>SSL passthrough:</strong> Instead of terminating TLS at the load balancer you can let the backend handle it directly
+<ul>
+<li><code>nginx.ingress.kubernetes.io/ssl-passthrough: &quot;true&quot;</code></li>
+</ul>
+</li>
+<li><strong>Redirections:</strong> Both <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#permanent-redirect">permanent</a> and <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#temporal-redirect">temporary</a>
+<ul>
+<li><code>nginx.ingress.kubernetes.io/permanent-redirect: https://www.google.com</code></li>
+</ul>
+</li>
+<li><strong>Security controls</strong>
+<ul>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#ssl-ciphers">SSL ciphers</a> can be configured controlling which SSL ciphers you support
+<ul>
+<li><code>nginx.ingress.kubernetes.io/ssl-ciphers: &quot;ALL:!aNULL:!EXPORT56:RC4+RSA:+HIGH:+MEDIUM:+LOW:+SSLv2:+EXP&quot;</code></li>
+</ul>
+</li>
+<li><a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/#enable-cors">CORS rules</a> to configure the cross-original resource sharing rules
+<ul>
+<li><code>nginx.ingress.kubernetes.io/enable-cors: &quot;true&quot;</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>A lot of these controls can be configured either as <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/annotations/">annotations</a> directly on Ingress resources affecting only those specific routes, or can be provided in the <a href="https://kubernetes.github.io/ingress-nginx/user-guide/nginx-configuration/configmap/">Configmap</a> to be applied at a global level.</p>
+<h2 id="-can-i-have-multiple-ingress-controllers">🤹‍♂️ Can I have multiple ingress-controllers?</h2>
+<p><strong>Yes</strong>. Let’s say you want to be able to accept traffic from the public internet as well as internally from inside your private network.</p>
+<p>We would:</p>
+<ul>
+<li>Deploy two sets of ingress-controllers, <em>ingress-public</em> and <em>ingress-private</em></li>
+<li>Configure them to be public and private. This is done usually by the annotations given to the different <code>Service</code> resources (<code>service.beta.kubernetes.io/aws-load-balancer-scheme: &quot;internet-facing&quot;</code> for instance)</li>
+<li>Setup the Ingress classes
+<ul>
+<li>This is a relatively new resource, it used to be managed by an annotation <code>kubernetes.io/ingress.class</code> which is being deprecated</li>
+</ul>
+</li>
+<li>When creating <code>Ingress</code> resources you can target the <code>IngressClass</code> to specify which controller should setup routing for your traffic</li>
+</ul>
+<h2 id="-what-about-hostnames">📮 What about hostnames?</h2>
+<p>Ingress resources in Kubernetes allow you to specify both the Paths and the Host values to route traffic for.</p>
+<p>To have your ingress controller exposed via a friendly DNS address you’d need to point a record of one to your load balancers DNS address. In AWS, this would be creating a Route53 A record aliased to your ELBs address. This would mean anything going to <code>friendly-address.domain.com</code> would point to your cloud-provisioned ELB and then onto your reverse proxy pods from there.</p>
+<p>Then any routes off this hostname would be directed to your specified pods, ie.:</p>
+<pre tabindex="0"><code>`friendly-address.domain.com/app-a` → `svc/app-a` in the cluster
+`friendly-address.domain.com/app-b` → `svc/app-b` in the cluster and so on
+</code></pre><p>But what if you wanted to have multiple different hostnames, maybe 1 per application.</p>
+<pre tabindex="0"><code>`app-a.friendly-address.domain.com/` → `svc/app-a`
+`app-b.friendly-address.domain.com/` → `svc/app-b`
+</code></pre><p>These would mean adding a new Route53 entry manually every time you want to deploy a new application. It takes away from the benefits of defining Ingress as a Kubernetes resource if you need to go click-ops or Terraform a new host each time.</p>
+<p>That’s where a tool like <a href="https://github.com/kubernetes-sigs/external-dns">external-dns</a> comes in.</p>
+<h3 id="external-dns">external-dns</h3>
+<p>external-dns allows you to automatically configure your DNS services based on your Kubernetes Ingress resources (and services!).</p>
+<p>As an example, if you have deployed external-dns and wanted to setup a new <code>app-c.friendly-address.domain.com</code> to point to your service all you would need to do is create an <code>Ingress</code> resource with the <code>Host</code> field set to <code>app-c.friendly-address.domain.com</code> and external-dns would provision you an A record pointing to your load balancer.</p>
+<h2 id="-bringing-it-all-together">🍵 Bringing it all together</h2>
+<p>To give an example of all of this in use, lets build resources for the following requirements:</p>
+<ul>
+<li>We have 3 applications: <code>alpha</code> <code>beta</code> and <code>gamma</code> running on our cluster</li>
+<li>We want <code>alpha</code> and <code>beta</code> exposed via the same Hostname but with separate routes:
+<ul>
+<li><code>public.example.com/alpha</code> and <code>public.example.com/beta</code></li>
+</ul>
+</li>
+<li>We want <code>gamma</code> to have it’s own hostname as it’s a separate, unrelated application
+<ul>
+<li><code>gamma.public.example.com</code></li>
+</ul>
+</li>
+<li>We have the TLS key and cert for <code>public.example.com</code> and want the ingress-controller to terminate TLS for this host</li>
+<li><code>gamma</code> handles it’s own TLS so we shouldn’t terminate it at the reverse proxy,</li>
+</ul>
+<p>We already have:</p>
+<ul>
+<li>A Kubernetes cluster running in AWS</li>
+<li>Deployed external-dns onto our cluster configured for AWS Route 53, [<a href="https://github.com/kubernetes-sigs/external-dns/blob/master/docs/tutorials/aws.md">link</a>]</li>
+<li>Deployed ingress-nginx onto our cluster configured for AWS, [<a href="https://kubernetes.github.io/ingress-nginx/deploy/">link</a>]. Ingress class is set to <code>default</code></li>
+</ul>
+<p>Feel free to try these steps above for yourself the implementation and breakdown of what we’re doing come below though so spoiler alert.</p>
+<hr>
+<ol>
+<li>
+<p>Create the TLS secret for our alpha/beta endpoint</p>
+<pre tabindex="0"><code>kubectl create secret tls public \
+  --cert=tls.cert \
+  --key=tls.key
+</code></pre></li>
+<li>
+<p>YAML for the Ingress of <code>alpha</code> and <code>beta</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha-beta</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">tls</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">hosts</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#ae81ff">public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">secretName</span>: <span style="color:#ae81ff">public</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/alpha</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">alpha</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/beta</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">beta</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div></li>
+<li>
+<p>YAML for the Ingress of <code>gamma</code></p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-yaml" data-lang="yaml"><span style="display:flex;"><span><span style="color:#f92672">apiVersion</span>: <span style="color:#ae81ff">networking.k8s.io/v1</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">kind</span>: <span style="color:#ae81ff">Ingress</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">metadata</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">annotations</span>:
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">nginx.ingress.kubernetes.io/ssl-passthrough</span>: <span style="color:#e6db74">&#34;true&#34;</span>
+</span></span><span style="display:flex;"><span><span style="color:#f92672">spec</span>:
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">ingressClassName</span>: <span style="color:#ae81ff">default</span>
+</span></span><span style="display:flex;"><span>  <span style="color:#f92672">rules</span>:
+</span></span><span style="display:flex;"><span>  - <span style="color:#f92672">host</span>: <span style="color:#ae81ff">gamma.public.example.com</span>
+</span></span><span style="display:flex;"><span>    <span style="color:#f92672">http</span>:
+</span></span><span style="display:flex;"><span>      <span style="color:#f92672">paths</span>:
+</span></span><span style="display:flex;"><span>      - <span style="color:#f92672">path</span>: <span style="color:#ae81ff">/</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">pathType</span>: <span style="color:#ae81ff">Prefix</span>
+</span></span><span style="display:flex;"><span>        <span style="color:#f92672">backend</span>:
+</span></span><span style="display:flex;"><span>          <span style="color:#f92672">service</span>:
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">name</span>: <span style="color:#ae81ff">gamma</span>
+</span></span><span style="display:flex;"><span>            <span style="color:#f92672">port</span>:
+</span></span><span style="display:flex;"><span>              <span style="color:#f92672">number</span>: <span style="color:#ae81ff">8080</span>
+</span></span></code></pre></div></li>
+</ol>
+<blockquote>
+<p>☝ SSL Passthrough also needs to be enabled on the ingress-nginx deployment with the flag <code>--enable-ssl-passthrough</code></p>
+</blockquote>
+<p><strong>What happens with these resources?</strong></p>
+<ul>
+<li><strong>ingress-nginx:</strong>
+<ul>
+<li>Constantly checks for new/updated <code>Ingress</code> resources</li>
+<li>Detects <code>alpha-beta</code>:
+<ul>
+<li>Adds nginx config to route to the services
+<ul>
+<li>Can be checked with: <code>kubectl exec -it &lt;ingress-controller-pod-name&gt; -- cat /etc/nginx/nginx.conf</code></li>
+<li>This config includes the secret mentioned to be able to terminate TLS</li>
+</ul>
+</li>
+<li>Updates the <code>Ingress</code> resource <code>Address</code> field with the DNS of the Cloud load balancer the controller knows is pointing at it</li>
+<li><code>curl https://public.example.com/alpha -v</code> shows it routing correctly and the cert as expected</li>
+<li><code>curl https://public.example.com/wrong -v</code> shows the default backend</li>
+</ul>
+</li>
+<li>Detects <code>gamma</code>:
+<ul>
+<li>Adds nginx config to route to the services
+<ul>
+<li>Again, can be checked with: <code>kubectl exec -it &lt;ingress-controller-pod-name&gt; -- cat /etc/nginx/nginx.conf</code></li>
+<li>This config will show the ssl_passthrough is set to not handle any TLS</li>
+</ul>
+</li>
+<li>Updates the <code>Ingress</code> resource <code>Address</code> field with the DNS of the Cloud load balancer that the controller knows is pointing at it.</li>
+<li><code>curl https://gamma.public.example.com -v</code> shows traffic routing correctly and with our in-application TLS handling</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>external-dns:</strong>
+<ul>
+<li>Constantly checking for new/updated <code>Ingress</code> resources</li>
+<li>Sees the two new resources but with empty <code>Address</code> fields - needs these to be set before it can point the specified host to the address the service sits behind.</li>
+<li><code>Address</code> field is now updated for <code>alpha-beta</code>:
+<ul>
+<li>Checks if the hostname has already been created
+<ul>
+<li>external-dns defaults to using <code>txt</code> records in the chosen DNS service to persist information about the domains it manages</li>
+</ul>
+</li>
+<li>Creates an <code>A</code> record pointing <code>public.example.com</code> to the value of <code>Address</code> in the ingress</li>
+</ul>
+</li>
+<li><code>Address</code> field is now updated for <code>gamma</code>
+<ul>
+<li>This does the same as <code>alpha-beta</code> but for <code>gamma.public.example.com</code></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2 id="-other-controllers-are-available">🦦 Other controllers are available</h2>
+<p>Other ingress controllers are available too, notable/interesting ones include:</p>
+<ul>
+<li><a href="https://github.com/kubernetes-sigs/aws-load-balancer-controller#readme">AWS Load balancer controller</a> can manage ALBs out of cluster for ingress resources and NLBs for service resources</li>
+<li><a href="https://doc.traefik.io/traefik/providers/kubernetes-ingress/">Traefix ingress controller</a> an ingress controller using the Kubernetes native edge router</li>
+<li><a href="https://www.getambassador.io/docs/edge-stack/latest/topics/running/ingress-controller/">Ambassador</a> uses Envoy to act as an ingress controller and API gateway</li>
+</ul>
+<p>The benefit of having all of your configuration directly in Kubernetes as an <code>Ingress</code> resource comes from every compliant ingress-controllers reading and interacting with Ingress in the same way. The only change between them would be the implementation specific things you control via annotations, the general routes and hosts work regardless of your choice.</p></div>
+</article>
+
+    <hr />
+    <p class="articleTagsContainer">
+        <span> </span>
+        <strong>Tags:</strong>
+        
+            <a
+                
+                href="/tags/deep-dive/">#deep-dive</a>
+        
+            <a
+                
+                href="/tags/kubernetes/">#kubernetes</a>
+        
+    </p>
+
+
+
+
+
+
+                    </main><footer>
+    <hr />
+
+<p><small>
+        2024 &copy; Dom Goodwin
+    </small></p>
+    <p><small>
+        <a href='https://gitlab.com/gabmus/hugo-ficurinia'>Ficurinia theme</a> for <a href='https://gohugo.io'>Hugo</a> by <a href='https://gabmus.org'>Gabriele Musco</a>. Licensed under <a href='https://www.gnu.org/licenses/agpl-3.0.html'>GNU AGPLv3</a>.
+    </small></p>
+</footer>
+</div>
+            </div>
+        </div>
+
+    
+        <script
+            async
+            defer
+            data-website-id="ac540eb3-ea38-412a-bbda-0f734635df39"
+            src="https://cloud.umami.is/script.js"
+        ></script>
+    
+
+
+</body>
+</html>

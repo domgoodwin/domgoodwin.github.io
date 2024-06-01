@@ -1,73 +1,24 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes"?>
-<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
     <title>Categories on Dom Goodwin</title>
-    <link>/categories/</link>
+    <link>https://dgood.win/categories/</link>
     <description>Recent content in Categories on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>en-us</language>
-    <managingEditor>dom@domgoodwin.dev (Dom Goodwin)</managingEditor>
-    <webMaster>dom@domgoodwin.dev (Dom Goodwin)</webMaster>
-    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="/categories/index.xml" rel="self" type="application/rss+xml" />
-    <item>
-      <title>Productivity</title>
-      <link>/categories/productivity/</link>
-      <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/productivity/</guid>
-      <description></description>
-      <content></content>
-    </item>
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Sun, 15 Jan 2023 10:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/categories/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
     
-    <item>
-      <title>Ways of working</title>
-      <link>/categories/ways-of-working/</link>
-      <pubDate>Wed, 25 Jan 2023 19:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/ways-of-working/</guid>
-      <description></description>
-      <content></content>
-    </item>
     
     <item>
       <title>Monzo</title>
-      <link>/categories/monzo/</link>
+      <link>https://dgood.win/categories/monzo/</link>
       <pubDate>Sun, 15 Jan 2023 10:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/monzo/</guid>
-      <description></description>
-      <content></content>
+      
+      <guid>https://dgood.win/categories/monzo/</guid>
+      <description><![CDATA[]]></description>
+      
     </item>
     
-    <item>
-      <title>Deep dive</title>
-      <link>/categories/deep-dive/</link>
-      <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/deep-dive/</guid>
-      <description></description>
-      <content></content>
-    </item>
-    
-    <item>
-      <title>Reccomendations</title>
-      <link>/categories/reccomendations/</link>
-      <pubDate>Sat, 05 Feb 2022 15:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/reccomendations/</guid>
-      <description></description>
-      <content></content>
-    </item>
-    
-    <item>
-      <title>Helpful</title>
-      <link>/categories/helpful/</link>
-      <pubDate>Mon, 10 Jan 2022 12:06:09 +0000</pubDate>
-      <author>dom@domgoodwin.dev (Dom Goodwin)</author>
-      <guid>/categories/helpful/</guid>
-      <description></description>
-      <content></content>
-    </item>
     
   </channel>
 </rss>

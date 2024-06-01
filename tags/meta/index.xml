@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
+  <channel>
+    <title>Meta on Dom Goodwin</title>
+    <link>http://192.168.0.30:1313/tags/meta/</link>
+    <description>Recent content in Meta on Dom Goodwin</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>en</language>
+    <copyright>Dom Goodwin</copyright>
+    <lastBuildDate>Mon, 03 Jan 2022 12:06:09 +0000</lastBuildDate><atom:link href="http://192.168.0.30:1313/tags/meta/index.xml" rel="self" type="application/rss+xml" /><icon>http://192.168.0.30:1313/logo.svg</icon>
+    
+    
+    <item>
+      <title>Blog² - Blog about blogs</title>
+      <link>http://192.168.0.30:1313/posts/blog-squared/</link>
+      <pubDate>Mon, 03 Jan 2022 12:06:09 +0000</pubDate>
+      
+      <guid>http://192.168.0.30:1313/posts/blog-squared/</guid>
+      <description><![CDATA[<p>Here&rsquo;s a list I (hopefully) update around tech blogs I enjoy</p>
+<ul>
+<li><a href="https://jvns.ca/">https://jvns.ca/</a></li>
+<li><a href="https://jlelse.blog/">https://jlelse.blog/</a></li>
+<li><a href="https://drewdevault.com/">https://drewdevault.com/</a></li>
+<li><a href="https://zwischenzugs.com/">https://zwischenzugs.com/</a></li>
+<li><a href="https://kevq.uk/">https://kevq.uk/</a></li>
+<li><a href="https://blog.gnoack.org/post/">https://blog.gnoack.org/post/</a></li>
+<li><a href="https://blog.jessfraz.com/">https://blog.jessfraz.com/</a></li>
+</ul>]]></description>
+      
+    </item>
+    
+    
+  </channel>
+</rss>
