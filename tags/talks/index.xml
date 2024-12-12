@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?><?xml-stylesheet href="/feed_style.xsl" type="text/xsl"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom" xmlns:media="https://www.rssboard.org/media-rss">
   <channel>
-    <title>Monzo on Dom Goodwin</title>
-    <link>https://dgood.win/tags/monzo/</link>
-    <description>Recent content in Monzo on Dom Goodwin</description>
+    <title>Talks on Dom Goodwin</title>
+    <link>https://dgood.win/tags/talks/</link>
+    <description>Recent content in Talks on Dom Goodwin</description>
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Dom Goodwin</copyright>
-    <lastBuildDate>Thu, 12 Dec 2024 08:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/tags/monzo/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    <lastBuildDate>Thu, 12 Dec 2024 08:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/tags/talks/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
     
     
     <item>
@@ -23,21 +23,6 @@ optimised for cost using Karpenter and Spot.</p>
       <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/f-2Ps_Ney3c?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
       ></iframe>
     </div>]]></description>
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>Reducing our NAT Gateway cost with private networking between AWS and GCP</title>
-      <link>https://dgood.win/posts/monzo-gcp-egress/</link>
-      <pubDate>Sun, 15 Jan 2023 10:06:09 +0000</pubDate>
-      
-      <guid>https://dgood.win/posts/monzo-gcp-egress/</guid>
-      <description><![CDATA[<p>This post is hosted on the Monzo Blog:</p>
-<blockquote>
-<p><a href="https://monzo.com/blog/2022/11/25/reducing-nat-gateway-cost-with-private-networking-between-aws-and-gcp">Reducing our NAT Gateway cost with private networking between AWS and GCP</a></p>
-</blockquote>]]></description>
       
     </item>
     

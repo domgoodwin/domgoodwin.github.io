@@ -6,7 +6,26 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Dom Goodwin</copyright>
-    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/posts/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    <lastBuildDate>Thu, 12 Dec 2024 08:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/posts/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    
+    
+    <item>
+      <title>Talk: Scaling to Success</title>
+      <link>https://dgood.win/posts/talk-scaling-to-success/</link>
+      <pubDate>Thu, 12 Dec 2024 08:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/posts/talk-scaling-to-success/</guid>
+      <description><![CDATA[<p>I recently gave a talk at Kubernetes Community Days UK on the history
+of how Monzo autoscaled it&rsquo;s Kubernetes cluster and more recently how we&rsquo;ve
+optimised for cost using Karpenter and Spot.</p>
+    
+    <div style="position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden;">
+      <iframe allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen="allowfullscreen" loading="eager" referrerpolicy="strict-origin-when-cross-origin" src="https://www.youtube.com/embed/f-2Ps_Ney3c?autoplay=0&controls=1&end=0&loop=0&mute=0&start=0" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border:0;" title="YouTube video"
+      ></iframe>
+    </div>]]></description>
+      
+    </item>
+    
     
     
     <item>

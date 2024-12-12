@@ -3,18 +3,30 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
     <loc>https://dgood.win/</loc>
-    <lastmod>2023-01-25T19:06:09+00:00</lastmod>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
+  </url><url>
+    <loc>https://dgood.win/tags/kubernetes/</loc>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
+  </url><url>
+    <loc>https://dgood.win/tags/monzo/</loc>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
+  </url><url>
+    <loc>https://dgood.win/posts/</loc>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
+  </url><url>
+    <loc>https://dgood.win/tags/</loc>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
+  </url><url>
+    <loc>https://dgood.win/posts/talk-scaling-to-success/</loc>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
+  </url><url>
+    <loc>https://dgood.win/tags/talks/</loc>
+    <lastmod>2024-12-12T08:06:09+00:00</lastmod>
   </url><url>
     <loc>https://dgood.win/posts/dont-say-hello/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
   </url><url>
-    <loc>https://dgood.win/posts/</loc>
-    <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
     <loc>https://dgood.win/tags/productivity/</loc>
-    <lastmod>2023-01-25T19:06:09+00:00</lastmod>
-  </url><url>
-    <loc>https://dgood.win/tags/</loc>
     <lastmod>2023-01-25T19:06:09+00:00</lastmod>
   </url><url>
     <loc>https://dgood.win/tags/ways-of-working/</loc>
@@ -23,16 +35,10 @@
     <loc>https://dgood.win/tags/external/</loc>
     <lastmod>2023-01-15T10:06:09+00:00</lastmod>
   </url><url>
-    <loc>https://dgood.win/tags/monzo/</loc>
-    <lastmod>2023-01-15T10:06:09+00:00</lastmod>
-  </url><url>
     <loc>https://dgood.win/posts/monzo-gcp-egress/</loc>
     <lastmod>2023-01-15T10:06:09+00:00</lastmod>
   </url><url>
     <loc>https://dgood.win/tags/deep-dive/</loc>
-    <lastmod>2022-07-22T18:06:09+00:00</lastmod>
-  </url><url>
-    <loc>https://dgood.win/tags/kubernetes/</loc>
     <lastmod>2022-07-22T18:06:09+00:00</lastmod>
   </url><url>
     <loc>https://dgood.win/posts/kubernetes-networking-ingress/</loc>

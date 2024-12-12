@@ -6,7 +6,43 @@
     <generator>Hugo -- gohugo.io</generator>
     <language>en</language>
     <copyright>Dom Goodwin</copyright>
-    <lastBuildDate>Wed, 25 Jan 2023 19:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/tags/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    <lastBuildDate>Thu, 12 Dec 2024 08:06:09 +0000</lastBuildDate><atom:link href="https://dgood.win/tags/index.xml" rel="self" type="application/rss+xml" /><icon>https://dgood.win/logo.svg</icon>
+    
+    
+    <item>
+      <title>Kubernetes</title>
+      <link>https://dgood.win/tags/kubernetes/</link>
+      <pubDate>Thu, 12 Dec 2024 08:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/kubernetes/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Monzo</title>
+      <link>https://dgood.win/tags/monzo/</link>
+      <pubDate>Thu, 12 Dec 2024 08:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/monzo/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
+    
+    
+    <item>
+      <title>Talks</title>
+      <link>https://dgood.win/tags/talks/</link>
+      <pubDate>Thu, 12 Dec 2024 08:06:09 +0000</pubDate>
+      
+      <guid>https://dgood.win/tags/talks/</guid>
+      <description><![CDATA[]]></description>
+      
+    </item>
+    
     
     
     <item>
@@ -46,35 +82,11 @@
     
     
     <item>
-      <title>Monzo</title>
-      <link>https://dgood.win/tags/monzo/</link>
-      <pubDate>Sun, 15 Jan 2023 10:06:09 +0000</pubDate>
-      
-      <guid>https://dgood.win/tags/monzo/</guid>
-      <description><![CDATA[]]></description>
-      
-    </item>
-    
-    
-    
-    <item>
       <title>Deep-Dive</title>
       <link>https://dgood.win/tags/deep-dive/</link>
       <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
       
       <guid>https://dgood.win/tags/deep-dive/</guid>
-      <description><![CDATA[]]></description>
-      
-    </item>
-    
-    
-    
-    <item>
-      <title>Kubernetes</title>
-      <link>https://dgood.win/tags/kubernetes/</link>
-      <pubDate>Fri, 22 Jul 2022 18:06:09 +0000</pubDate>
-      
-      <guid>https://dgood.win/tags/kubernetes/</guid>
       <description><![CDATA[]]></description>
       
     </item>
