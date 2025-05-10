@@ -42,6 +42,8 @@
     <link href="/jetbrains-mono/jetbrains-mono.css" rel="stylesheet" integrity="sha512-tJxlgL6v1Y7kFf+qB8SloaAMKnOAw6WouknxXtIjkBux9Y/9aX81EUWOJO8c/3l98DmjG8brr4to7zaez606Fg=="/>
 
     
+        <link rel="stylesheet" href="https://latest.cactus.chat/style.css" type="text/css">
+    
     
     <link type="text/css" rel="stylesheet" href=https://dgood.win/css/styles.c928edc0eba1b83ff1c6bfac475f42cca75f1d3970d6d594d2752af04d870a4b33adc7c5b9db020a5ae5ccc17ff0d127cab7af3d937912f09f5491c26e8596a8.css integrity="sha512-ySjtwOuhuD/xxr&#43;sR19CzKdfHTlw1tWU0nUq8E2HCkszrcfFudsCClrlzMF/8NEnyrevPZN5EvCfVJHCboWWqA==" />
 <meta name="author" content="Dom Goodwin" />
@@ -534,7 +536,65 @@
 </article>
 
 
+    <a style="margin-bottom: 24px; display: inline-block;" class="shareBtn" onclick="openFediInstanceDialog();">
+        Share on the Fediverse
+    </a>
+    <div id="fediInstanceDialog">
+        <div class="bg" onclick="closeFediInstanceDialog();"></div>
+        <div class="dialog">
+            <h2>Enter your instance&#39;s address</h2>
+            <input id="fediInstanceInput" placeholder='Eg. mastodon.social' type="text" />
+            <div class="buttons">
+                <a class="shareBtn" onclick="closeFediInstanceDialog();">Cancel</a>
+                <a class="shareBtn" onclick="shareOnFedi();">Share</a>
+            </div>
+        </div>
+    </div>
+    <script>
+        var articleTitle = 'Books';
+        var articleLink = 'https:\/\/dgood.win\/pages\/books\/';
+        var fediInstanceDialog = document.getElementById('fediInstanceDialog');
+        var fediInstanceInput = document.getElementById('fediInstanceInput');
+        function openFediInstanceDialog() {
+            fediInstanceDialog.classList.add('open');
+        }
+        function closeFediInstanceDialog() {
+            fediInstanceDialog.classList.remove('open');
+        }
+        function fixURL(url) {
+            if (url.substr(0, 8) == 'https://') return url;
+            if (url.substr(0, 7) == 'http://') return url;
+            return 'https://' + url;
+        }
+        function shareOnFedi() {
+            let instance = fediInstanceInput.value.trim();
+            if (!instance) {
+                return;
+            }
+            instance = fixURL(instance);
+            window.open(
+                `${instance}/share?text=${articleTitle}%20${articleLink}`,
+                '__blank'
+            );
+            closeFediInstanceDialog();
+        }
+    </script>
 
+
+
+<script type="text/javascript" src="https://latest.cactus.chat/cactus.js"></script>
+
+<div id="ficurinia-cactus-comments"></div>
+
+<script>
+initComments({
+    node: document.getElementById("ficurinia-cactus-comments"),
+    defaultHomeserverUrl: 'https:\/\/matrix.cactus.chat:8448',
+    serverName: 'cactus.chat',
+    siteName: "dgood.win",
+    commentSectionId: "fd2be5aaea31585ff53d5c8a2bfcef80"
+})
+</script>
 
 
 
