@@ -3,6 +3,6 @@
 	font-family: Symbols Nerd Font;
 	font-style: normal;
 	font-weight: 400;
-	src: local("Symbols-2048-em Nerd Font Complete"), local("SymbolsNerdFontComplete-2048-em"), url(symbols-2048-em-nerd-font-complete.woff2) format("woff2");
+	src: local("Symbols Nerd Font Mono"), url(symbols-nerd-font-mono.woff2) format("woff2");
 }
 

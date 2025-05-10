@@ -1,7 +1,7 @@
 {
 	"version": 3,
 	"file": "styles.css",
-	"sourceRoot": "/home/dom/repos/blog",
+	"sourceRoot": "/home/dom/repos/domgoodwin/blog",
 	"sources": [
 		"themes/hugo-ficurinia/assets/scss/style.scss"
 	],
